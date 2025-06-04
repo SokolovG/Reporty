@@ -7,7 +7,9 @@ from src.database.base import Base
 
 def get_sqlalchemy_config() -> SQLAlchemyAsyncConfig:
     """Get SQLAlchemy config."""
-    return SQLAlchemyAsyncConfig(connection_string=settings.database_url, create_all=True, metadata=Base.metadata)
+    return SQLAlchemyAsyncConfig(
+        connection_string=settings.database_url, create_all=True, metadata=Base.metadata
+    )
 
 
 def get_sqlalchemy_plugin() -> SQLAlchemyPlugin:

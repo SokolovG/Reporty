@@ -2,10 +2,8 @@ import uvicorn
 from litestar import Litestar
 from sqladmin_litestar_plugin import SQLAdminPlugin
 
-from src.api.routes import report_router, task_router, record_router
-from src.core.config import get_sqlalchemy_plugin, get_sqlalchemy_config, logging_config
-
-
+from src.api.routes import record_router, report_router, task_router
+from src.core.config import get_sqlalchemy_config, get_sqlalchemy_plugin, logging_config
 
 sqlalchemy_plugin = get_sqlalchemy_plugin()
 sqlalchemy_config = get_sqlalchemy_config()

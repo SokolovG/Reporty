@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     debug: bool = os.getenv("DEBUG", "False").lower() == "true"
 
     # LLM API
-    llm_api_key: str | None = os.getenv("LLM_API_KEY", None)
+    ai_api_key: str | None = os.getenv("AI_API_KEY", None)
 
     # Bitrix24
     bitrix_webhook_url: str | None = os.getenv("BITRIX_WEBHOOK_URL", None)
@@ -44,10 +44,10 @@ class Settings(BaseSettings):
 
     def validate_claude_settings(self) -> bool:
         """Check your Claude API settings."""
-        return self.enable_ai_processing and self.claude_api_key is not None
+        return self.enable_ai_processing and self.ai_api_key is not None
 
     def validate_bitrix_settings(self) -> bool:
-        """Checking Bitrix24 settings."""
+        """Check Bitrix24 settings."""
         return (
             self.enable_bitrix_integration
             and self.bitrix_webhook_url is not None
