@@ -20,6 +20,7 @@ class Settings(BaseSettings):
 
     # Application
     debug: bool = os.getenv("DEBUG", "False").lower() == "true"
+    secret_key = os.getenv("SECRET_KEY")
 
     # LLM API
     ai_api_key: str | None = os.getenv("AI_API_KEY", None)

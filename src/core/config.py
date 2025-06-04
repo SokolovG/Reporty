@@ -1,15 +1,27 @@
+import os
+
+from dotenv import load_dotenv
 from litestar.contrib.sqlalchemy.plugins import SQLAlchemyAsyncConfig, SQLAlchemyPlugin
 from litestar.logging import LoggingConfig
+from litestar.security.jwt import JWTAuth
+from litestar_users import LitestarUsersConfig
+from litestar_users.config import (
+    AuthHandlerConfig,
+    RegisterHandlerConfig,
+    VerificationHandlerConfig,
+)
 
 from src.core.settings import settings
-from src.database.base import Base
+from src.database.models import User
+from src.dto.auth.user_dto import UserReadDTO, UserRegistrationDTO, UserUpdateDTO
+from src.services.user_service import UserService
+
+load_dotenv()
 
 
 def get_sqlalchemy_config() -> SQLAlchemyAsyncConfig:
     """Get SQLAlchemy config."""
-    return SQLAlchemyAsyncConfig(
-        connection_string=settings.database_url, create_all=True, metadata=Base.metadata
-    )
+    return SQLAlchemyAsyncConfig(connection_string=settings.database_url, create_all=True)
 
 
 def get_sqlalchemy_plugin() -> SQLAlchemyPlugin:
@@ -30,4 +42,18 @@ logging_config = LoggingConfig(
         },
     },
     log_exceptions="always",
+)
+
+
+litestar_users_config = LitestarUsersConfig(
+    auth_backend_class=JWTAuth,
+    secret=os.getenv("SECRET_KEY", ""),
+    user_model=User,  # type: ignore
+    user_read_dto=UserReadDTO,
+    user_registration_dto=UserRegistrationDTO,
+    user_update_dto=UserUpdateDTO,
+    user_service_class=UserService,
+    auth_handler_config=AuthHandlerConfig(),
+    register_handler_config=RegisterHandlerConfig(),
+    verification_handler_config=VerificationHandlerConfig(),
 )

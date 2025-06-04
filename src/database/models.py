@@ -1,5 +1,6 @@
 from datetime import UTC, datetime
 
+from litestar_users.adapter.sqlalchemy.mixins import SQLAlchemyUserMixin
 from sqlalchemy import Boolean, DateTime, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -109,3 +110,9 @@ class Report(Base):
             f"<Report(id={self.id}, report_date={self.report_date},"
             f" entries_count={self.entries_count})>"
         )
+
+
+class User(Base, SQLAlchemyUserMixin):
+    """User model."""
+
+    __tablename__ = "users"
