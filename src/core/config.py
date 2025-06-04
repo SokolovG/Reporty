@@ -10,6 +10,7 @@ from litestar_users.config import (
     RegisterHandlerConfig,
     VerificationHandlerConfig,
 )
+from sqlalchemy import Engine, create_engine
 
 from src.api.dto.auth import UserReadDTO, UserRegistrationDTO, UserUpdateDTO
 from src.core.settings import settings
@@ -23,7 +24,9 @@ load_dotenv()
 def get_sqlalchemy_config() -> SQLAlchemyAsyncConfig:
     """Get SQLAlchemy config."""
     return SQLAlchemyAsyncConfig(
-        connection_string=settings.database_url, create_all=True, metadata=Base.metadata
+        connection_string=settings.async_database_url,
+        create_all=True,
+        metadata=Base.metadata,
     )
 
 
@@ -39,13 +42,19 @@ logging_config = LoggingConfig(
     },
     handlers={
         "console": {
-            "class": "logging_config.StreamHandler",
+            "class": "logging.StreamHandler",
             "level": "INFO",
             "formatter": "standard",
         },
     },
     log_exceptions="always",
 )
+
+
+def get_sync_engine() -> Engine:
+    """Get synchronous engine for SQLAdmin."""
+    sync_url = settings.database_url
+    return create_engine(sync_url, echo=settings.debug)
 
 
 litestar_users_config = LitestarUsersConfig(

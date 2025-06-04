@@ -4,16 +4,22 @@ from litestar_users import LitestarUsersPlugin
 from sqladmin_litestar_plugin import SQLAdminPlugin
 
 from src.api.routes import record_router, report_router, task_router
+from src.core.admin import DailyRecordAdmin, ReportAdmin
 from src.core.config import (
     get_sqlalchemy_config,
     get_sqlalchemy_plugin,
+    get_sync_engine,
     litestar_users_config,
     logging_config,
 )
 
 sqlalchemy_plugin = get_sqlalchemy_plugin()
 sqlalchemy_config = get_sqlalchemy_config()
-admin_plugin = SQLAdminPlugin(engine=sqlalchemy_config.get_engine(), base_url="/admin", views=[])
+admin_plugin = SQLAdminPlugin(
+    engine=get_sync_engine(),
+    base_url="/admin",
+    views=[DailyRecordAdmin, ReportAdmin],
+)
 litestar_users = LitestarUsersPlugin(config=litestar_users_config)
 
 app = Litestar(

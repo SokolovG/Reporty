@@ -20,7 +20,7 @@ class Settings(BaseSettings):
 
     # Application
     debug: bool = os.getenv("DEBUG", "False").lower() == "true"
-    secret_key = os.getenv("SECRET_KEY")
+    secret_key: str = os.getenv("SECRET_KEY", "")
 
     # LLM API
     ai_api_key: str | None = os.getenv("AI_API_KEY", None)
@@ -35,7 +35,7 @@ class Settings(BaseSettings):
 
     @property
     def database_url(self) -> str:
-        """Synchronous URL for migrations."""
+        """Synchronous URL for migrations and admin panel."""
         return f"postgresql://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
 
     @property
