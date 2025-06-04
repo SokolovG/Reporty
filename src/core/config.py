@@ -12,7 +12,7 @@ from litestar_users.config import (
 )
 from sqlalchemy import Engine, create_engine
 
-from src.api.dto.auth import UserReadDTO, UserRegistrationDTO, UserUpdateDTO
+from src.api.dto import UserReadDTO, UserRegistrationDTO, UserUpdateDTO
 from src.core.settings import settings
 from src.database.base import Base
 from src.database.models import User
