@@ -11,9 +11,10 @@ from litestar_users.config import (
     VerificationHandlerConfig,
 )
 
+from src.api.dto.auth import UserReadDTO, UserRegistrationDTO, UserUpdateDTO
 from src.core.settings import settings
+from src.database.base import Base
 from src.database.models import User
-from src.dto.auth.user_dto import UserReadDTO, UserRegistrationDTO, UserUpdateDTO
 from src.services.user_service import UserService
 
 load_dotenv()
@@ -21,7 +22,9 @@ load_dotenv()
 
 def get_sqlalchemy_config() -> SQLAlchemyAsyncConfig:
     """Get SQLAlchemy config."""
-    return SQLAlchemyAsyncConfig(connection_string=settings.database_url, create_all=True)
+    return SQLAlchemyAsyncConfig(
+        connection_string=settings.database_url, create_all=True, metadata=Base.metadata
+    )
 
 
 def get_sqlalchemy_plugin() -> SQLAlchemyPlugin:

@@ -8,7 +8,6 @@ from src.database.models import User
 class UserRegistrationSchema(Struct):
     email: str
     password: str
-    password_confirm: str
 
 
 class UserRegistrationDTO(MsgspecDTO[UserRegistrationSchema]):
