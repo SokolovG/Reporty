@@ -1,7 +1,5 @@
 import asyncio
 import os
-
-# Добавляем путь к проекту
 import sys
 from logging.config import fileConfig
 
@@ -10,7 +8,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
-from src.database.models import BitrixTask, DailyRecord, Report, User  # noqa
+from src.database.models import *  # noqa
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 

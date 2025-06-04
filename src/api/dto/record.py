@@ -2,11 +2,16 @@ from datetime import datetime
 from uuid import UUID
 
 import msgspec
+from litestar.dto import DTOConfig, MsgspecDTO
 
 
 class DailyRecordRequest(msgspec.Struct):
     raw_input: str
     bitrix_task_id: str | None = None
+
+
+class DailyRecordRequestDTO(MsgspecDTO[DailyRecordRequest]):
+    config = DTOConfig()
 
 
 class DailyRecordResponse(msgspec.Struct):
@@ -19,3 +24,7 @@ class DailyRecordResponse(msgspec.Struct):
     is_processed: bool
     is_approved: bool
     bitrix_task_id: str | None
+
+
+class DailyRecordResponseDTO(MsgspecDTO[DailyRecordResponse]):
+    config = DTOConfig()
