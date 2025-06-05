@@ -1,6 +1,5 @@
 from collections.abc import Sequence
 from datetime import date
-from uuid import UUID
 
 from advanced_alchemy import repository
 from sqlalchemy import and_, select
@@ -25,7 +24,7 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
 
         return await self.add(record)
 
-    async def get_with_external_task(self, record_id: UUID) -> DailyRecord:
+    async def get_with_external_task(self, record_id: int) -> DailyRecord:
         """Get record with loaded external task and system info."""
         result = await self.session.execute(
             select(DailyRecord)
@@ -67,7 +66,7 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
         )
         return result.scalars().all()
 
-    async def get_records_for_external_task(self, external_task_id: UUID) -> Sequence[DailyRecord]:
+    async def get_records_for_external_task(self, external_task_id: int) -> Sequence[DailyRecord]:
         """Get all records linked to a specific external task."""
         result = await self.session.execute(
             select(DailyRecord)
@@ -76,7 +75,7 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
         )
         return result.scalars().all()
 
-    async def _validate_external_task_exists(self, external_task_id: UUID) -> None:
+    async def _validate_external_task_exists(self, external_task_id: int) -> None:
         """Validate that external task exists."""
         result = await self.session.execute(
             select(ExternalTask.id).where(ExternalTask.id == external_task_id)

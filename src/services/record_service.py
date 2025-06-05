@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from src.api.dto import DailyRecordRequest, DailyRecordResponse
 from src.api.dto.record_dto import DailyRecordWithTaskResponse
 from src.database.models import DailyRecord
@@ -25,7 +23,7 @@ class RecordService:
             external_task_id=saved_record.external_task_id,
         )
 
-    async def get_record(self, record_id: UUID) -> DailyRecordResponse:
+    async def get_record(self, record_id: int) -> DailyRecordResponse:
         record = await self.repo.get(record_id)
         return DailyRecordResponse(
             id=record.id,
@@ -39,7 +37,7 @@ class RecordService:
             external_task_id=record.external_task_id,
         )
 
-    async def get_record_with_task(self, record_id: UUID) -> DailyRecordWithTaskResponse:
+    async def get_record_with_task(self, record_id: int) -> DailyRecordWithTaskResponse:
         """Get record with loaded external task information."""
         record = await self.repo.get(record_id, load=[DailyRecord.external_task])
         return DailyRecordWithTaskResponse(
@@ -55,7 +53,7 @@ class RecordService:
         )
 
     async def link_to_external_task(
-        self, record_id: UUID, external_task_id: UUID
+        self, record_id: int, external_task_id: int
     ) -> DailyRecordResponse:
         """Link daily record to external task."""
         record = await self.repo.get(record_id)
@@ -74,7 +72,7 @@ class RecordService:
             external_task_id=updated_record.external_task_id,
         )
 
-    async def unlink_from_external_task(self, record_id: UUID) -> DailyRecordResponse:
+    async def unlink_from_external_task(self, record_id: int) -> DailyRecordResponse:
         """Remove link to external task."""
         record = await self.repo.get(record_id)
         record.external_task_id = None

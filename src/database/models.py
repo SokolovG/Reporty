@@ -1,5 +1,4 @@
 from datetime import UTC, datetime
-from uuid import UUID
 
 from litestar_users.adapter.sqlalchemy.mixins import SQLAlchemyUserMixin
 from sqlalchemy import (
@@ -8,6 +7,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Index,
+    Integer,
     String,
     Text,
     UniqueConstraint,
@@ -49,7 +49,7 @@ class DailyRecord(Base):
     )
 
     # Связь с внешней задачей (опционально)
-    external_task_id: Mapped[UUID | None] = mapped_column(
+    external_task_id: Mapped[int | None] = mapped_column(
         ForeignKey("external_tasks.id"), nullable=True, comment="Link to external task"
     )
 
@@ -105,10 +105,10 @@ class ExternalTask(Base):
 
     __tablename__ = "external_tasks"
 
-    external_id: Mapped[str] = mapped_column(
-        String(100), nullable=False, comment="Task ID in external system"
+    external_id: Mapped[int] = mapped_column(
+        Integer, nullable=False, comment="Task ID in external system"
     )
-    external_system_id: Mapped[UUID] = mapped_column(
+    external_system_id: Mapped[int] = mapped_column(
         ForeignKey("external_systems.id"),
         nullable=False,
         comment="Link to external system",

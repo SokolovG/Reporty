@@ -1,5 +1,4 @@
 from collections.abc import Sequence
-from uuid import UUID
 
 from advanced_alchemy import repository
 from sqlalchemy import and_, select
@@ -12,7 +11,7 @@ class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTask])
 
     model_type: type[ExternalTask] = ExternalTask
 
-    async def get_by_external_id(self, system_id: UUID, external_id: str) -> ExternalTask | None:
+    async def get_by_external_id(self, system_id: int, external_id: int) -> ExternalTask | None:
         """Get a task by external system and external ID."""
         result = await self.session.execute(
             select(ExternalTask).where(
@@ -24,7 +23,7 @@ class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTask])
         )
         return result.scalar_one_or_none()
 
-    async def get_tasks_for_sync(self, system_id: UUID) -> Sequence[ExternalTask]:
+    async def get_tasks_for_sync(self, system_id: int) -> Sequence[ExternalTask]:
         """Get tasks that need synchronization."""
         result = await self.session.execute(
             select(ExternalTask)
