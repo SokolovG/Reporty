@@ -8,8 +8,8 @@ class RecordService:
     def __init__(self, record_repo: DailyRecordRepository) -> None:
         self.repo = record_repo
 
-    async def create_record(self, request: DailyRecordRequest) -> DailyRecordResponse:
-        saved_record = await self.repo.create_record(request)
+    async def create_record(self, data: DailyRecordRequest) -> DailyRecordResponse:
+        saved_record = await self.repo.create_record(data)
 
         return DailyRecordResponse(
             id=saved_record.id,

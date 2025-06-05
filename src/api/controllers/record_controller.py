@@ -8,11 +8,11 @@ from src.api.dto import (
     DailyRecordResponse,
     DailyRecordResponseDTO,
 )
-from src.services.record_service import RecordService
+from src.services import RecordService
 
 
 class RecordController(Controller):
-    @post("/", dto=DailyRecordRequestDTO, return_dto=DailyRecordResponseDTO)
+    @post(dto=DailyRecordRequestDTO, return_dto=DailyRecordResponseDTO)
     async def create_record(
         self, data: DailyRecordRequest, record_service: RecordService
     ) -> DailyRecordResponse:

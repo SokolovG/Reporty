@@ -1,10 +1,15 @@
-from src.api.dto.record import (
+from src.api.dto.record_dto import (
     DailyRecordRequest,
     DailyRecordRequestDTO,
     DailyRecordResponse,
     DailyRecordResponseDTO,
 )
-from src.api.dto.report import DailyReportRequest, DailyReportResponse
+from src.api.dto.report_dto import (
+    DailyReportRequest,
+    DailyReportRequestDTO,
+    DailyReportResponse,
+    DailyReportResponseDTO,
+)
 from src.api.dto.user_dto import UserReadDTO, UserRegistrationDTO, UserUpdateDTO
 
 __all__ = [
@@ -14,6 +19,8 @@ __all__ = [
     "DailyRecordResponseDTO",
     "DailyRecordRequest",
     "DailyRecordResponse",
+    "DailyReportRequestDTO",
+    "DailyReportResponseDTO",
     "UserReadDTO",
     "UserRegistrationDTO",
     "UserUpdateDTO",

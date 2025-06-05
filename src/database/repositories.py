@@ -1,7 +1,7 @@
 from advanced_alchemy import repository
 
 from src.api.dto import DailyRecordRequest
-from src.api.dto.report import DailyReportRequest, DailyReportResponse
+from src.api.dto.report_dto import DailyReportRequest
 from src.database.models import DailyRecord, Report
 
 
@@ -20,5 +20,7 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
 class DailyReportRepository(repository.SQLAlchemyAsyncRepository[Report]):  # type: ignore
     model_type: type[Report] = Report
 
-    async def create_report(self, dto: DailyReportRequest) -> DailyReportResponse:  # type: ignore
-        pass
+    async def create_report(self, dto: DailyReportRequest) -> Report:
+        record = Report()
+
+        return await self.add(record)

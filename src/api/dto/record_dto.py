@@ -10,10 +10,6 @@ class DailyRecordRequest(msgspec.Struct):
     bitrix_task_id: str | None = None
 
 
-class DailyRecordRequestDTO(MsgspecDTO[DailyRecordRequest]):
-    config = DTOConfig()
-
-
 class DailyRecordResponse(msgspec.Struct):
     id: UUID
     raw_input: str
@@ -24,6 +20,10 @@ class DailyRecordResponse(msgspec.Struct):
     is_processed: bool
     is_approved: bool
     bitrix_task_id: str | None
+
+
+class DailyRecordRequestDTO(MsgspecDTO[DailyRecordRequest]):
+    config = DTOConfig()
 
 
 class DailyRecordResponseDTO(MsgspecDTO[DailyRecordResponse]):
