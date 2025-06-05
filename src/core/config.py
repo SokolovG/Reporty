@@ -68,5 +68,5 @@ litestar_users_config = LitestarUsersConfig(
     auth_handler_config=AuthHandlerConfig(),
     register_handler_config=RegisterHandlerConfig(),
     verification_handler_config=VerificationHandlerConfig(),
-    auth_exclude_paths=["/admin"],
+    auth_exclude_paths=["/admin", "/schema"],
 )

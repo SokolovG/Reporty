@@ -1,6 +1,8 @@
 from uuid import UUID
 
 from src.api.dto import DailyRecordRequest, DailyRecordResponse
+from src.api.dto.record_dto import DailyRecordWithTaskResponse
+from src.database.models import DailyRecord
 from src.database.repositories import DailyRecordRepository
 
 
@@ -20,7 +22,7 @@ class RecordService:
             processed_at=saved_record.processed_at,
             is_processed=saved_record.is_processed,
             is_approved=saved_record.is_approved,
-            bitrix_task_id=saved_record.bitrix_task_id,
+            external_task_id=saved_record.external_task_id,
         )
 
     async def get_record(self, record_id: UUID) -> DailyRecordResponse:
@@ -34,5 +36,58 @@ class RecordService:
             processed_at=record.processed_at,
             is_processed=record.is_processed,
             is_approved=record.is_approved,
-            bitrix_task_id=record.bitrix_task_id,
+            external_task_id=record.external_task_id,
+        )
+
+    async def get_record_with_task(self, record_id: UUID) -> DailyRecordWithTaskResponse:
+        """Get record with loaded external task information."""
+        record = await self.repo.get(record_id, load=[DailyRecord.external_task])
+        return DailyRecordWithTaskResponse(
+            id=record.id,
+            raw_input=record.raw_input,
+            ai_processed=record.ai_processed,
+            final_description=record.final_description,
+            created_at=record.created_at,
+            processed_at=record.processed_at,
+            is_processed=record.is_processed,
+            is_approved=record.is_approved,
+            external_task_id=record.external_task_id,
+        )
+
+    async def link_to_external_task(
+        self, record_id: UUID, external_task_id: UUID
+    ) -> DailyRecordResponse:
+        """Link daily record to external task."""
+        record = await self.repo.get(record_id)
+        record.external_task_id = external_task_id
+        updated_record = await self.repo.update(record)
+
+        return DailyRecordResponse(
+            id=updated_record.id,
+            raw_input=updated_record.raw_input,
+            ai_processed=updated_record.ai_processed,
+            final_description=updated_record.final_description,
+            created_at=updated_record.created_at,
+            processed_at=updated_record.processed_at,
+            is_processed=updated_record.is_processed,
+            is_approved=updated_record.is_approved,
+            external_task_id=updated_record.external_task_id,
+        )
+
+    async def unlink_from_external_task(self, record_id: UUID) -> DailyRecordResponse:
+        """Remove link to external task."""
+        record = await self.repo.get(record_id)
+        record.external_task_id = None
+        updated_record = await self.repo.update(record)
+
+        return DailyRecordResponse(
+            id=updated_record.id,
+            raw_input=updated_record.raw_input,
+            ai_processed=updated_record.ai_processed,
+            final_description=updated_record.final_description,
+            created_at=updated_record.created_at,
+            processed_at=updated_record.processed_at,
+            is_processed=updated_record.is_processed,
+            is_approved=updated_record.is_approved,
+            external_task_id=updated_record.external_task_id,
         )
