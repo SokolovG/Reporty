@@ -8,12 +8,20 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
-from src.database.models import *  # noqa
+from backend.src.database.models import (
+    User,
+    Report,
+    DailyRecord,
+    ExternalSystem,
+    ExternalTask,
+    Report,
+    Profile,
+)
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-from src.core.settings import settings
-from src.database.base import Base
+from backend.src.core.settings import settings
+from backend.src.database.base import Base
 
 # this is the Alembic Config object
 config = context.config
