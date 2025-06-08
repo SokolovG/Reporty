@@ -2,9 +2,10 @@ import uvicorn
 from litestar import Litestar
 from litestar_users import LitestarUsersPlugin
 from sqladmin_litestar_plugin import SQLAdminPlugin
-from src.api.routes import record_router, report_router, task_router
-from src.core.admin import DailyRecordAdmin, ReportAdmin
-from src.core.config import (
+
+from backend.src.api.routes import record_router, report_router, task_router
+from backend.src.core.admin import DailyRecordAdmin, ReportAdmin
+from backend.src.core.config import (
     get_sqlalchemy_config,
     get_sqlalchemy_plugin,
     get_sync_engine,
