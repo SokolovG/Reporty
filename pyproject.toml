@@ -34,9 +34,11 @@ indent-width = 4
 extend-exclude = ["tests", "alembic"]
 
 [tool.ruff.lint]
-select = ["E", "F", "B", "I", "N", "UP", "YTT", "ANN", "S", "A", "D"]
-ignore = ["ANN102", "D100", "D101", "D104", "D105", "D103", "D102", "D107"]
-
+ignore = [
+    "D100", "D101", "D104", "D105", "D103", "D102", "D107",
+    "D203",
+    "D213",
+]
 
 [tool.ruff.format]
 quote-style = "double"
