@@ -22,13 +22,13 @@ class RecordController(Controller):
     ) -> DailyRecordResponse:
         return await record_service.create_record(data)
 
-    @get("/{record_id:uuid}", return_dto=DailyRecordResponseDTO)
+    @get("/{record_id:int}", return_dto=DailyRecordResponseDTO)
     async def get_record(
         self, record_service: RecordService, record_id: int
     ) -> DailyRecordResponse:
         return await record_service.get_record(record_id)
 
-    @get("/{record_id:uuid}/with-task", return_dto=DailyRecordWithTaskResponseDTO)
+    @get("/{record_id:int}/with-task", return_dto=DailyRecordWithTaskResponseDTO)
     async def get_record_with_task(
         self, record_service: RecordService, record_id: int
     ) -> DailyRecordWithTaskResponse:
@@ -36,7 +36,7 @@ class RecordController(Controller):
         return await record_service.get_record_with_task(record_id)
 
     @post(
-        "/{record_id:uuid}/link-task",
+        "/{record_id:int}/link-task",
         dto=LinkTaskRequestDTO,
         return_dto=DailyRecordResponseDTO,
     )
@@ -47,7 +47,7 @@ class RecordController(Controller):
         return await record_service.link_to_external_task(record_id, data.external_task_id)
 
     @delete(
-        "/{record_id:uuid}/unlink-task",
+        "/{record_id:int}/unlink-task",
         status_code=200,
         return_dto=DailyRecordResponseDTO,
     )
