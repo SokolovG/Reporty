@@ -7,7 +7,7 @@ class DailyReportRequest(msgspec.Struct):
 
 
 class DailyReportRequestUpdate(msgspec.Struct):
-    pass
+    report_id: int
 
 
 class DailyReportResponse(msgspec.Struct):
