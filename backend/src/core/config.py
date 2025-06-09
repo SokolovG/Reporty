@@ -25,7 +25,7 @@ def get_sqlalchemy_config() -> SQLAlchemyAsyncConfig:
     """Get SQLAlchemy config."""
     return SQLAlchemyAsyncConfig(
         connection_string=settings.async_database_url,
-        create_all=True,
+        create_all=False,
         metadata=Base.metadata,
     )
 

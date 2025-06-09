@@ -18,9 +18,8 @@ class ReportService:
         record = await self.repo.get(report_id)  # noqa
         return DailyReportResponse()
 
-    async def delete_report(self, report_id: int) -> DailyReportResponse:
+    async def delete_report(self, report_id: int) -> None:
         record = await self.repo.delete(report_id)  # noqa
-        return DailyReportResponse()
 
     async def update_report(self, update_data: DailyReportRequestUpdate) -> DailyReportResponse:
         record = await self.repo.update_report(update_data)  # noqa

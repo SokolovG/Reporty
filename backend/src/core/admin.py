@@ -6,14 +6,21 @@ from backend.src.database.models import (
     ExternalTask,
     Report,
     User,
+    Profile,
 )
 
 
 class ReportAdmin(ModelView, model=Report):
+    name = "Report"
+    name_plural = "Reports"
+    icon = "fa-solid fa-file-lines"
     column_list = [Report.report_date, Report.content, Report.generated_at]
 
 
 class UserAdmin(ModelView, model=User):
+    name = "User"
+    name_plural = "Users"
+    icon = "fa-solid fa-user"
     column_list = [
         User.email,
         User.is_active,
@@ -24,6 +31,9 @@ class UserAdmin(ModelView, model=User):
 
 
 class DailyRecordAdmin(ModelView, model=DailyRecord):
+    name = "Daily Record"
+    name_plural = "Daily Records"
+    icon = "fa-solid fa-book"
     column_list = [
         DailyRecord.raw_input,
         DailyRecord.ai_processed,
@@ -37,6 +47,9 @@ class DailyRecordAdmin(ModelView, model=DailyRecord):
 
 
 class ExternalSystemAdmin(ModelView, model=ExternalSystem):
+    name = "External System"
+    name_plural = "External Systems"
+    icon = "fa-solid fa-plug"
     column_list = [
         ExternalSystem.name,
         ExternalSystem.display_name,
@@ -46,6 +59,9 @@ class ExternalSystemAdmin(ModelView, model=ExternalSystem):
 
 
 class ExternalTaskAdmin(ModelView, model=ExternalTask):
+    name = "External Task"
+    name_plural = "External Tasks"
+    icon = "fa-solid fa-tasks"
     column_list = [
         ExternalTask.external_id,
         ExternalTask.external_system_id,
@@ -57,4 +73,11 @@ class ExternalTaskAdmin(ModelView, model=ExternalTask):
         ExternalTask.completed_at,
         ExternalTask.last_sync,
         ExternalTask.system,
+    ]
+
+
+class ProfileAdmin(ModelView, model=Profile):
+    column_list = [
+        Profile.id,
+        Profile.name,
     ]

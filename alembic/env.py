@@ -9,13 +9,12 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 from backend.src.database.models import (
-    User,
-    Report,
     DailyRecord,
     ExternalSystem,
     ExternalTask,
-    Report,
     Profile,
+    Report,
+    User,
 )
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
@@ -41,7 +40,8 @@ target_metadata = Base.metadata
 
 def get_url() -> str:
     """Get database URL from settings."""
-    return settings.async_database_url
+    url = settings.async_database_url
+    return url
 
 
 def run_migrations_offline() -> None:

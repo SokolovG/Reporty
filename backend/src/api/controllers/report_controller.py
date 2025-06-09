@@ -23,11 +23,9 @@ class ReportController(Controller):
     ) -> DailyReportResponse:
         return await report_service.get_report(report_id)
 
-    @delete("/{report_id:int}", return_dto=DailyReportResponseDTO)
-    async def delete_report(
-        self, report_service: ReportService, report_id: int
-    ) -> DailyReportResponse:
-        return await report_service.delete_report(report_id)
+    @delete("/{report_id:int}")
+    async def delete_report(self, report_service: ReportService, report_id: int) -> None:
+        await report_service.delete_report(report_id)
 
     @patch("/{report_id:int}", return_dto=DailyReportResponseDTO)
     async def update_report(
