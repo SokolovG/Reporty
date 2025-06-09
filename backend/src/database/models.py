@@ -197,3 +197,13 @@ class Profile(Base):
     __tablename__ = "profiles"
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     name: Mapped[str] = mapped_column(String(100))
+
+
+class UserSettings(Base):
+    __tablename__ = "user_settings"
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True)
+    ai_auto_process: Mapped[bool] = mapped_column(default=False)
+    ai_provider: Mapped[str | None] = mapped_column(String(50))
+    encrypted_api_key: Mapped[str | None] = mapped_column(String(500))
+
+    user: Mapped["User"] = relationship("User")

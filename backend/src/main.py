@@ -8,8 +8,10 @@ from backend.src.core.admin import (
     DailyRecordAdmin,
     ExternalSystemAdmin,
     ExternalTaskAdmin,
+    ProfileAdmin,
     ReportAdmin,
     UserAdmin,
+    UserSettingsAdmin,
 )
 from backend.src.core.config import (
     get_sqlalchemy_config,
@@ -28,8 +30,10 @@ admin_plugin = SQLAdminPlugin(
         DailyRecordAdmin,
         ExternalSystemAdmin,
         ExternalTaskAdmin,
+        ProfileAdmin,
         ReportAdmin,
         UserAdmin,
+        UserSettingsAdmin,
     ],
 )
 litestar_users = LitestarUsersPlugin(config=litestar_users_config)
