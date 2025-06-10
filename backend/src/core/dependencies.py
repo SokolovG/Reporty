@@ -10,7 +10,7 @@ from backend.src.database.repositories import (
     ProfileRepository,
     UserSettingsRepository,
 )
-from backend.src.services import ReportService
+from backend.src.services import ReportService, CryptoService
 from backend.src.services.record_service import RecordService
 
 
@@ -25,9 +25,12 @@ class MyProvider(Provider):
 
     @provide(scope=Scope.REQUEST)
     def record_service(
-        self, record_repo: DailyRecordRepository, settings_repo: UserSettingsRepository
+        self,
+        record_repo: DailyRecordRepository,
+        settings_repo: UserSettingsRepository,
+        crypto_service: CryptoService,
     ) -> RecordService:
-        return RecordService(record_repo, settings_repo)
+        return RecordService(record_repo, settings_repo, crypto_service)
 
     @provide(scope=Scope.REQUEST)
     def report_service(self, report_repo: DailyReportRepository) -> ReportService:
@@ -48,3 +51,7 @@ class MyProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def settings_repo(self, db_session: AsyncSession) -> UserSettingsRepository:
         return UserSettingsRepository(session=db_session)
+
+    @provide(scope=Scope.REQUEST)
+    def crypto_service(self, db_session: AsyncSession) -> CryptoService:
+        return CryptoService()

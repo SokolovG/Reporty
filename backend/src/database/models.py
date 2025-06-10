@@ -14,7 +14,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from backend.src.database.base import Base
+from backend.src.core.constants import REPORTY_LOCAL_API_KEY
+from backend.src.database.base import Base, AIProviders
 
 
 class DailyRecord(Base):
@@ -203,7 +204,7 @@ class UserSettings(Base):
     __tablename__ = "user_settings"
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True)
     ai_auto_process: Mapped[bool] = mapped_column(default=False)
-    ai_provider: Mapped[str | None] = mapped_column(String(50))
-    encrypted_api_key: Mapped[str | None] = mapped_column(String(500))
+    ai_provider: Mapped[AIProviders] = mapped_column(default=AIProviders.LOCAL)
+    encrypted_api_key: Mapped[str] = mapped_column(String(500), default=REPORTY_LOCAL_API_KEY)
 
     user: Mapped["User"] = relationship("User")

@@ -1,4 +1,5 @@
 from datetime import datetime
+from enum import Enum
 
 from sqlalchemy import (
     Integer,
@@ -13,3 +14,11 @@ class Base(DeclarativeBase):
     __abstract__ = True
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
+
+
+class AIProviders(Enum):
+    CLAUDE = "claude"
+    OPEN_AI = "open_ai"
+    GEMINI = "gemini"
+    GROK = "grok"
+    LOCAL = "local"

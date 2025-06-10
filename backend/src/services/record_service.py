@@ -7,22 +7,33 @@ from backend.src.database.repositories import (
     DailyRecordRepository,
     UserSettingsRepository,
 )
+from backend.src.integrations.ai_service import AIService
+from backend.src.services import CryptoService
 
 
 class RecordService:
     def __init__(
-        self, record_repo: DailyRecordRepository, settings_repo: UserSettingsRepository
+        self,
+        record_repo: DailyRecordRepository,
+        settings_repo: UserSettingsRepository,
+        crypto_service: CryptoService,
     ) -> None:
         self.repo = record_repo
         self.settings_repo = settings_repo
         self._to_response = get_converter(DailyRecord, DailyRecordResponse)
+        self.ai_service = AIService(self.settings_repo, crypto_service)
 
     async def create_record(self, data: DailyRecordRequest, user_id: int) -> DailyRecordResponse:
         saved_record = await self.repo.create_record(data)
         settings = await self.settings_repo.get_by_user_id(user_id)
 
         if settings.ai_auto_process:
-            pass
+            ai_processed = await self.ai_service.process(data.raw_input, user_id)
+            saved_record.ai_processed = ai_processed
+            updated_record = await self.repo.update(saved_record)
+
+            return self._to_response(updated_record)
+
         return self._to_response(saved_record)
 
     async def get_record(self, record_id: int) -> DailyRecordResponse:
@@ -31,7 +42,7 @@ class RecordService:
 
     async def get_record_with_task(self, record_id: int) -> DailyRecordWithTaskResponse:
         """Get record with loaded external task information."""
-        record = await self.repo.get(record_id, load=[DailyRecord.external_task])
+        record = await self.repo.get_with_external_task(record_id)
         external_task_info = None
         if record.external_task:
             external_task_info = ExternalTaskInfo(
@@ -74,5 +85,10 @@ class RecordService:
 
         return self._to_response(updated_record)
 
-    async def process_with_ai(self, record_id: int) -> DailyRecordResponse:  # type: ignore
-        pass
+    async def process_with_ai(self, record_id: int) -> DailyRecordResponse:
+        record = await self.repo.get(record_id)
+        ai_processed = await self.ai_service.process(record.raw_input, record_id)
+        record.ai_processed = ai_processed
+        updated_record = await self.repo.update(record)
+
+        return self._to_response(updated_record)
