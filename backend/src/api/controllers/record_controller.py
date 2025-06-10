@@ -18,9 +18,9 @@ from backend.src.services import RecordService
 class RecordController(Controller):
     @post(dto=DailyRecordRequestDTO, return_dto=DailyRecordResponseDTO)
     async def create_record(
-        self, data: DailyRecordRequest, record_service: RecordService
+        self, data: DailyRecordRequest, user_id: int, record_service: RecordService
     ) -> DailyRecordResponse:
-        return await record_service.create_record(data)
+        return await record_service.create_record(data, user_id)
 
     @get("/{record_id:int}", return_dto=DailyRecordResponseDTO)
     async def get_record(
@@ -56,3 +56,10 @@ class RecordController(Controller):
     ) -> DailyRecordResponse:
         """Remove link to external task."""
         return await record_service.unlink_from_external_task(record_id)
+
+    @post("/{record_id:int}/process", return_dto=DailyRecordResponseDTO)
+    async def process_record_with_ai(
+        self, record_service: RecordService, record_id: int
+    ) -> DailyRecordResponse:
+        """Process record via AI."""
+        return await record_service.process_with_ai(record_id)
