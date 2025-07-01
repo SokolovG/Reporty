@@ -89,7 +89,7 @@ class ProfileAdmin(ModelView, model=Profile):
 
 
 class UserSettingsAdmin(ModelView, model=UserSettings):
-    name = "User settings"
+    name = "User setting"
     icon = "fa-solid fa-globe"
 
     column_list = [
