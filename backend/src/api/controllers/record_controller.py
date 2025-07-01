@@ -59,7 +59,7 @@ class RecordController(Controller):
 
     @post("/{record_id:int}/process", return_dto=DailyRecordResponseDTO)
     async def process_record_with_ai(
-        self, record_service: RecordService, record_id: int
+        self, record_service: RecordService, record_id: int, user_id: int
     ) -> DailyRecordResponse:
         """Process record via AI."""
-        return await record_service.process_with_ai(record_id)
+        return await record_service.process_with_ai(record_id, user_id)

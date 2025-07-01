@@ -48,7 +48,7 @@ class RecordService:
             external_task_info = ExternalTaskInfo(
                 id=record.external_task.id,
                 external_id=record.external_task.external_id,
-                title=record.external_task.title,
+                title=record.external_task.title or "",
                 status=record.external_task.status,
                 system_name=record.external_task.system.name,
                 system_display_name=record.external_task.system.display_name,
@@ -56,6 +56,7 @@ class RecordService:
 
         return DailyRecordWithTaskResponse(
             id=record.id,
+            title=record.title,
             raw_input=record.raw_input,
             ai_processed=record.ai_processed,
             final_description=record.final_description,
@@ -85,9 +86,9 @@ class RecordService:
 
         return self._to_response(updated_record)
 
-    async def process_with_ai(self, record_id: int) -> DailyRecordResponse:
+    async def process_with_ai(self, record_id: int, user_id: int) -> DailyRecordResponse:
         record = await self.repo.get(record_id)
-        ai_processed = await self.ai_service.process(record.raw_input, record_id)
+        ai_processed = await self.ai_service.process(record.raw_input, user_id)
         record.ai_processed = ai_processed
         updated_record = await self.repo.update(record)
 

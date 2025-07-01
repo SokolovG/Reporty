@@ -5,12 +5,14 @@ from litestar.dto import DTOConfig, MsgspecDTO
 
 
 class DailyRecordRequest(msgspec.Struct):
+    title: str
     raw_input: str
     external_task_id: int | None = None
 
 
 class DailyRecordResponse(msgspec.Struct):
     id: int
+    title: str
     raw_input: str
     ai_processed: str | None
     final_description: str | None
@@ -25,6 +27,7 @@ class DailyRecordWithTaskResponse(msgspec.Struct):
     """Response with external task information included."""
 
     id: int
+    title: str
     raw_input: str
     ai_processed: str | None
     final_description: str | None

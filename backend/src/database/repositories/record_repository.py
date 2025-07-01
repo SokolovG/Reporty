@@ -17,6 +17,7 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
             await self._validate_external_task_exists(dto.external_task_id)
 
         record = DailyRecord(
+            title=dto.title,
             raw_input=dto.raw_input,
             external_task_id=dto.external_task_id,
         )

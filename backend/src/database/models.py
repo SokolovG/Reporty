@@ -23,6 +23,10 @@ class DailyRecord(Base):
 
     __tablename__ = "daily_records"
 
+    title: Mapped[str] = mapped_column(
+        String(255), nullable=False, comment="Название задачи/активности"
+    )
+
     raw_input: Mapped[str] = mapped_column(
         Text, nullable=False, comment="Original developer record"
     )
@@ -115,7 +119,7 @@ class ExternalTask(Base):
         comment="Link to external system",
     )
 
-    title: Mapped[str] = mapped_column(String(500), nullable=False, comment="Task title")
+    title: Mapped[str | None] = mapped_column(String(500), nullable=True, comment="Task title")
     description: Mapped[str | None] = mapped_column(Text, nullable=True, comment="Task description")
     status: Mapped[str] = mapped_column(String(100), nullable=False, comment="Task status")
 
@@ -154,7 +158,7 @@ class ExternalTask(Base):
         return (
             f"<ExternalTask(external_id='{self.external_id}', "
             f"system='{self.system.name if self.system else 'Unknown'}', "
-            f"title='{self.title[:30]}...', status='{self.status}')>"
+            f"title='{self.title or ''}...', status='{self.status}')>"
         )
 
 
