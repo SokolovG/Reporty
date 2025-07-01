@@ -61,3 +61,4 @@ disallow_subclassing_any = false
 disallow_any_generics = false
 ignore_missing_imports = true
 follow_untyped_imports = true
+exclude = ["alembic"]

@@ -23,6 +23,9 @@ class DailyRecord(Base):
 
     __tablename__ = "daily_records"
 
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"), nullable=False, comment="ID пользователя"
+    )
     title: Mapped[str] = mapped_column(
         String(255), nullable=False, comment="Название задачи/активности"
     )

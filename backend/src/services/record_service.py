@@ -1,3 +1,5 @@
+from datetime import date
+
 from adaptix.conversion import get_converter
 
 from backend.src.api.dto import DailyRecordRequest, DailyRecordResponse
@@ -66,6 +68,7 @@ class RecordService:
             is_approved=record.is_approved,
             external_task_id=record.external_task_id,
             external_task=external_task_info,
+            user_id=record.user_id,
         )
 
     async def link_to_external_task(
@@ -93,3 +96,14 @@ class RecordService:
         updated_record = await self.repo.update(record)
 
         return self._to_response(updated_record)
+
+    async def create_or_append_record(self, data: DailyRecordRequest) -> DailyRecordResponse:
+        existing = await self.repo.get_by_title_user_and_date(
+            data.title, data.user_id, date.today()
+        )
+        if existing:
+            existing.raw_input += f"\n{data.raw_input}"
+            updated = await self.repo.update(existing)
+            return self._to_response(updated)
+        else:
+            return await self.create_record(data, data.user_id)

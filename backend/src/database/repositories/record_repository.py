@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from datetime import date
+from datetime import date, datetime
 
 from advanced_alchemy import repository
 from sqlalchemy import and_, select
@@ -17,12 +17,27 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
             await self._validate_external_task_exists(dto.external_task_id)
 
         record = DailyRecord(
+            user_id=dto.user_id,
             title=dto.title,
             raw_input=dto.raw_input,
             external_task_id=dto.external_task_id,
         )
 
         return await self.add(record)
+
+    async def get_by_title_user_and_date(
+        self, title: str, user_id: int, day: date
+    ) -> DailyRecord | None:
+        start = datetime.combine(day, datetime.min.time())
+        end = datetime.combine(day, datetime.max.time())
+        result = await self.session.execute(
+            select(DailyRecord)
+            .where(DailyRecord.user_id == user_id)
+            .where(DailyRecord.title == title)
+            .where(DailyRecord.created_at >= start)
+            .where(DailyRecord.created_at <= end)
+        )
+        return result.scalar_one_or_none()
 
     async def get_with_external_task(self, record_id: int) -> DailyRecord:
         """Get record with loaded external task and system info."""
