@@ -1,3 +1,5 @@
+from dishka import FromDishka
+from dishka.integrations.litestar import inject
 from litestar import Controller, delete, get, post
 
 from backend.src.api.dto import (
@@ -17,20 +19,26 @@ from backend.src.services import RecordService
 
 class RecordController(Controller):
     @post(dto=DailyRecordRequestDTO, return_dto=DailyRecordResponseDTO)
+    @inject
     async def create_record(
-        self, data: DailyRecordRequest, user_id: int, record_service: RecordService
+        self,
+        data: DailyRecordRequest,
+        user_id: int,
+        record_service: FromDishka[RecordService],
     ) -> DailyRecordResponse:
         return await record_service.create_record(data, user_id)
 
     @get("/{record_id:int}", return_dto=DailyRecordResponseDTO)
+    @inject
     async def get_record(
-        self, record_service: RecordService, record_id: int
+        self, record_service: FromDishka[RecordService], record_id: int
     ) -> DailyRecordResponse:
         return await record_service.get_record(record_id)
 
     @get("/{record_id:int}/with-task", return_dto=DailyRecordWithTaskResponseDTO)
+    @inject
     async def get_record_with_task(
-        self, record_service: RecordService, record_id: int
+        self, record_service: FromDishka[RecordService], record_id: int
     ) -> DailyRecordWithTaskResponse:
         """Get record with full external task information."""
         return await record_service.get_record_with_task(record_id)
@@ -40,8 +48,12 @@ class RecordController(Controller):
         dto=LinkTaskRequestDTO,
         return_dto=DailyRecordResponseDTO,
     )
+    @inject
     async def link_external_task(
-        self, record_service: RecordService, record_id: int, data: LinkTaskRequest
+        self,
+        record_service: FromDishka[RecordService],
+        record_id: int,
+        data: LinkTaskRequest,
     ) -> DailyRecordResponse:
         """Link record to an external task."""
         return await record_service.link_to_external_task(record_id, data.external_task_id)
@@ -51,15 +63,17 @@ class RecordController(Controller):
         status_code=200,
         return_dto=DailyRecordResponseDTO,
     )
+    @inject
     async def unlink_external_task(
-        self, record_service: RecordService, record_id: int
+        self, record_service: FromDishka[RecordService], record_id: int
     ) -> DailyRecordResponse:
         """Remove link to external task."""
         return await record_service.unlink_from_external_task(record_id)
 
     @post("/{record_id:int}/process", return_dto=DailyRecordResponseDTO)
+    @inject
     async def process_record_with_ai(
-        self, record_service: RecordService, record_id: int, user_id: int
+        self, record_service: FromDishka[RecordService], record_id: int, user_id: int
     ) -> DailyRecordResponse:
         """Process record via AI."""
         return await record_service.process_with_ai(record_id, user_id)
