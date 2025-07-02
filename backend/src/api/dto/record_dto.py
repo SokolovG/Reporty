@@ -51,6 +51,7 @@ class ExternalTaskInfo(msgspec.Struct):
     status: str
     system_name: str
     system_display_name: str
+    url: str
 
 
 class LinkTaskRequest(msgspec.Struct):

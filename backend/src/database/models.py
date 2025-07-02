@@ -63,7 +63,7 @@ class DailyRecord(Base):
 
     # Relationship
     external_task: Mapped["ExternalTask | None"] = relationship(
-        "ExternalTask", back_populates="daily_records"
+        "ExternalTask", back_populates="daily_records", lazy="joined"
     )
 
     def __repr__(self) -> str:
@@ -125,7 +125,7 @@ class ExternalTask(Base):
     title: Mapped[str | None] = mapped_column(String(500), nullable=True, comment="Task title")
     description: Mapped[str | None] = mapped_column(Text, nullable=True, comment="Task description")
     status: Mapped[str] = mapped_column(String(100), nullable=False, comment="Task status")
-
+    url: Mapped[str] = mapped_column(String(256), nullable=False, comment="Task link")
     # Dates
     external_created_at: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, comment="Creation date in external system"

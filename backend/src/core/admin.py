@@ -23,10 +23,10 @@ class UserAdmin(ModelView, model=User):
     name_plural = "Users"
     icon = "fa-solid fa-user"
     column_list = [
+        User.id,
         User.email,
         User.is_active,
         User.created_at,
-        User.id,
         User.is_verified,
     ]
 
@@ -36,6 +36,8 @@ class DailyRecordAdmin(ModelView, model=DailyRecord):
     name_plural = "Daily Records"
     icon = "fa-solid fa-book"
     column_list = [
+        DailyRecord.id,
+        DailyRecord.title,
         DailyRecord.raw_input,
         DailyRecord.ai_processed,
         DailyRecord.final_description,
@@ -44,6 +46,7 @@ class DailyRecordAdmin(ModelView, model=DailyRecord):
         DailyRecord.is_processed,
         DailyRecord.is_approved,
         DailyRecord.external_task_id,
+        "external_task.url",
     ]
 
 
@@ -64,6 +67,7 @@ class ExternalTaskAdmin(ModelView, model=ExternalTask):
     name_plural = "External Tasks"
     icon = "fa-solid fa-tasks"
     column_list = [
+        ExternalTask.id,
         ExternalTask.external_id,
         ExternalTask.external_system_id,
         ExternalTask.title,
@@ -74,6 +78,7 @@ class ExternalTaskAdmin(ModelView, model=ExternalTask):
         ExternalTask.completed_at,
         ExternalTask.last_sync,
         ExternalTask.system,
+        ExternalTask.url,
     ]
 
 

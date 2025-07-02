@@ -54,6 +54,7 @@ class RecordService:
                 status=record.external_task.status,
                 system_name=record.external_task.system.name,
                 system_display_name=record.external_task.system.display_name,
+                url=record.external_task.url,
             )
 
         return DailyRecordWithTaskResponse(
@@ -78,6 +79,7 @@ class RecordService:
         record = await self.repo.get(record_id)
         record.external_task_id = external_task_id
         updated_record = await self.repo.update(record)
+        await self.repo.session.commit()
 
         return self._to_response(updated_record)
 
