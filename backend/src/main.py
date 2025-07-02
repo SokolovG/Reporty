@@ -1,4 +1,6 @@
 import uvicorn
+from dishka import make_async_container
+from dishka.integrations.litestar import setup_dishka, LitestarProvider
 from litestar import Litestar
 from litestar_users import LitestarUsersPlugin
 from sqladmin_litestar_plugin import SQLAdminPlugin
@@ -20,6 +22,7 @@ from backend.src.core.config import (
     litestar_users_config,
     logging_config,
 )
+from backend.src.core.dependencies import MyProvider
 
 sqlalchemy_plugin = get_sqlalchemy_plugin()
 sqlalchemy_config = get_sqlalchemy_config()
@@ -44,6 +47,8 @@ app = Litestar(
     debug=True,
     logging_config=logging_config,
 )
+container = make_async_container(MyProvider(), LitestarProvider())
+setup_dishka(container, app)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000, reload=True)

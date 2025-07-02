@@ -43,7 +43,7 @@ class DailyRecord(Base):
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.now(UTC), comment="Creation time"
+        DateTime, default=datetime.now, comment="Creation time"
     )
     processed_at: Mapped[datetime | None] = mapped_column(
         DateTime, nullable=True, comment="AI processing time"

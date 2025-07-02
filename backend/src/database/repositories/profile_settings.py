@@ -15,8 +15,8 @@ class UserSettingsRepository(repository.SQLAlchemyAsyncRepository[UserSettings])
         )
         settings = result.scalar_one_or_none()
         if settings is None:
-            # Создаем дефолтные настройки для нового пользователя
             settings = UserSettings(user_id=user_id)
+            await self.session.commit()
             return await self.add(settings)
         return settings
 

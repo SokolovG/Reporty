@@ -23,7 +23,9 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
             external_task_id=dto.external_task_id,
         )
 
-        return await self.add(record)
+        added_record = await self.add(record)
+        await self.session.commit()
+        return added_record
 
     async def get_by_title_user_and_date(
         self, title: str, user_id: int, day: date

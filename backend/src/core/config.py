@@ -1,5 +1,7 @@
 import os
 
+from advanced_alchemy.config import AsyncSessionConfig
+from advanced_alchemy.extensions.litestar import EngineConfig
 from dotenv import load_dotenv
 from litestar.contrib.sqlalchemy.plugins import SQLAlchemyAsyncConfig, SQLAlchemyPlugin
 from litestar.logging import LoggingConfig
@@ -27,6 +29,9 @@ def get_sqlalchemy_config() -> SQLAlchemyAsyncConfig:
         connection_string=settings.async_database_url,
         create_all=False,
         metadata=Base.metadata,
+        engine_config=EngineConfig(echo=True),
+        before_send_handler="autocommit",
+        session_config=AsyncSessionConfig(expire_on_commit=False),
     )
 
 
@@ -68,5 +73,9 @@ litestar_users_config = LitestarUsersConfig(
     auth_handler_config=AuthHandlerConfig(),
     register_handler_config=RegisterHandlerConfig(),
     verification_handler_config=VerificationHandlerConfig(),
-    auth_exclude_paths=["/admin", "/schema"],  # In future delete admin here!
+    auth_exclude_paths=[
+        "/admin",
+        "/schema",
+        "v1/record",
+    ],  # In the future, delete admin here.
 )

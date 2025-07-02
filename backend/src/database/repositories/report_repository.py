@@ -13,6 +13,7 @@ class DailyReportRepository(repository.SQLAlchemyAsyncRepository[Report]):  # ty
 
     async def create_report(self, dto: DailyReportRequest) -> Report:
         record = Report()
+        await self.session.commit()
         return await self.add(record)
 
     async def get_latest_report(self) -> Report | None:

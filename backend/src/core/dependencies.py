@@ -1,7 +1,10 @@
+from typing import AsyncGenerator
+
 from dishka import Scope, provide
 from dishka.provider import Provider
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from backend.src.core.config import get_sqlalchemy_config
 from backend.src.database.repositories import (
     DailyRecordRepository,
     DailyReportRepository,
@@ -15,6 +18,13 @@ from backend.src.services.record_service import RecordService
 
 
 class MyProvider(Provider):
+    @provide(scope=Scope.REQUEST)
+    async def get_db_session(self) -> AsyncGenerator[AsyncSession, None]:
+        sqlalchemy_config = get_sqlalchemy_config()
+        session_maker = sqlalchemy_config.create_session_maker()
+        async with session_maker() as session:
+            yield session
+
     @provide(scope=Scope.REQUEST)
     def record_repo(self, db_session: AsyncSession) -> DailyRecordRepository:
         return DailyRecordRepository(session=db_session)
