@@ -15,6 +15,7 @@ from backend.src.database.repositories import (
 )
 from backend.src.services import ReportService, CryptoService
 from backend.src.services.record_service import RecordService
+from backend.src.services.task_service import TaskService
 
 
 class MyProvider(Provider):
@@ -65,3 +66,11 @@ class MyProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def crypto_service(self, db_session: AsyncSession) -> CryptoService:
         return CryptoService()
+
+    @provide(scope=Scope.REQUEST)
+    def task_service(
+        self,
+        external_task_repo: ExternalTaskRepository,
+        external_system_repo: ExternalSystemRepository,
+    ) -> TaskService:
+        return TaskService(external_task_repo, external_system_repo)

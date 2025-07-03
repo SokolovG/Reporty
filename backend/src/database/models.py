@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timezone
 
 from litestar_users.adapter.sqlalchemy.mixins import SQLAlchemyUserMixin
 from sqlalchemy import (
@@ -113,8 +113,8 @@ class ExternalTask(Base):
 
     __tablename__ = "external_tasks"
 
-    external_id: Mapped[int] = mapped_column(
-        Integer, nullable=False, comment="Task ID in external system"
+    external_id: Mapped[int | None] = mapped_column(
+        Integer, nullable=True, comment="Task ID in external system"
     )
     external_system_id: Mapped[int] = mapped_column(
         ForeignKey("external_systems.id"),
@@ -128,19 +128,19 @@ class ExternalTask(Base):
     url: Mapped[str] = mapped_column(String(256), nullable=False, comment="Task link")
     # Dates
     external_created_at: Mapped[datetime] = mapped_column(
-        DateTime, nullable=False, comment="Creation date in external system"
+        DateTime(timezone=True), nullable=False, comment="Creation date in external system"
     )
     external_updated_at: Mapped[datetime | None] = mapped_column(
-        DateTime, nullable=True, comment="Last update in external system"
+        DateTime(timezone=True), nullable=True, comment="Last update in external system"
     )
     completed_at: Mapped[datetime | None] = mapped_column(
-        DateTime, nullable=True, comment="Completion date"
+        DateTime(timezone=True), nullable=True, comment="Completion date"
     )
 
     # Synchronization
     last_sync: Mapped[datetime] = mapped_column(
-        DateTime,
-        default=datetime.now(UTC),
+        DateTime(timezone=True),
+        default=lambda: datetime.now(timezone.utc),
         comment="Last synchronization with external system",
     )
 

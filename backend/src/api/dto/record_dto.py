@@ -46,12 +46,12 @@ class ExternalTaskInfo(msgspec.Struct):
     """Basic external task information for responses."""
 
     id: int
-    external_id: int
     title: str
     status: str
     system_name: str
     system_display_name: str
     url: str
+    external_id: int | None = None
 
 
 class LinkTaskRequest(msgspec.Struct):
@@ -73,4 +73,44 @@ class DailyRecordWithTaskResponseDTO(MsgspecDTO[DailyRecordWithTaskResponse]):
 
 
 class LinkTaskRequestDTO(MsgspecDTO[LinkTaskRequest]):
+    config = DTOConfig()
+
+
+class ExternalTaskCreateRequest(msgspec.Struct):
+    url: str
+    title: str | None = None
+    external_id: int | None = None
+
+
+class ExternalTaskUpdateRequest(msgspec.Struct):
+    url: str | None = None
+    title: str | None = None
+    external_id: int | None = None
+    status: str | None = None
+    description: str | None = None
+
+
+class ExternalTaskCreateRequestDTO(MsgspecDTO[ExternalTaskCreateRequest]):
+    config = DTOConfig()
+
+
+class ExternalTaskUpdateRequestDTO(MsgspecDTO[ExternalTaskUpdateRequest]):
+    config = DTOConfig(partial=True)
+
+
+class ExternalTaskResponse(msgspec.Struct):
+    id: int
+    external_id: int | None
+    external_system_id: int
+    title: str | None
+    description: str | None
+    status: str
+    url: str
+    external_created_at: datetime
+    external_updated_at: datetime | None
+    completed_at: datetime | None
+    last_sync: datetime
+
+
+class ExternalTaskResponseDTO(MsgspecDTO[ExternalTaskResponse]):
     config = DTOConfig()
