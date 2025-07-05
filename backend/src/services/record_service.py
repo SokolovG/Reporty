@@ -1,5 +1,3 @@
-from datetime import date
-
 from adaptix.conversion import get_converter
 
 from backend.src.api.dto import DailyRecordRequest, DailyRecordResponse
@@ -8,6 +6,7 @@ from backend.src.api.dto.record_dto import (
     ExternalTaskInfo,
     DailyRecordUpdateRequest,
     AppendToRecordRequest,
+    RecordStatusUpdateRequest,
 )
 from backend.src.database.models import DailyRecord
 from backend.src.database.repositories import (
@@ -38,6 +37,7 @@ class RecordService:
             ai_processed = await self.ai_service.process(data.raw_input, user_id)
             saved_record.ai_processed = ai_processed
             updated_record = await self.repo.update(saved_record)
+            await self.repo.session.commit()
 
             return self._to_response(updated_record)
 
@@ -134,16 +134,16 @@ class RecordService:
         ai_processed = await self.ai_service.process(record.raw_input, user_id)
         record.ai_processed = ai_processed
         updated_record = await self.repo.update(record)
+        await self.repo.session.commit()
 
         return self._to_response(updated_record)
 
-    async def create_or_append_record(self, data: DailyRecordRequest) -> DailyRecordResponse:
-        existing = await self.repo.get_by_title_user_and_date(
-            data.title, data.user_id, date.today()
-        )
-        if existing:
-            existing.raw_input += f"\n{data.raw_input}"
-            updated = await self.repo.update(existing)
-            return self._to_response(updated)
-        else:
-            return await self.create_record(data, data.user_id)
+    async def update_status(
+        self, record_id: int, data: RecordStatusUpdateRequest
+    ) -> DailyRecordResponse:
+        record = await self.repo.get(record_id)
+        record.status = data.status
+        updated_record = await self.repo.update(record)
+        await self.repo.session.commit()
+
+        return self._to_response(updated_record)

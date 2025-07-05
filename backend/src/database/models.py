@@ -15,7 +15,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.src.core.constants import REPORTY_LOCAL_API_KEY
-from backend.src.database.base import Base, AIProviders
+from backend.src.database.base import Base, AIProviders, RecordStatus
 
 
 class DailyRecord(Base):
@@ -55,6 +55,7 @@ class DailyRecord(Base):
     is_approved: Mapped[bool] = mapped_column(
         Boolean, default=False, comment="Whether approved by user"
     )
+    status: Mapped[RecordStatus] = mapped_column(default=RecordStatus.OPEN)
     external_url: Mapped[str | None] = mapped_column(
         String(500), nullable=True, comment="Quick external task link"
     )

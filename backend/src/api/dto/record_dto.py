@@ -3,6 +3,8 @@ from datetime import datetime
 import msgspec
 from litestar.dto import DTOConfig, MsgspecDTO
 
+from backend.src.database.base import RecordStatus
+
 
 class DailyRecordRequest(msgspec.Struct):
     user_id: int
@@ -73,6 +75,10 @@ class LinkTaskRequest(msgspec.Struct):
     external_task_id: int
 
 
+class RecordStatusUpdateRequest(msgspec.Struct):
+    status: RecordStatus
+
+
 class DailyRecordRequestDTO(MsgspecDTO[DailyRecordRequest]):
     config = DTOConfig()
 
@@ -134,4 +140,8 @@ class ExternalTaskResponse(msgspec.Struct):
 
 
 class ExternalTaskResponseDTO(MsgspecDTO[ExternalTaskResponse]):
+    config = DTOConfig()
+
+
+class RecordStatusUpdateRequestDTO(MsgspecDTO[RecordStatusUpdateRequest]):
     config = DTOConfig()

@@ -5,28 +5,31 @@ from advanced_alchemy import repository
 from sqlalchemy import and_, select
 from sqlalchemy.orm import selectinload
 
-from backend.src.api.dto import DailyRecordRequest
+from backend.src.api.dto import DailyRecordRequest, RecordStatusUpdateRequest
 from backend.src.database.models import DailyRecord, ExternalTask
 
 
 class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]):  # type: ignore
     model_type: type[DailyRecord] = DailyRecord
 
-    async def create_record(self, dto: DailyRecordRequest) -> DailyRecord:
-        if dto.external_task_id is not None:
-            await self._validate_external_task_exists(dto.external_task_id)
+    async def create_record(self, data: DailyRecordRequest) -> DailyRecord:
+        if data.external_task_id is not None:
+            await self._validate_external_task_exists(data.external_task_id)
 
         record = DailyRecord(
-            user_id=dto.user_id,
-            title=dto.title,
-            raw_input=dto.raw_input,
-            external_task_id=dto.external_task_id,
-            external_url=dto.external_task_url,
+            user_id=data.user_id,
+            title=data.title,
+            raw_input=data.raw_input,
+            external_task_id=data.external_task_id,
+            external_url=data.external_task_url,
         )
 
         added_record = await self.add(record)
         await self.session.commit()
         return added_record
+
+    async def update_record_status(self, record_id: int, data: RecordStatusUpdateRequest) -> None:
+        return None
 
     async def get_by_title_user_and_date(
         self, title: str, user_id: int, day: date

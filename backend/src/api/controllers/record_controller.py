@@ -7,6 +7,8 @@ from backend.src.api.dto import (
     DailyRecordRequestDTO,
     DailyRecordResponse,
     DailyRecordResponseDTO,
+    RecordStatusUpdateRequest,
+    RecordStatusUpdateRequestDTO,
 )
 from backend.src.api.dto.record_dto import (
     DailyRecordWithTaskResponse,
@@ -22,6 +24,8 @@ from backend.src.services import RecordService
 
 
 class RecordController(Controller):
+    path = "records"
+
     @post(dto=DailyRecordRequestDTO, return_dto=DailyRecordResponseDTO)
     @inject
     async def create_record(
@@ -38,6 +42,20 @@ class RecordController(Controller):
         self, record_service: FromDishka[RecordService], record_id: int
     ) -> DailyRecordResponse:
         return await record_service.get_record(record_id)
+
+    @patch(
+        "/{task_id}/status",
+        dto=RecordStatusUpdateRequestDTO,
+        return_dto=DailyRecordResponseDTO,
+    )
+    @inject
+    async def update_record_status(
+        self,
+        record_service: FromDishka[RecordService],
+        record_id: int,
+        data: RecordStatusUpdateRequest,
+    ) -> DailyRecordResponse:
+        return await record_service.update_status(record_id, data)
 
     @post(
         "/{record_id:int}/append",

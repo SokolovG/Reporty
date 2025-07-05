@@ -11,7 +11,7 @@ from backend.src.database.models import Report
 class DailyReportRepository(repository.SQLAlchemyAsyncRepository[Report]):  # type: ignore
     model_type: type[Report] = Report
 
-    async def create_report(self, dto: DailyReportRequest) -> Report:
+    async def create_report(self, data: DailyReportRequest) -> Report:
         record = Report()
         await self.session.commit()
         return await self.add(record)
