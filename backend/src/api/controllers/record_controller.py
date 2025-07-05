@@ -15,6 +15,8 @@ from backend.src.api.dto.record_dto import (
     LinkTaskRequestDTO,
     DailyRecordUpdateRequestDTO,
     DailyRecordUpdateRequest,
+    AppendToRecordRequestDTO,
+    AppendToRecordRequest,
 )
 from backend.src.services import RecordService
 
@@ -36,6 +38,20 @@ class RecordController(Controller):
         self, record_service: FromDishka[RecordService], record_id: int
     ) -> DailyRecordResponse:
         return await record_service.get_record(record_id)
+
+    @post(
+        "/{record_id:int}/append",
+        dto=AppendToRecordRequestDTO,
+        return_dto=DailyRecordResponseDTO,
+    )
+    @inject
+    async def append_to_record(
+        self,
+        data: AppendToRecordRequest,
+        record_id: int,
+        record_service: FromDishka[RecordService],
+    ) -> DailyRecordResponse:
+        return await record_service.append_to_record(record_id, data)
 
     @patch(
         "/{record_id:int}",

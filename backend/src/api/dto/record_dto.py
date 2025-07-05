@@ -19,6 +19,11 @@ class DailyRecordUpdateRequest(msgspec.Struct):
     external_task_id: int | None = None
 
 
+class AppendToRecordRequest(msgspec.Struct):
+    additional_input: str
+    separator: str = ","
+
+
 class DailyRecordResponse(msgspec.Struct):
     id: int
     user_id: int
@@ -73,6 +78,10 @@ class DailyRecordRequestDTO(MsgspecDTO[DailyRecordRequest]):
 
 
 class DailyRecordUpdateRequestDTO(MsgspecDTO[DailyRecordUpdateRequest]):
+    config = DTOConfig()
+
+
+class AppendToRecordRequestDTO(MsgspecDTO[AppendToRecordRequest]):
     config = DTOConfig()
 
 

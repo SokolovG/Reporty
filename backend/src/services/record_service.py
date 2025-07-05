@@ -7,6 +7,7 @@ from backend.src.api.dto.record_dto import (
     DailyRecordWithTaskResponse,
     ExternalTaskInfo,
     DailyRecordUpdateRequest,
+    AppendToRecordRequest,
 )
 from backend.src.database.models import DailyRecord
 from backend.src.database.repositories import (
@@ -45,6 +46,18 @@ class RecordService:
     async def get_record(self, record_id: int) -> DailyRecordResponse:
         record = await self.repo.get(record_id)
         return self._to_response(record)
+
+    async def append_to_record(
+        self, record_id: int, data: AppendToRecordRequest
+    ) -> DailyRecordResponse:
+        record = await self.repo.get(record_id)
+
+        record.raw_input += data.separator + data.additional_input
+
+        updated_record = await self.repo.update(record)
+        await self.repo.session.commit()
+
+        return self._to_response(updated_record)
 
     async def update_record(
         self, record_id: int, data: DailyRecordUpdateRequest
