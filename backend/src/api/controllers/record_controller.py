@@ -1,6 +1,6 @@
 from dishka import FromDishka
 from dishka.integrations.litestar import inject
-from litestar import Controller, delete, get, post
+from litestar import Controller, delete, get, post, patch
 
 from backend.src.api.dto import (
     DailyRecordRequest,
@@ -13,6 +13,8 @@ from backend.src.api.dto.record_dto import (
     DailyRecordWithTaskResponseDTO,
     LinkTaskRequest,
     LinkTaskRequestDTO,
+    DailyRecordUpdateRequestDTO,
+    DailyRecordUpdateRequest,
 )
 from backend.src.services import RecordService
 
@@ -34,6 +36,20 @@ class RecordController(Controller):
         self, record_service: FromDishka[RecordService], record_id: int
     ) -> DailyRecordResponse:
         return await record_service.get_record(record_id)
+
+    @patch(
+        "/{record_id:int}",
+        dto=DailyRecordUpdateRequestDTO,
+        return_dto=DailyRecordResponseDTO,
+    )
+    @inject
+    async def update_record(
+        self,
+        data: DailyRecordUpdateRequest,
+        record_id: int,
+        record_service: FromDishka[RecordService],
+    ) -> DailyRecordResponse:
+        return await record_service.update_record(record_id, data)
 
     @get("/{record_id:int}/with-task", return_dto=DailyRecordWithTaskResponseDTO)
     @inject

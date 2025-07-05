@@ -3,7 +3,11 @@ from datetime import date
 from adaptix.conversion import get_converter
 
 from backend.src.api.dto import DailyRecordRequest, DailyRecordResponse
-from backend.src.api.dto.record_dto import DailyRecordWithTaskResponse, ExternalTaskInfo
+from backend.src.api.dto.record_dto import (
+    DailyRecordWithTaskResponse,
+    ExternalTaskInfo,
+    DailyRecordUpdateRequest,
+)
 from backend.src.database.models import DailyRecord
 from backend.src.database.repositories import (
     DailyRecordRepository,
@@ -41,6 +45,27 @@ class RecordService:
     async def get_record(self, record_id: int) -> DailyRecordResponse:
         record = await self.repo.get(record_id)
         return self._to_response(record)
+
+    async def update_record(
+        self, record_id: int, data: DailyRecordUpdateRequest
+    ) -> DailyRecordResponse:
+        record = await self.repo.get(record_id)
+
+        if data.title is not None:
+            record.title = data.title
+        if data.raw_input is not None:
+            record.raw_input = data.raw_input
+        if data.external_task_id is not None:
+            record.external_task_id = data.external_task_id
+
+        if data.external_task_url is not None:
+            ...
+            # TODO: Find or create task
+
+        updated_record = await self.repo.update(record)
+        await self.repo.session.commit()
+
+        return self._to_response(updated_record)
 
     async def get_record_with_task(self, record_id: int) -> DailyRecordWithTaskResponse:
         """Get record with loaded external task information."""

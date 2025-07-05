@@ -3,6 +3,8 @@ from backend.src.api.dto.record_dto import (
     DailyRecordRequestDTO,
     DailyRecordResponse,
     DailyRecordResponseDTO,
+    DailyRecordUpdateRequestDTO,
+    DailyRecordUpdateRequest,
 )
 from backend.src.api.dto.report_dto import (
     DailyReportRequest,
@@ -26,4 +28,6 @@ __all__ = [
     "UserRegistrationDTO",
     "UserUpdateDTO",
     "DailyReportRequestUpdate",
+    "DailyRecordUpdateRequestDTO",
+    "DailyRecordUpdateRequest",
 ]

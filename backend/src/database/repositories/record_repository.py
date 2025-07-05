@@ -21,6 +21,7 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
             title=dto.title,
             raw_input=dto.raw_input,
             external_task_id=dto.external_task_id,
+            external_url=dto.external_task_url,
         )
 
         added_record = await self.add(record)

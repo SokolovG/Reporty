@@ -8,6 +8,14 @@ class DailyRecordRequest(msgspec.Struct):
     user_id: int
     title: str
     raw_input: str
+    external_task_url: str | None = None
+    external_task_id: int | None = None
+
+
+class DailyRecordUpdateRequest(msgspec.Struct):
+    title: str | None = None
+    raw_input: str | None = None
+    external_task_url: str | None = None
     external_task_id: int | None = None
 
 
@@ -61,6 +69,10 @@ class LinkTaskRequest(msgspec.Struct):
 
 
 class DailyRecordRequestDTO(MsgspecDTO[DailyRecordRequest]):
+    config = DTOConfig()
+
+
+class DailyRecordUpdateRequestDTO(MsgspecDTO[DailyRecordUpdateRequest]):
     config = DTOConfig()
 
 

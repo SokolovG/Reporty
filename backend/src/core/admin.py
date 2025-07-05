@@ -45,7 +45,7 @@ class DailyRecordAdmin(ModelView, model=DailyRecord):
         DailyRecord.processed_at,
         DailyRecord.is_processed,
         DailyRecord.is_approved,
-        DailyRecord.external_task_id,
+        DailyRecord.external_url,
         "external_task.url",
     ]
 

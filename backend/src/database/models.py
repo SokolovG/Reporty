@@ -1,4 +1,4 @@
-from datetime import UTC, datetime, timezone
+from datetime import UTC, datetime
 
 from litestar_users.adapter.sqlalchemy.mixins import SQLAlchemyUserMixin
 from sqlalchemy import (
@@ -55,8 +55,10 @@ class DailyRecord(Base):
     is_approved: Mapped[bool] = mapped_column(
         Boolean, default=False, comment="Whether approved by user"
     )
+    external_url: Mapped[str | None] = mapped_column(
+        String(500), nullable=True, comment="Quick external task link"
+    )
 
-    # Связь с внешней задачей (опционально)
     external_task_id: Mapped[int | None] = mapped_column(
         ForeignKey("external_tasks.id"), nullable=True, comment="Link to external task"
     )
@@ -128,7 +130,9 @@ class ExternalTask(Base):
     url: Mapped[str] = mapped_column(String(256), nullable=False, comment="Task link")
     # Dates
     external_created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, comment="Creation date in external system"
+        DateTime(timezone=True),
+        nullable=False,
+        comment="Creation date in external system",
     )
     external_updated_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True, comment="Last update in external system"
@@ -140,7 +144,7 @@ class ExternalTask(Base):
     # Synchronization
     last_sync: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=lambda: datetime.now(timezone.utc),
+        default=datetime.now(),
         comment="Last synchronization with external system",
     )
 
