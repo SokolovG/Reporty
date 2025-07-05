@@ -77,5 +77,6 @@ litestar_users_config = LitestarUsersConfig(
         "/admin",
         "/schema",
         "v1/record",
+        "docs/",  # only for development
     ],  # In the future, delete admin here.
 )
