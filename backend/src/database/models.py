@@ -55,7 +55,7 @@ class DailyRecord(Base):
     is_approved: Mapped[bool] = mapped_column(
         Boolean, default=False, comment="Whether approved by user"
     )
-    status: Mapped[RecordStatus] = mapped_column(default=RecordStatus.OPEN)
+    status: Mapped[str] = mapped_column(default=RecordStatus.OPEN.value)
     external_url: Mapped[str | None] = mapped_column(
         String(500), nullable=True, comment="Quick external task link"
     )

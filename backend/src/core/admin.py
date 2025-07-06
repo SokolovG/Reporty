@@ -38,6 +38,7 @@ class DailyRecordAdmin(ModelView, model=DailyRecord):
     column_list = [
         DailyRecord.id,
         DailyRecord.title,
+        DailyRecord.status,
         DailyRecord.raw_input,
         DailyRecord.ai_processed,
         DailyRecord.final_description,

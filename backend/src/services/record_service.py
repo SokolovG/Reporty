@@ -142,7 +142,7 @@ class RecordService:
         self, record_id: int, data: RecordStatusUpdateRequest
     ) -> DailyRecordResponse:
         record = await self.repo.get(record_id)
-        record.status = data.status
+        record.status = data.status.value
         updated_record = await self.repo.update(record)
         await self.repo.session.commit()
 

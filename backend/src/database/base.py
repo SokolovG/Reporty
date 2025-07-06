@@ -25,5 +25,5 @@ class AIProviders(Enum):
 
 
 class RecordStatus(Enum):
-    OPEN = "Open"
-    CLOSED = "Closed"
+    OPEN = "OPEN"
+    CLOSED = "CLOSED"
