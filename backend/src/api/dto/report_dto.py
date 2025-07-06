@@ -1,9 +1,12 @@
+from datetime import datetime
+
 import msgspec
 from litestar.dto import DTOConfig, MsgspecDTO
 
 
 class DailyReportRequest(msgspec.Struct):
-    pass
+    date: datetime = datetime.today()
+    user_id: int | None = None
 
 
 class DailyReportRequestUpdate(msgspec.Struct):

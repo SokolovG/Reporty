@@ -44,8 +44,10 @@ class MyProvider(Provider):
         return RecordService(record_repo, settings_repo, crypto_service)
 
     @provide(scope=Scope.REQUEST)
-    def report_service(self, report_repo: DailyReportRepository) -> ReportService:
-        return ReportService(report_repo)
+    def report_service(
+        self, report_repo: DailyReportRepository, record_repo: DailyRecordRepository
+    ) -> ReportService:
+        return ReportService(report_repo, record_repo)
 
     @provide(scope=Scope.REQUEST)
     def external_task_repo(self, db_session: AsyncSession) -> ExternalTaskRepository:

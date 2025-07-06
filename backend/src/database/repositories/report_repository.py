@@ -1,17 +1,18 @@
 from collections.abc import Sequence
 from datetime import date
+from typing import Any
 
 from advanced_alchemy import repository
 from sqlalchemy import and_, select
 
-from backend.src.api.dto.report_dto import DailyReportRequest, DailyReportRequestUpdate
+from backend.src.api.dto.report_dto import DailyReportRequestUpdate
 from backend.src.database.models import Report
 
 
 class DailyReportRepository(repository.SQLAlchemyAsyncRepository[Report]):  # type: ignore
     model_type: type[Report] = Report
 
-    async def create_report(self, data: DailyReportRequest) -> Report:
+    async def create_report(self, tasks: Any) -> Report:
         record = Report()
         await self.session.commit()
         return await self.add(record)

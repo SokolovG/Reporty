@@ -6,6 +6,7 @@ from sqlalchemy import and_, select
 from sqlalchemy.orm import selectinload
 
 from backend.src.api.dto import DailyRecordRequest, RecordStatusUpdateRequest
+from backend.src.database.base import RecordStatus
 from backend.src.database.models import DailyRecord, ExternalTask
 
 
@@ -55,25 +56,26 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
         record = result.scalar_one()
         return record
 
-    async def get_records_by_date_range(
-        self, start_date: date, end_date: date, include_external_tasks: bool = False
+    async def get_records_by_date(
+        self, target_date: date, user_id: int | None = None, include_external_tasks: bool = False
     ) -> Sequence[DailyRecord]:
-        """Get records within date range, optionally with external task info."""
-        query = (
-            select(DailyRecord)
-            .where(
-                and_(
-                    DailyRecord.created_at >= start_date,
-                    DailyRecord.created_at <= end_date,
-                )
-            )
-            .order_by(DailyRecord.created_at.desc())
+        """Get all records for a specific date."""
+        start_datetime = datetime.combine(target_date, datetime.min.time())
+        end_datetime = datetime.combine(target_date, datetime.max.time())
+
+        query = select(DailyRecord).where(
+            and_(DailyRecord.created_at >= start_datetime, DailyRecord.created_at <= end_datetime)
         )
+
+        if user_id is not None:
+            query = query.where(DailyRecord.user_id == user_id)
 
         if include_external_tasks:
             query = query.options(
                 selectinload(DailyRecord.external_task).selectinload(ExternalTask.system)
             )
+
+        query = query.order_by(DailyRecord.created_at.asc())
 
         result = await self.session.execute(query)
         return result.scalars().all()
@@ -103,3 +105,17 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
         )
         if result.scalar_one_or_none() is None:
             raise ValueError(f"External task with id {external_task_id} not found")
+
+    async def get_records_by_status(
+        self, status: RecordStatus, user_id: int | None = None
+    ) -> Sequence[DailyRecord]:
+        """Get records by status."""
+        query = select(DailyRecord).where(DailyRecord.status == status.value)
+
+        if user_id is not None:
+            query = query.where(DailyRecord.user_id == user_id)
+
+        query = query.order_by(DailyRecord.created_at.desc())
+
+        result = await self.session.execute(query)
+        return result.scalars().all()
