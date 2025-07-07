@@ -18,6 +18,12 @@ from backend.src.api.dto.report_dto import (
     DailyReportResponseDTO,
 )
 from backend.src.api.dto.user_dto import UserReadDTO, UserRegistrationDTO, UserUpdateDTO
+from backend.src.api.dto.profile_dto import (
+    ReportTemplateRequest,
+    ReportTemplateRequestDTO,
+    ReportTemplateResponse,
+    ReportTemplateResponseDTO,
+)
 
 __all__ = [
     "DailyReportRequest",
@@ -38,4 +44,8 @@ __all__ = [
     "AppendToRecordRequest",
     "RecordStatusUpdateRequestDTO",
     "RecordStatusUpdateRequest",
+    "ReportTemplateResponse",
+    "ReportTemplateResponseDTO",
+    "ReportTemplateRequestDTO",
+    "ReportTemplateRequest",
 ]

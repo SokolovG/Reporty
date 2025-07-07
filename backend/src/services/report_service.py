@@ -27,11 +27,18 @@ class ReportService:
             status=RecordStatus.OPEN, user_id=data.user_id
         )
 
-        tasks = [today_records, open_records]
+        set_ids = set()
+        unique_records = []
+
+        for record in list(open_records) + list(today_records):
+            if record.id not in set_ids:
+                set_ids.add(record.id)
+                unique_records.append(record)
 
         logger.info(f"today record - {today_records}")
         logger.info(f"open records record - {open_records}")
-        await self.repo.create_report(tasks)
+        logger.info(f"tasks - {unique_records}")
+        # await self.repo.create_report(tasks)
         return DailyReportResponse()
 
     async def get_report(self, report_id: int) -> DailyReportResponse:
@@ -44,3 +51,6 @@ class ReportService:
     async def update_report(self, update_data: DailyReportRequestUpdate) -> DailyReportResponse:
         record = await self.repo.update_report(update_data)  # noqa
         return DailyReportResponse()
+
+    async def _write_report(self) -> None:
+        pass

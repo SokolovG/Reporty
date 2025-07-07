@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import datetime
 
 from litestar_users.adapter.sqlalchemy.mixins import SQLAlchemyUserMixin
 from sqlalchemy import (
@@ -184,7 +184,7 @@ class Report(Base):
         default=0, comment="Number of included daily records"
     )
     generated_at: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.now(UTC), comment="Report generation time"
+        DateTime, default=datetime.now(), comment="Report generation time"
     )
 
     # Indexes for performance
@@ -218,5 +218,22 @@ class UserSettings(Base):
     ai_auto_process: Mapped[bool] = mapped_column(default=False)
     ai_provider: Mapped[AIProviders] = mapped_column(default=AIProviders.LOCAL)
     encrypted_api_key: Mapped[str] = mapped_column(String(500), default=REPORTY_LOCAL_API_KEY)
+    default_report_template_id: Mapped[int | None] = mapped_column(
+        ForeignKey("report_templates.id"), nullable=True
+    )
+
+    default_template: Mapped["ReportTemplate"] = relationship("ReportTemplate")
+
+    user: Mapped["User"] = relationship("User")
+
+
+class ReportTemplate(Base):
+    __tablename__ = "report_templates"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(100))  # "daily"
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    template_content: Mapped[str] = mapped_column(Text)
+    is_active: Mapped[bool] = mapped_column(default=True)
 
     user: Mapped["User"] = relationship("User")

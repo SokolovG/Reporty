@@ -8,6 +8,7 @@ from backend.src.database.models import (
     User,
     Profile,
     UserSettings,
+    ReportTemplate,
 )
 
 
@@ -103,4 +104,16 @@ class UserSettingsAdmin(ModelView, model=UserSettings):
         UserSettings.ai_auto_process,
         UserSettings.ai_provider,
         UserSettings.encrypted_api_key,
+    ]
+
+
+class ReportTemplateAdmin(ModelView, model=ReportTemplate):
+    name = "Report  template"
+
+    column_list = [
+        ReportTemplate.id,
+        ReportTemplate.name,
+        ReportTemplate.user_id,
+        ReportTemplate.template_content,
+        ReportTemplate.is_active,
     ]
