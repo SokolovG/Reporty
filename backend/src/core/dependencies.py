@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.src.core.config import get_sqlalchemy_config
 from backend.src.database.repositories import (
     DailyRecordRepository,
-    DailyReportRepository,
+    ReportRepository,
     ExternalSystemRepository,
     ExternalTaskRepository,
     ProfileRepository,
@@ -17,6 +17,8 @@ from backend.src.database.repositories.report_repository import ReportTemplateRe
 from backend.src.services import ReportService, CryptoService, ReportTemplateService
 from backend.src.services.record_service import RecordService
 from backend.src.services.task_service import TaskService
+from backend.src.services.user_service import UserService
+from backend.src.services.report_data_provider import ReportDataProvider
 
 
 class MyProvider(Provider):
@@ -32,8 +34,8 @@ class MyProvider(Provider):
         return DailyRecordRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
-    def report_repo(self, db_session: AsyncSession) -> DailyReportRepository:
-        return DailyReportRepository(session=db_session)
+    def report_repo(self, db_session: AsyncSession) -> ReportRepository:
+        return ReportRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
     def record_service(
@@ -46,9 +48,22 @@ class MyProvider(Provider):
 
     @provide(scope=Scope.REQUEST)
     def report_service(
-        self, report_repo: DailyReportRepository, record_repo: DailyRecordRepository
+        self,
+        report_repo: ReportRepository,
+        record_repo: DailyRecordRepository,
+        report_template_service: ReportTemplateService,
+        report_data_provider: ReportDataProvider,
+        user_service: UserService,
+        user_settings_repo: UserSettingsRepository,
     ) -> ReportService:
-        return ReportService(report_repo, record_repo)
+        return ReportService(
+            report_repo,
+            record_repo,
+            report_template_service,
+            report_data_provider,
+            user_service,
+            user_settings_repo,
+        )
 
     @provide(scope=Scope.REQUEST)
     def external_task_repo(self, db_session: AsyncSession) -> ExternalTaskRepository:
@@ -87,3 +102,9 @@ class MyProvider(Provider):
         self, report_template_repo: ReportTemplateRepository
     ) -> ReportTemplateService:
         return ReportTemplateService(report_template_repo)
+
+    @provide(scope=Scope.REQUEST)
+    def report_data_provider(
+        self, user_service: UserService, profile_repo: ProfileRepository
+    ) -> ReportDataProvider:
+        return ReportDataProvider(profile_repo)

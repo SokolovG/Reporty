@@ -1,7 +1,5 @@
 from collections.abc import Sequence
 from datetime import date
-from typing import Any
-
 from advanced_alchemy import repository
 from sqlalchemy import and_, select
 
@@ -9,13 +7,8 @@ from backend.src.api.dto.report_dto import DailyReportRequestUpdate
 from backend.src.database.models import Report, ReportTemplate
 
 
-class DailyReportRepository(repository.SQLAlchemyAsyncRepository[Report]):  # type: ignore
+class ReportRepository(repository.SQLAlchemyAsyncRepository[Report]):  # type: ignore
     model_type: type[Report] = Report
-
-    async def create_report(self, tasks: Any) -> Report:
-        record = Report()
-        await self.session.commit()
-        return await self.add(record)
 
     async def get_latest_report(self) -> Report | None:
         """Get the most recent report."""

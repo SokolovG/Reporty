@@ -5,8 +5,10 @@ from litestar.dto import DTOConfig, MsgspecDTO
 
 
 class DailyReportRequest(msgspec.Struct):
+    user_id: int
     date: datetime = datetime.today()
-    user_id: int | None = None
+    custom_fields: dict[str, str] = {}
+    template_id: int | None = None
 
 
 class DailyReportRequestUpdate(msgspec.Struct):
@@ -14,7 +16,11 @@ class DailyReportRequestUpdate(msgspec.Struct):
 
 
 class DailyReportResponse(msgspec.Struct):
-    pass
+    id: int
+    report_date: datetime
+    content: str
+    entries_count: int
+    generated_at: datetime
 
 
 class DailyReportRequestDTO(MsgspecDTO[DailyReportRequest]):

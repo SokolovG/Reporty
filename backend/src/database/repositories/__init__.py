@@ -8,7 +8,7 @@ from backend.src.database.repositories.record_repository import (
     DailyRecordRepository,
 )
 from backend.src.database.repositories.report_repository import (
-    DailyReportRepository,
+    ReportRepository,
 )
 from backend.src.database.repositories.profile_settings import (
     ProfileRepository,
@@ -19,7 +19,7 @@ __all__ = [
     "ExternalSystemRepository",
     "ExternalTaskRepository",
     "DailyRecordRepository",
-    "DailyReportRepository",
+    "ReportRepository",
     "ProfileRepository",
     "UserSettingsRepository",
 ]

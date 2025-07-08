@@ -25,3 +25,7 @@ class ProfileRepository(repository.SQLAlchemyAsyncRepository[Profile]):  # type:
     """Repository for managing user settings."""
 
     model_type: type[Profile] = Profile
+
+    async def get_by_user_id(self, user_id: int) -> Profile | None:
+        result = await self.session.execute(select(Profile).where(Profile.user_id == user_id))
+        return result.scalar_one_or_none()

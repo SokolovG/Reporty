@@ -14,7 +14,7 @@ class ReportTemplateService:
             template_content=data.template_content,
             is_active=True,
         )
-        await self.template_repo.add(template)
+        await self.template_repo.add(template)  # noqa
         await self.template_repo.session.commit()
         return ReportTemplateResponse(
             name=template.name, user_id=template.user_id, template_content=template.template_content

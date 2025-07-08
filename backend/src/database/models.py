@@ -210,6 +210,8 @@ class Profile(Base):
     __tablename__ = "profiles"
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     name: Mapped[str] = mapped_column(String(100))
+    department: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    position: Mapped[str | None] = mapped_column(String(100), nullable=True)
 
 
 class UserSettings(Base):
