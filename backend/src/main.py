@@ -2,6 +2,7 @@ import uvicorn
 from dishka import make_async_container
 from dishka.integrations.litestar import setup_dishka, LitestarProvider
 from litestar import Litestar
+from litestar.config.cors import CORSConfig
 from litestar_users import LitestarUsersPlugin
 from sqladmin_litestar_plugin import SQLAdminPlugin
 
@@ -42,12 +43,13 @@ admin_plugin = SQLAdminPlugin(
     ],
 )
 litestar_users = LitestarUsersPlugin(config=litestar_users_config)
-
+cors_config = CORSConfig(allow_origins=["http://127.0.0.1:5173"])
 app = Litestar(
     route_handlers=[report_router, task_router, record_router, template_router],
     plugins=[sqlalchemy_plugin, admin_plugin, litestar_users],
     debug=True,
     logging_config=logging_config,
+    cors_config=cors_config,
 )
 container = make_async_container(MyProvider(), LitestarProvider())
 setup_dishka(container, app)

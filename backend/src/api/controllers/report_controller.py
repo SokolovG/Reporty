@@ -40,5 +40,5 @@ class ReportController(Controller):
         self,
         report_service: FromDishka[ReportService],
         update_data: DailyReportRequestUpdate,
-    ) -> DailyReportResponse:
+    ) -> None:
         return await report_service.update_report(update_data)
