@@ -11,9 +11,8 @@ from backend.src.database.models import Report
 from backend.src.database.repositories import (
     ReportRepository,
     DailyRecordRepository,
-    UserSettingsRepository,
+    UserProfileRepository,
 )
-from backend.src.services.report_data_provider import ReportDataProvider
 
 logger = getLogger(__name__)
 
@@ -23,13 +22,11 @@ class ReportService:
         self,
         report_repo: ReportRepository,
         record_repo: DailyRecordRepository,
-        report_data_provider: ReportDataProvider,
-        user_settings_repo: UserSettingsRepository,
+        user_profile_settings: UserProfileRepository,
     ) -> None:
         self.repo = report_repo
         self.record_repo = record_repo
-        self.report_data_provider = report_data_provider
-        self.user_settings_repo = user_settings_repo
+        self.user_profile_settings = user_profile_settings
 
     async def create_report(self, data: DailyReportRequest) -> DailyReportResponse:
         today_records = await self.record_repo.get_records_by_date(

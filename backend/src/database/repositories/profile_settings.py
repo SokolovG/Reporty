@@ -1,31 +1,23 @@
 from sqlalchemy import select
 
-from backend.src.database.models import UserSettings, Profile
+from backend.src.database.models import UserProfile
 from advanced_alchemy import repository
 
 
-class UserSettingsRepository(repository.SQLAlchemyAsyncRepository[UserSettings]):  # type: ignore
-    """Repository for managing user settings."""
+class UserProfileRepository(repository.SQLAlchemyAsyncRepository[UserProfile]):  # type: ignore
+    """Repository for managing user profiles and settings"""
 
-    model_type: type[UserSettings] = UserSettings
+    model_type: type[UserProfile] = UserProfile
 
-    async def get_by_user_id(self, user_id: int) -> UserSettings:
+    async def get_by_user_id(self, user_id: int) -> UserProfile:
         result = await self.session.execute(
-            select(UserSettings).where(UserSettings.user_id == user_id)
+            select(UserProfile).where(UserProfile.user_id == user_id)
         )
-        settings = result.scalar_one_or_none()
-        if settings is None:
-            settings = UserSettings(user_id=user_id)
+        profile = result.scalar_one_or_none()
+
+        if profile is None:
+            profile = UserProfile(user_id=user_id)
+            profile = await self.add(profile)
             await self.session.commit()
-            return await self.add(settings)
-        return settings
 
-
-class ProfileRepository(repository.SQLAlchemyAsyncRepository[Profile]):  # type: ignore
-    """Repository for managing user settings."""
-
-    model_type: type[Profile] = Profile
-
-    async def get_by_user_id(self, user_id: int) -> Profile | None:
-        result = await self.session.execute(select(Profile).where(Profile.user_id == user_id))
-        return result.scalar_one_or_none()
+        return profile

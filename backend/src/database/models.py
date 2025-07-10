@@ -206,17 +206,15 @@ class User(Base, SQLAlchemyUserMixin):
     __tablename__ = "users"
 
 
-class Profile(Base):
-    __tablename__ = "profiles"
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    name: Mapped[str] = mapped_column(String(100))
+class UserProfile(Base):
+    __tablename__ = "user_profiles"
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True)
+
+    display_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
     department: Mapped[str | None] = mapped_column(String(100), nullable=True)
     position: Mapped[str | None] = mapped_column(String(100), nullable=True)
 
-
-class UserSettings(Base):
-    __tablename__ = "user_settings"
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True)
     ai_auto_process: Mapped[bool] = mapped_column(default=False)
     ai_provider: Mapped[AIProviders] = mapped_column(default=AIProviders.LOCAL)
     encrypted_api_key: Mapped[str] = mapped_column(String(500), default=REPORTY_LOCAL_API_KEY)

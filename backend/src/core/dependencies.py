@@ -10,14 +10,12 @@ from backend.src.database.repositories import (
     ReportRepository,
     ExternalSystemRepository,
     ExternalTaskRepository,
-    ProfileRepository,
-    UserSettingsRepository,
     UserRepository,
 )
+from backend.src.database.repositories.profile_settings import UserProfileRepository
 from backend.src.services import ReportService, CryptoService
 from backend.src.services.record_service import RecordService
 from backend.src.services.task_service import TaskService
-from backend.src.services.report_data_provider import ReportDataProvider
 
 
 class MyProvider(Provider):
@@ -40,24 +38,26 @@ class MyProvider(Provider):
     def record_service(
         self,
         record_repo: DailyRecordRepository,
-        settings_repo: UserSettingsRepository,
+        user_profile_repo: UserProfileRepository,
         crypto_service: CryptoService,
     ) -> RecordService:
-        return RecordService(record_repo, settings_repo, crypto_service)
+        return RecordService(record_repo, user_profile_repo, crypto_service)
+
+    @provide(scope=Scope.REQUEST)
+    def user_profile_repo(self, db_session: AsyncSession) -> UserProfileRepository:
+        return UserProfileRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
     def report_service(
         self,
         report_repo: ReportRepository,
         record_repo: DailyRecordRepository,
-        report_data_provider: ReportDataProvider,
-        user_settings_repo: UserSettingsRepository,
+        user_profile_repo: UserProfileRepository,
     ) -> ReportService:
         return ReportService(
             report_repo,
             record_repo,
-            report_data_provider,
-            user_settings_repo,
+            user_profile_repo,
         )
 
     @provide(scope=Scope.REQUEST)
@@ -67,14 +67,6 @@ class MyProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def external_system_repo(self, db_session: AsyncSession) -> ExternalSystemRepository:
         return ExternalSystemRepository(session=db_session)
-
-    @provide(scope=Scope.REQUEST)
-    def profile_repo(self, db_session: AsyncSession) -> ProfileRepository:
-        return ProfileRepository(session=db_session)
-
-    @provide(scope=Scope.REQUEST)
-    def settings_repo(self, db_session: AsyncSession) -> UserSettingsRepository:
-        return UserSettingsRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
     def crypto_service(self, db_session: AsyncSession) -> CryptoService:
@@ -87,12 +79,6 @@ class MyProvider(Provider):
         external_system_repo: ExternalSystemRepository,
     ) -> TaskService:
         return TaskService(external_task_repo, external_system_repo)
-
-    @provide(scope=Scope.REQUEST)
-    def report_data_provider(
-        self, profile_repo: ProfileRepository, user_repo: UserRepository
-    ) -> ReportDataProvider:
-        return ReportDataProvider(profile_repo, user_repo)
 
     @provide(scope=Scope.REQUEST)
     def user_repository(self, db_session: AsyncSession) -> UserRepository:

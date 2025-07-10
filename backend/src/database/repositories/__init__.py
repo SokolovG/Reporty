@@ -11,8 +11,7 @@ from backend.src.database.repositories.report_repository import (
     ReportRepository,
 )
 from backend.src.database.repositories.profile_settings import (
-    ProfileRepository,
-    UserSettingsRepository,
+    UserProfileRepository,
 )
 from backend.src.database.repositories.user_repository import UserRepository
 
@@ -21,7 +20,6 @@ __all__ = [
     "ExternalTaskRepository",
     "DailyRecordRepository",
     "ReportRepository",
-    "ProfileRepository",
-    "UserSettingsRepository",
+    "UserProfileRepository",
     "UserRepository",
 ]
