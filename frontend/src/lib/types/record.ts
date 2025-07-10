@@ -1,6 +1,6 @@
 export interface Record {
-    id: BigInteger,
-    date: Date,
+    id: number,
+    date: string,
     content: string
 }
 

@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from adaptix.conversion import get_converter
 
 from backend.src.api.dto import DailyRecordRequest, DailyRecordResponse
@@ -46,6 +48,15 @@ class RecordService:
     async def get_record(self, record_id: int) -> DailyRecordResponse:
         record = await self.repo.get(record_id)
         return self._to_response(record)
+
+    async def get_records(self, target_date: datetime | None = None) -> list[DailyRecordResponse]:
+        if target_date is not None:
+            search_data = target_date.date() if isinstance(target_date, datetime) else target_date
+            records = await self.repo.get_records_by_date(search_data)
+        else:
+            records = await self.repo.get_all_records()
+
+        return [self._to_response(record) for record in records]
 
     async def append_to_record(
         self, record_id: int, data: AppendToRecordRequest

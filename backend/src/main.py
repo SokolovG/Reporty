@@ -39,7 +39,8 @@ admin_plugin = SQLAdminPlugin(
     ],
 )
 litestar_users = LitestarUsersPlugin(config=litestar_users_config)
-cors_config = CORSConfig(allow_origins=["http://127.0.0.1:5173"])
+# cors_config = CORSConfig(allow_origins=["http://127.0.0.1:5173"])
+cors_config = CORSConfig(allow_origins=["*"])  # for development
 app = Litestar(
     route_handlers=[report_router, task_router, record_router],
     plugins=[sqlalchemy_plugin, admin_plugin, litestar_users],

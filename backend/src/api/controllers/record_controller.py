@@ -1,6 +1,9 @@
+from datetime import datetime
+
 from dishka import FromDishka
 from dishka.integrations.litestar import inject
 from litestar import Controller, delete, get, post, patch
+from litestar.params import Parameter
 
 from backend.src.api.dto import (
     DailyRecordRequest,
@@ -24,8 +27,6 @@ from backend.src.services import RecordService
 
 
 class RecordController(Controller):
-    path = "records"
-
     @post(dto=DailyRecordRequestDTO, return_dto=DailyRecordResponseDTO)
     @inject
     async def create_record(
@@ -42,6 +43,17 @@ class RecordController(Controller):
         self, record_service: FromDishka[RecordService], record_id: int
     ) -> DailyRecordResponse:
         return await record_service.get_record(record_id)
+
+    @get(return_dto=DailyRecordResponseDTO)
+    @inject
+    async def get_records(
+        self,
+        record_service: FromDishka[RecordService],
+        date: datetime | None = Parameter(
+            query="date", default=None, description="Filter records by date (YYYY-MM-DD format)"
+        ),
+    ) -> list[DailyRecordResponse]:
+        return await record_service.get_records(date)
 
     @patch(
         "/{record_id:int}/status",
