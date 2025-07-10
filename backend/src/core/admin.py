@@ -7,8 +7,7 @@ from backend.src.database.models import (
     ExternalTask,
     Report,
     User,
-    Profile,
-    UserSettings,
+    UserProfile,
 )
 
 
@@ -85,24 +84,17 @@ class ExternalTaskAdmin(ModelView, model=ExternalTask):
     ]
 
 
-class ProfileAdmin(ModelView, model=Profile):
+class UserProfileAdmin(ModelView, model=UserProfile):
     name = "Profile"
     name_plural = "Profiles"
     icon = "fa-solid fa-id-card"
     column_list = [
-        Profile.id,
-        Profile.user_id,
-        Profile.name,
-    ]
-
-
-class UserSettingsAdmin(ModelView, model=UserSettings):
-    name = "User setting"
-    icon = "fa-solid fa-globe"
-
-    column_list = [
-        UserSettings.user_id,
-        UserSettings.ai_auto_process,
-        UserSettings.ai_provider,
-        UserSettings.encrypted_api_key,
+        UserProfile.id,
+        UserProfile.user_id,
+        UserProfile.display_name,
+        UserProfile.department,
+        UserProfile.position,
+        UserProfile.ai_auto_process,
+        UserProfile.ai_provider,
+        UserProfile.encrypted_api_key,
     ]

@@ -11,10 +11,9 @@ from backend.src.core.admin import (
     DailyRecordAdmin,
     ExternalSystemAdmin,
     ExternalTaskAdmin,
-    ProfileAdmin,
     ReportAdmin,
     UserAdmin,
-    UserSettingsAdmin,
+    UserProfileAdmin,
 )
 from backend.src.core.config import (
     get_sqlalchemy_config,
@@ -34,10 +33,9 @@ admin_plugin = SQLAdminPlugin(
         DailyRecordAdmin,
         ExternalSystemAdmin,
         ExternalTaskAdmin,
-        ProfileAdmin,
         ReportAdmin,
         UserAdmin,
-        UserSettingsAdmin,
+        UserProfileAdmin,
     ],
 )
 litestar_users = LitestarUsersPlugin(config=litestar_users_config)

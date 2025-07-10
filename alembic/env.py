@@ -12,7 +12,7 @@ from backend.src.database.models import (
     DailyRecord,
     ExternalSystem,
     ExternalTask,
-    Profile,
+    UserProfile,
     Report,
     User,
 )
