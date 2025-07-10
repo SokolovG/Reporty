@@ -31,7 +31,6 @@ class ReportService:
         self.report_data_provider = report_data_provider
         self.user_settings_repo = user_settings_repo
 
-    # noinspection PyTypeChecker
     async def create_report(self, data: DailyReportRequest) -> DailyReportResponse:
         today_records = await self.record_repo.get_records_by_date(
             target_date=data.date, user_id=data.user_id
