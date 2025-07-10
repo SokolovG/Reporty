@@ -36,3 +36,36 @@ Reporty solves the problem of creating daily reports for developers. Instead of 
 - **Validation:** MSGSPEC
 - **Code Quality:** Ruff, MyPy, Pre-commit
 - **Deployment:** Docker + Docker Compose
+
+🚀 Installation and Setup
+Using Docker
+
+Clone the repository:
+
+1. Clone the repository:
+```bash
+git clone https://github.com/SokolovG/Reporty
+cd reporty
+```
+2. Create `.env` file with the following content:
+```
+# Database
+DB_HOST
+DB_PORT
+DB_NAME
+DB_USER
+DB_PASSWORD
+DEBUG
+SECRET_KEY
+```
+3. Build and run containers:
+```bash
+docker-compose up --build
+```
+
+4. Access the application:
+
+Backend API: http://localhost:8000
+API Documentation: http://localhost:8000/schema/swagger
+Admin Panel: http://localhost:8000/admin
+Frontend Svelte: http://localhost:5173/
