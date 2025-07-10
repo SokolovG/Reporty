@@ -64,8 +64,7 @@ docker-compose up --build
 ```
 
 4. Access the application:
-
-Backend API: http://localhost:8000
-API Documentation: http://localhost:8000/schema/swagger
-Admin Panel: http://localhost:8000/admin
-Frontend Svelte: http://localhost:5173/
+    - Backend API: http://localhost:8000
+    - API Documentation: http://localhost:8000/schema/swagger
+    - Admin Panel: http://localhost:8000/admin
+    - Frontend Svelte: http://localhost:5173/
