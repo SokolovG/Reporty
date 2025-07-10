@@ -17,7 +17,6 @@ from backend.src.database.repositories.report_repository import ReportTemplateRe
 from backend.src.services import ReportService, CryptoService, ReportTemplateService
 from backend.src.services.record_service import RecordService
 from backend.src.services.task_service import TaskService
-from backend.src.services.user_service import UserService
 from backend.src.services.report_data_provider import ReportDataProvider
 
 
@@ -53,7 +52,6 @@ class MyProvider(Provider):
         record_repo: DailyRecordRepository,
         report_template_service: ReportTemplateService,
         report_data_provider: ReportDataProvider,
-        user_service: UserService,
         user_settings_repo: UserSettingsRepository,
     ) -> ReportService:
         return ReportService(
@@ -61,7 +59,6 @@ class MyProvider(Provider):
             record_repo,
             report_template_service,
             report_data_provider,
-            user_service,
             user_settings_repo,
         )
 
@@ -104,7 +101,5 @@ class MyProvider(Provider):
         return ReportTemplateService(report_template_repo)
 
     @provide(scope=Scope.REQUEST)
-    def report_data_provider(
-        self, user_service: UserService, profile_repo: ProfileRepository
-    ) -> ReportDataProvider:
+    def report_data_provider(self, profile_repo: ProfileRepository) -> ReportDataProvider:
         return ReportDataProvider(profile_repo)

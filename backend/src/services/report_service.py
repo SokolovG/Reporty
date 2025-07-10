@@ -14,7 +14,6 @@ from backend.src.database.repositories import (
 from backend.src.database.models import Report
 from backend.src.services.report_template_service import ReportTemplateService
 from backend.src.services.report_data_provider import ReportDataProvider
-from backend.src.services.user_service import UserService
 from jinja2 import Environment, TemplateSyntaxError, UndefinedError, select_autoescape, Template
 from functools import lru_cache
 
@@ -28,14 +27,12 @@ class ReportService:
         record_repo: DailyRecordRepository,
         report_template_service: ReportTemplateService,
         report_data_provider: ReportDataProvider,
-        user_service: UserService,
         user_settings_repo: UserSettingsRepository,
     ) -> None:
         self.repo = report_repo
         self.record_repo = record_repo
         self.report_template_service = report_template_service
         self.report_data_provider = report_data_provider
-        self.user_service = user_service
         self.user_settings_repo = user_settings_repo
         self.jinja_env = Environment(
             autoescape=select_autoescape(["html", "xml"]),
@@ -126,7 +123,4 @@ class ReportService:
         record = await self.repo.delete(report_id)  # noqa
 
     async def update_report(self, update_data: DailyReportRequestUpdate) -> None:
-        pass
-
-    async def _write_report(self) -> None:
         pass

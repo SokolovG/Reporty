@@ -50,7 +50,6 @@ class ReportDataProvider:
         }
 
         user_data = {
-            "id": user.id,
             "email": getattr(user, "email", None),
             "full_name": getattr(user, "name", None),
             "department": getattr(profile, "department", None),
