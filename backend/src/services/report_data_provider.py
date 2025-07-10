@@ -1,13 +1,17 @@
 from datetime import datetime
 
-from backend.src.database.repositories.profile_settings import ProfileRepository
-from backend.src.database.models import DailyRecord, User, Profile
 from sqlalchemy import select
+
+from backend.src.database.repositories.profile_settings import ProfileRepository
+from backend.src.database.models import DailyRecord, Profile
+
+from backend.src.database.repositories import UserRepository
 
 
 class ReportDataProvider:
-    def __init__(self, profile_repo: ProfileRepository):
+    def __init__(self, profile_repo: ProfileRepository, user_repo: UserRepository):
         self.profile_repo = profile_repo
+        self.user_repo = user_repo
 
     async def build_context(
         self,
@@ -25,13 +29,11 @@ class ReportDataProvider:
             "custom": {}  # difficulties, learned, plans и т.д.
         }
         """
-        session = self.profile_repo.session
-        result = await session.execute(
-            select(User, Profile)
-            .join(Profile, Profile.user_id == User.id)
-            .where(User.id == user_id)
+
+        user = self.user_repo.get(user_id)
+        profile = self.profile_repo.session.execute(
+            select(Profile).where(Profile.user_id == user_id)
         )
-        user, profile = result.first() if result is not None else (None, None)  # type: ignore
 
         tasks = [
             {

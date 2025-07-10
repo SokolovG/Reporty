@@ -12,6 +12,7 @@ from backend.src.database.repositories import (
     ExternalTaskRepository,
     ProfileRepository,
     UserSettingsRepository,
+    UserRepository,
 )
 from backend.src.database.repositories.report_repository import ReportTemplateRepository
 from backend.src.services import ReportService, CryptoService, ReportTemplateService
@@ -101,5 +102,11 @@ class MyProvider(Provider):
         return ReportTemplateService(report_template_repo)
 
     @provide(scope=Scope.REQUEST)
-    def report_data_provider(self, profile_repo: ProfileRepository) -> ReportDataProvider:
-        return ReportDataProvider(profile_repo)
+    def report_data_provider(
+        self, profile_repo: ProfileRepository, user_repo: UserRepository
+    ) -> ReportDataProvider:
+        return ReportDataProvider(profile_repo, user_repo)
+
+    @provide(scope=Scope.REQUEST)
+    def user_repository(self, db_session: AsyncSession) -> UserRepository:
+        return UserRepository(session=db_session)
