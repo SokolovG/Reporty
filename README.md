@@ -1,6 +1,6 @@
 # Reporty
 
-Daily reporting automation system for fintech developers.
+Reporting automation system.
 
 ## 🎯 Purpose
 
