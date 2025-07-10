@@ -44,7 +44,7 @@ class RecordController(Controller):
         return await record_service.get_record(record_id)
 
     @patch(
-        "/{task_id:int}/status",
+        "/{record_id:int}/status",
         dto=RecordStatusUpdateRequestDTO,
         return_dto=DailyRecordResponseDTO,
     )

@@ -1,9 +1,8 @@
 from datetime import datetime
 
-from sqlalchemy import select
 
 from backend.src.database.repositories.profile_settings import ProfileRepository
-from backend.src.database.models import DailyRecord, Profile
+from backend.src.database.models import DailyRecord
 
 from backend.src.database.repositories import UserRepository
 
@@ -30,10 +29,8 @@ class ReportDataProvider:
         }
         """
 
-        user = self.user_repo.get(user_id)
-        profile = self.profile_repo.session.execute(
-            select(Profile).where(Profile.user_id == user_id)
-        )
+        user = await self.user_repo.get(user_id)
+        profile = await self.profile_repo.get_by_user_id(user_id)
 
         tasks = [
             {

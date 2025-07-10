@@ -1,3 +1,4 @@
+from markupsafe import Markup
 from sqladmin import ModelView
 
 from backend.src.database.models import (
@@ -8,7 +9,6 @@ from backend.src.database.models import (
     User,
     Profile,
     UserSettings,
-    ReportTemplate,
 )
 
 
@@ -17,6 +17,7 @@ class ReportAdmin(ModelView, model=Report):
     name_plural = "Reports"
     icon = "fa-solid fa-file-lines"
     column_list = [Report.report_date, Report.content, Report.generated_at]
+    column_formatters = {"content": lambda m, a: Markup(m.content.replace("\n", "<br>"))}  # type: ignore
 
 
 class UserAdmin(ModelView, model=User):
@@ -104,16 +105,4 @@ class UserSettingsAdmin(ModelView, model=UserSettings):
         UserSettings.ai_auto_process,
         UserSettings.ai_provider,
         UserSettings.encrypted_api_key,
-    ]
-
-
-class ReportTemplateAdmin(ModelView, model=ReportTemplate):
-    name = "Report  template"
-
-    column_list = [
-        ReportTemplate.id,
-        ReportTemplate.name,
-        ReportTemplate.user_id,
-        ReportTemplate.template_content,
-        ReportTemplate.is_active,
     ]

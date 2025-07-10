@@ -4,7 +4,7 @@ from advanced_alchemy import repository
 from sqlalchemy import and_, select
 
 from backend.src.api.dto.report_dto import DailyReportRequestUpdate
-from backend.src.database.models import Report, ReportTemplate
+from backend.src.database.models import Report
 
 
 class ReportRepository(repository.SQLAlchemyAsyncRepository[Report]):  # type: ignore
@@ -29,7 +29,3 @@ class ReportRepository(repository.SQLAlchemyAsyncRepository[Report]):  # type: i
     async def update_report(self, update_data: DailyReportRequestUpdate) -> Report:
         report = await self.get(DailyReportRequestUpdate.report_id)
         return await self.update(report)
-
-
-class ReportTemplateRepository(repository.SQLAlchemyAsyncRepository[ReportTemplate]):  # type: ignore
-    model_type: type[ReportTemplate] = ReportTemplate

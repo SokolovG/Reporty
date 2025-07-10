@@ -6,7 +6,7 @@ from litestar.config.cors import CORSConfig
 from litestar_users import LitestarUsersPlugin
 from sqladmin_litestar_plugin import SQLAdminPlugin
 
-from backend.src.api.routes import record_router, report_router, task_router, template_router
+from backend.src.api.routes import record_router, report_router, task_router
 from backend.src.core.admin import (
     DailyRecordAdmin,
     ExternalSystemAdmin,
@@ -15,7 +15,6 @@ from backend.src.core.admin import (
     ReportAdmin,
     UserAdmin,
     UserSettingsAdmin,
-    ReportTemplateAdmin,
 )
 from backend.src.core.config import (
     get_sqlalchemy_config,
@@ -39,13 +38,12 @@ admin_plugin = SQLAdminPlugin(
         ReportAdmin,
         UserAdmin,
         UserSettingsAdmin,
-        ReportTemplateAdmin,
     ],
 )
 litestar_users = LitestarUsersPlugin(config=litestar_users_config)
 cors_config = CORSConfig(allow_origins=["http://127.0.0.1:5173"])
 app = Litestar(
-    route_handlers=[report_router, task_router, record_router, template_router],
+    route_handlers=[report_router, task_router, record_router],
     plugins=[sqlalchemy_plugin, admin_plugin, litestar_users],
     debug=True,
     logging_config=logging_config,

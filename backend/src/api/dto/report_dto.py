@@ -8,7 +8,6 @@ class DailyReportRequest(msgspec.Struct):
     user_id: int
     date: datetime = datetime.today()
     custom_fields: dict[str, str] = {}
-    template_id: int | None = None
 
 
 class DailyReportRequestUpdate(msgspec.Struct):
