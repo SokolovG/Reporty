@@ -1,11 +1,32 @@
-<footer class="w-full bg-slate-800 text-white mt-auto">
-  <div class="container mx-auto px-4 py-6">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center">
-        <span class="text-sm">© 2025 Reporty. Все права защищены.</span>
+<footer class="w-full bg-gray-50 border-t border-gray-200">
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row items-center justify-between">
+
+      <!-- Logo and description -->
+      <div class="flex items-center space-x-2 mb-4 md:mb-0">
+        <div class="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
+          <span class="text-white font-bold text-xs">R</span>
+        </div>
+        <div>
+          <span class="font-semibold text-gray-900">Reporty</span>
+        </div>
       </div>
-      <div class="text-sm text-slate-300">
-        v1.0.0
+
+      <!-- Additional information -->
+      <div class="flex items-center space-x-6 text-sm text-gray-600">
+        <span>© 2025 Reporty</span>
+        <span class="hidden sm:block">•</span>
+        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
+          v1.0.0
+        </span>
+      </div>
+    </div>
+
+    <!-- Additional links -->
+    <div class="mt-6 pt-6 border-t border-gray-200">
+      <div class="flex flex-wrap justify-center md:justify-start space-x-6 text-sm text-gray-500">
+        <a href="#" class="hover:text-blue-600 transition-colors">Documentation</a>
+        <a href="#" class="hover:text-blue-600 transition-colors">GitHub</a>
       </div>
     </div>
   </div>
