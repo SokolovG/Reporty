@@ -8,7 +8,6 @@ from backend.src.database.repositories.report_repository import (
     ReportRepository,
 )
 from backend.src.database.repositories.settings_repository import (
-    TaskTypeRepository,
     AIProviderRepository,
     UserProfileRepository,
     ExternalSystemRepository,
@@ -19,7 +18,6 @@ __all__ = [
     "ExternalTaskRepository",
     "DailyRecordRepository",
     "ReportRepository",
-    "TaskTypeRepository",
     "AIProviderRepository",
     "UserProfileRepository",
     "ExternalSystemRepository",

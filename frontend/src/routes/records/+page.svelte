@@ -2,25 +2,23 @@
     import {getRecords, createRecord, deleteRecord, updateStatus} from "$lib/api/records";
     import { STATUS_STYLES, STATUS_LABELS } from '$lib/constants.js';
     import type {Record} from "$lib/types/record";
-    import type {taskType} from "$lib/types/settings";
+    import type {TaskType} from "$lib/types/settings";
     import { onMount } from 'svelte';
+    import {getTaskTypes} from "$lib/api/settings";
 
     let records: Record[] = [];
     let newRecordText = "";
     let newRecordTitle = "";
     let newRecordTaskType = "";
     let errorMessage = "";
-
-    const taskTypes: taskType[] = [{ title: "No category" }];
-    async function loadTaskTypes() {}
-
+    let taskTypes: TaskType[] = [];
 
     async function loadRecords() {
         records = await getRecords();
     }
 
-    async function handleTaskTypes(userId: number) {
-
+    async function handleTaskTypes() {
+        taskTypes = await getTaskTypes();
     }
 
     async function handleCreateRecord(text: string, title: string, taskType: string) {
@@ -82,7 +80,7 @@
         }
     }
     onMount(async () => {
-        await loadTaskTypes();
+        await handleTaskTypes();
         await loadRecords();
     });
 </script>
@@ -156,7 +154,6 @@
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-2">
                             <span class="text-sm text-gray-500">{record.title}</span>
-                            <span class="text-sm text-gray-500">{record.rawInput}</span>
                             <span class="px-2 py-1 text-xs rounded-full {STATUS_STYLES[record.status]}">
                                 {STATUS_LABELS[record.status]}
                             </span>

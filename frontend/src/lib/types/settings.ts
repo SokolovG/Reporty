@@ -1,3 +1,3 @@
-export interface taskType {
+export interface TaskType {
     title: string
 }

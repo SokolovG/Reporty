@@ -11,7 +11,6 @@ from backend.src.database.repositories import (
     ExternalSystemRepository,
     ExternalTaskRepository,
     UserRepository,
-    TaskTypeRepository,
     AIProviderRepository,
     UserProfileRepository,
 )
@@ -49,10 +48,6 @@ class MyProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def user_profile_repo(self, db_session: AsyncSession) -> UserProfileRepository:
         return UserProfileRepository(session=db_session)
-
-    @provide(scope=Scope.REQUEST)
-    def task_type_repo(self, db_session: AsyncSession) -> TaskTypeRepository:
-        return TaskTypeRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
     def ai_provider_repo(self, db_session: AsyncSession) -> AIProviderRepository:
@@ -94,13 +89,11 @@ class MyProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def settings_service(
         self,
-        task_type_repo: TaskTypeRepository,
         ai_provider_repo: AIProviderRepository,
         user_profile_repo: UserProfileRepository,
         external_system_repo: ExternalSystemRepository,
     ) -> SettingsService:
         return SettingsService(
-            task_type_repo,
             ai_provider_repo,
             user_profile_repo,
             external_system_repo,

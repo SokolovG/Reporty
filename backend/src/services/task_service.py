@@ -3,7 +3,7 @@ from sqlalchemy import select
 from backend.src.database.repositories.external_task_repository import (
     ExternalTaskRepository,
 )
-from backend.src.database.repositories.external_system_repository import (
+from backend.src.database.repositories.settings_repository import (
     ExternalSystemRepository,
 )
 from backend.src.database.models import ExternalTask
