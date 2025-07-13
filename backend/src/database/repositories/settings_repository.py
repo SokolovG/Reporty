@@ -1,7 +1,15 @@
 from sqlalchemy import select
-
-from backend.src.database.models import UserProfile
 from advanced_alchemy import repository
+
+from backend.src.database.models import TaskType, AIProvider, UserProfile, ExternalSystem
+
+
+class TaskTypeRepository(repository.SQLAlchemyAsyncRepository[TaskType]):  # type: ignore
+    model_type: type[TaskType] = TaskType
+
+
+class AIProviderRepository(repository.SQLAlchemyAsyncRepository[AIProvider]):  # type: ignore
+    model_type: type[AIProvider] = AIProvider
 
 
 class UserProfileRepository(repository.SQLAlchemyAsyncRepository[UserProfile]):  # type: ignore
@@ -21,3 +29,7 @@ class UserProfileRepository(repository.SQLAlchemyAsyncRepository[UserProfile]): 
             await self.session.commit()
 
         return profile
+
+
+class ExternalSystemRepository(repository.SQLAlchemyAsyncRepository[ExternalSystem]):  # type: ignore
+    model_type: type[ExternalSystem] = ExternalSystem

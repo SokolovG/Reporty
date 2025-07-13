@@ -1,6 +1,3 @@
-from backend.src.database.repositories.external_system_repository import (
-    ExternalSystemRepository,
-)
 from backend.src.database.repositories.external_task_repository import (
     ExternalTaskRepository,
 )
@@ -10,16 +7,21 @@ from backend.src.database.repositories.record_repository import (
 from backend.src.database.repositories.report_repository import (
     ReportRepository,
 )
-from backend.src.database.repositories.profile_settings import (
+from backend.src.database.repositories.settings_repository import (
+    TaskTypeRepository,
+    AIProviderRepository,
     UserProfileRepository,
+    ExternalSystemRepository,
 )
 from backend.src.database.repositories.user_repository import UserRepository
 
 __all__ = [
-    "ExternalSystemRepository",
     "ExternalTaskRepository",
     "DailyRecordRepository",
     "ReportRepository",
+    "TaskTypeRepository",
+    "AIProviderRepository",
     "UserProfileRepository",
+    "ExternalSystemRepository",
     "UserRepository",
 ]

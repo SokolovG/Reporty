@@ -1,5 +1,6 @@
 from backend.src.services.crypto_service import CryptoService
 from backend.src.services.record_service import RecordService
 from backend.src.services.report_service import ReportService
+from backend.src.services.settings_service import SettingsService
 
-__all__ = ["RecordService", "ReportService", "CryptoService"]
+__all__ = ["RecordService", "ReportService", "CryptoService", "SettingsService"]

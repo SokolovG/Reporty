@@ -1,7 +1,9 @@
 from datetime import datetime
 
 import msgspec
-from litestar.dto import DTOConfig, MsgspecDTO
+from litestar.dto import DTOConfig
+
+from backend.src.api.dto.base import BaseMsgspecDTO
 
 
 class DailyReportRequest(msgspec.Struct):
@@ -22,13 +24,13 @@ class DailyReportResponse(msgspec.Struct):
     generated_at: datetime
 
 
-class DailyReportRequestDTO(MsgspecDTO[DailyReportRequest]):
+class DailyReportRequestDTO(BaseMsgspecDTO[DailyReportRequest]):
     config = DTOConfig()
 
 
-class DailyReportResponseDTO(MsgspecDTO[DailyReportResponse]):
+class DailyReportResponseDTO(BaseMsgspecDTO[DailyReportResponse]):
     config = DTOConfig()
 
 
-class DailyReportRequestUpdateDTO(MsgspecDTO[DailyReportRequestUpdate]):
+class DailyReportRequestUpdateDTO(BaseMsgspecDTO[DailyReportRequestUpdate]):
     config = DTOConfig(partial=True, exclude={"id"})

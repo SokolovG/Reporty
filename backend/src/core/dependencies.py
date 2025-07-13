@@ -11,11 +11,14 @@ from backend.src.database.repositories import (
     ExternalSystemRepository,
     ExternalTaskRepository,
     UserRepository,
+    TaskTypeRepository,
+    AIProviderRepository,
+    UserProfileRepository,
 )
-from backend.src.database.repositories.profile_settings import UserProfileRepository
 from backend.src.services import ReportService, CryptoService
 from backend.src.services.record_service import RecordService
 from backend.src.services.task_service import TaskService
+from backend.src.services.settings_service import SettingsService
 
 
 class MyProvider(Provider):
@@ -48,6 +51,18 @@ class MyProvider(Provider):
         return UserProfileRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
+    def task_type_repo(self, db_session: AsyncSession) -> TaskTypeRepository:
+        return TaskTypeRepository(session=db_session)
+
+    @provide(scope=Scope.REQUEST)
+    def ai_provider_repo(self, db_session: AsyncSession) -> AIProviderRepository:
+        return AIProviderRepository(session=db_session)
+
+    @provide(scope=Scope.REQUEST)
+    def external_system_repo(self, db_session: AsyncSession) -> ExternalSystemRepository:
+        return ExternalSystemRepository(session=db_session)
+
+    @provide(scope=Scope.REQUEST)
     def report_service(
         self,
         report_repo: ReportRepository,
@@ -65,10 +80,6 @@ class MyProvider(Provider):
         return ExternalTaskRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
-    def external_system_repo(self, db_session: AsyncSession) -> ExternalSystemRepository:
-        return ExternalSystemRepository(session=db_session)
-
-    @provide(scope=Scope.REQUEST)
     def crypto_service(self, db_session: AsyncSession) -> CryptoService:
         return CryptoService()
 
@@ -79,6 +90,21 @@ class MyProvider(Provider):
         external_system_repo: ExternalSystemRepository,
     ) -> TaskService:
         return TaskService(external_task_repo, external_system_repo)
+
+    @provide(scope=Scope.REQUEST)
+    def settings_service(
+        self,
+        task_type_repo: TaskTypeRepository,
+        ai_provider_repo: AIProviderRepository,
+        user_profile_repo: UserProfileRepository,
+        external_system_repo: ExternalSystemRepository,
+    ) -> SettingsService:
+        return SettingsService(
+            task_type_repo,
+            ai_provider_repo,
+            user_profile_repo,
+            external_system_repo,
+        )
 
     @provide(scope=Scope.REQUEST)
     def user_repository(self, db_session: AsyncSession) -> UserRepository:
