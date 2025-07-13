@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { getRecords, createRecord } from "$lib/api/records";
+    import {getRecords, createRecord, deleteRecord} from "$lib/api/records";
+    import { STATUS_STYLES, STATUS_LABELS } from '$lib/constants.js';
     import type {Record} from "$lib/types/record";
     import type {taskType} from "$lib/types/settings";
     import { onMount } from 'svelte';
@@ -8,7 +9,7 @@
     let newRecordText = "";
     let newRecordTitle = "";
     let newRecordTaskType = "";
-    let errorMessage = '';
+    let errorMessage = "";
 
     const taskTypes: taskType[] = [{ title: "No category" }];
     async function loadTaskTypes() {}
@@ -20,7 +21,7 @@
 
     async function handleCreateRecord(text: string, title: string, taskType: string) {
         const data = {
-        content: text,
+        rawInput: text,
         title: `${taskType}: ${title.trim()}`
     };
         try {
@@ -40,6 +41,22 @@
         newRecordTaskType = "";
         await loadRecords();
     }
+
+    async function handleDeleteRecord(record_id: number) {
+        try {
+            await deleteRecord(record_id);
+            errorMessage = '';
+            await loadRecords();
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            } else {
+                errorMessage = 'Error during record delete';
+            }
+        }
+    }
+
 
     function handleKeydown(event: KeyboardEvent) {
         if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
@@ -123,6 +140,9 @@
                             <span class="text-sm text-gray-500">{record.id}.</span>
                             <span class="text-sm text-gray-500">{record.title}</span>
                             <span class="text-sm text-gray-500">{record.rawInput}</span>
+                            <span class="px-2 py-1 text-xs rounded-full {STATUS_STYLES[record.status]}">
+                                {STATUS_LABELS[record.status]}
+                            </span>
                             <span class="px-2 py-1 text-xs rounded-full {record.isProcessed ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">
                                 {record.isProcessed ? 'Processed' : 'Pending'}
                             </span>
@@ -137,7 +157,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
                             </button>
-                            <button class="p-1 text-gray-400 hover:text-red-600 rounded" aria-label="Delete record">
+                            <button class="p-1 text-gray-400 hover:text-red-600 rounded" aria-label="Delete record" on:click = {() => handleDeleteRecord(record.id)}>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>

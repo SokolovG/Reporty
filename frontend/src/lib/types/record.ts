@@ -8,9 +8,10 @@ export interface Record {
     isProcessed: boolean
     rawInput: string
     title: string
+    status: string
 }
 
 export interface CreateRecordRequest {
-    content: string
+    rawInput: string
     title: string
 }

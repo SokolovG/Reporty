@@ -3,9 +3,7 @@ import apiClient from "$lib/api/client";
 
 export async function createRecord(newRecord:CreateRecordRequest): Promise<Record> {
     try{
-        console.log(newRecord)
         const response = await apiClient.post('/v1/records', newRecord);
-        console.log(newRecord)
         return response.data;
     } catch (error) {
         console.log(error);
@@ -29,6 +27,16 @@ export async function getRecords() : Promise<Record[]>{
     try {
         const response = await apiClient.get('/v1/records');
         console.log(response.data)
+        return response.data;
+    } catch (error) {
+        console.log(error)
+        throw new Error("Unexpected error");
+    }
+}
+
+export async function deleteRecord(recordId: number): Promise<boolean> {
+    try {
+        const response = await apiClient.delete(`/v1/records/${recordId}`);
         return response.data;
     } catch (error) {
         console.log(error)

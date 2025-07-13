@@ -37,6 +37,7 @@ class DailyRecordResponse(msgspec.Struct):
     processed_at: datetime | None
     is_processed: bool
     is_approved: bool
+    status: str
     external_task_id: int | None
 
 

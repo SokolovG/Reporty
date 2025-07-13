@@ -133,6 +133,14 @@ class RecordController(Controller):
         """Remove link to external task."""
         return await record_service.unlink_from_external_task(record_id)
 
+    @delete("/{record_id:int}")
+    @inject
+    async def delete_record(
+        self, record_service: FromDishka[RecordService], record_id: int
+    ) -> None:
+        """Delete record."""
+        return await record_service.delete_record(record_id)
+
     @post("/{record_id:int}/process", return_dto=DailyRecordResponseDTO)
     @inject
     async def process_record_with_ai(

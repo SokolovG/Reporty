@@ -158,3 +158,11 @@ class RecordService:
         await self.repo.session.commit()
 
         return self._to_response(updated_record)
+
+    async def delete_record(self, record_id: int) -> None:
+        record = await self.repo.get(record_id)
+        if not record:
+            return
+
+        await self.repo.delete(record_id)
+        await self.repo.session.commit()
