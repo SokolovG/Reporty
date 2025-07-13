@@ -22,7 +22,7 @@
     async function handleCreateRecord(text: string, title: string, taskType: string) {
         const data = {
         rawInput: text,
-        title: `${taskType}: ${title.trim()}`
+        title: taskType ? `${taskType}: ${title.trim()}` : title.trim()
     };
         try {
             await createRecord(data);
@@ -151,7 +151,6 @@
                     <!-- Header -->
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-2">
-                            <span class="text-sm text-gray-500">{record.id}.</span>
                             <span class="text-sm text-gray-500">{record.title}</span>
                             <span class="text-sm text-gray-500">{record.rawInput}</span>
                             <span class="px-2 py-1 text-xs rounded-full {STATUS_STYLES[record.status]}">
