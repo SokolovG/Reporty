@@ -15,7 +15,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.src.core.constants import REPORTY_LOCAL_API_KEY
-from backend.src.database.base import Base, AIProviders, RecordStatus
+from backend.src.database.base import Base, RecordStatus
 
 
 class DailyRecord(Base):
@@ -200,10 +200,46 @@ class Report(Base):
         )
 
 
+class AIProvider(Base):
+    __tablename__ = "ai_providers"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+
+    base_prompt: Mapped[str | None] = mapped_column(
+        Text, nullable=True, comment="Basic system prompt."
+    )
+
+    model_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
+
+    requires_api_key: Mapped[bool] = mapped_column(default=True)
+    is_active: Mapped[bool] = mapped_column(default=True)
+
+    __table_args__ = (Index("ix_ai_providers_active", "is_active"),)
+
+
 class User(Base, SQLAlchemyUserMixin):
     """Application user."""
 
     __tablename__ = "users"
+
+
+class TaskType(Base):
+    __tablename__ = "task_types"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_profile_id: Mapped[int] = mapped_column(ForeignKey("user_profiles.id"), nullable=False)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    color: Mapped[str | None] = mapped_column(String(7), nullable=True)
+    is_active: Mapped[bool] = mapped_column(default=True)
+
+    user_profile: Mapped["UserProfile"] = relationship("UserProfile", back_populates="task_types")
+
+    # Indexes for performance
+    __table_args__ = (
+        UniqueConstraint("user_profile_id", "title", name="uk_user_profile_task_type"),
+        Index("ix_task_types_user_profile_active", "user_profile_id", "is_active"),
+    )
 
 
 class UserProfile(Base):
@@ -216,8 +252,12 @@ class UserProfile(Base):
     position: Mapped[str | None] = mapped_column(String(100), nullable=True)
 
     ai_auto_process: Mapped[bool] = mapped_column(default=False)
-    ai_provider: Mapped[str] = mapped_column(default=AIProviders.LOCAL)
+    ai_provider_id: Mapped[int] = mapped_column(ForeignKey("ai_providers.id"), nullable=False)
     encrypted_api_key: Mapped[str] = mapped_column(String(500), default=REPORTY_LOCAL_API_KEY)
-    task_type: Mapped[str] = mapped_column(String(255), nullable=True)
+
+    ai_provider: Mapped["AIProvider"] = relationship("AIProvider")
+    task_types: Mapped[list["TaskType"]] = relationship(
+        "TaskType", back_populates="user_profile", cascade="all, delete-orphan"
+    )
 
     user: Mapped["User"] = relationship("User")
