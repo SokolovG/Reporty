@@ -15,7 +15,6 @@
       <!-- Additional information -->
       <div class="flex items-center space-x-6 text-sm text-gray-600">
         <span>© 2025 Reporty</span>
-        <span class="hidden sm:block">•</span>
         <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
           v1.0.0
         </span>
@@ -25,8 +24,8 @@
     <!-- Additional links -->
     <div class="mt-6 pt-6 border-t border-gray-200">
       <div class="flex flex-wrap justify-center md:justify-start space-x-6 text-sm text-gray-500">
-        <a href="#" class="hover:text-blue-600 transition-colors">Documentation</a>
-        <a href="#" class="hover:text-blue-600 transition-colors">GitHub</a>
+        <a href="http://0.0.0.0:8080/schema" class="hover:text-blue-600 transition-colors">Documentation</a>
+        <a href="https://github.com/SokolovG/Reporty" class="hover:text-blue-600 transition-colors">GitHub</a>
       </div>
     </div>
   </div>
