@@ -1,5 +1,6 @@
 <script lang="ts">
     import {loginUser} from "$lib/api/auth";
+    import {goto} from "$app/navigation";
 
     let email = "";
     let password = "";
@@ -13,6 +14,7 @@
 
         try {
             await loginUser(data);
+            await goto('/')
             errorMessage = '';
         }
         catch (error) {
