@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {getRecords, createRecord, deleteRecord} from "$lib/api/records";
+    import {getRecords, createRecord, deleteRecord, updateStatus} from "$lib/api/records";
     import { STATUS_STYLES, STATUS_LABELS } from '$lib/constants.js';
     import type {Record} from "$lib/types/record";
     import type {taskType} from "$lib/types/settings";
@@ -57,6 +57,20 @@
         }
     }
 
+    async function handleUpdateStatus(record_id: number, newStatus: string) {
+        try {
+            await updateStatus(record_id, newStatus);
+            errorMessage = '';
+            await loadRecords();
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            } else {
+                errorMessage = 'Error during record delete';
+            }
+        }
+    }
 
     function handleKeydown(event: KeyboardEvent) {
         if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
@@ -185,6 +199,14 @@
                         </span>
 
                         <div class="flex gap-3">
+                            {#if record.status === 'OPEN'}
+                            <button
+                                class="text-green-600 hover:text-green-700 hover:underline"
+                                on:click={() => handleUpdateStatus(record.id, 'CLOSED')}
+                            >
+                                ✓ Complete
+                            </button>
+                        {/if}
                             {#if !record.isProcessed}
                                 <button class="text-blue-600 hover:underline">Process</button>
                             {:else if !record.isApproved}

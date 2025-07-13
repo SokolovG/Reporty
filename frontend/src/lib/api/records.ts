@@ -34,9 +34,20 @@ export async function getRecords() : Promise<Record[]>{
     }
 }
 
-export async function deleteRecord(recordId: number): Promise<boolean> {
+export async function deleteRecord(recordId: number): Promise<undefined> {
     try {
         const response = await apiClient.delete(`/v1/records/${recordId}`);
+        return response.data;
+    } catch (error) {
+        console.log(error)
+        throw new Error("Unexpected error");
+    }
+}
+
+export async function updateStatus(recordId: number, newStatus: string) {
+    try {
+        const data = {"status": newStatus}
+        const response = await apiClient.patch(`/v1/records/${recordId}/status`, data);
         return response.data;
     } catch (error) {
         console.log(error)
