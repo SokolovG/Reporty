@@ -7,7 +7,6 @@ from backend.src.database.base import RecordStatus
 
 
 class DailyRecordRequest(msgspec.Struct):
-    user_id: int
     title: str
     raw_input: str
     external_task_url: str | None = None

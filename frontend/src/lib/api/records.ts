@@ -3,15 +3,20 @@ import {API_BASE_URL} from '$lib/config'
 
 export async function createRecord(newRecord:CreateRecordRequest): Promise<Record> {
     try{
+        console.log(newRecord)
         const response = await fetch(`${API_BASE_URL}/records`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(newRecord)
     });
-    return response.json();
+    if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return response.json();
     } catch (error) {
         console.log(error);
-        throw new Error("Unexpected error");
+        throw new Error("Error during record creation");
     }
 }
 

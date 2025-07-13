@@ -2,7 +2,7 @@ from datetime import datetime
 
 from dishka import FromDishka
 from dishka.integrations.litestar import inject
-from litestar import Controller, delete, get, post, patch
+from litestar import Controller, delete, get, post, patch, Request
 from litestar.params import Parameter
 
 from backend.src.api.dto import (
@@ -32,9 +32,10 @@ class RecordController(Controller):
     async def create_record(
         self,
         data: DailyRecordRequest,
-        user_id: int,
+        request: Request,
         record_service: FromDishka[RecordService],
     ) -> DailyRecordResponse:
+        user_id = request.user.id
         return await record_service.create_record(data, user_id)
 
     @get("/{record_id:int}", return_dto=DailyRecordResponseDTO)

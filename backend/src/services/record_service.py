@@ -32,7 +32,7 @@ class RecordService:
         self.ai_service = AIService(self.user_profile_settings, crypto_service)
 
     async def create_record(self, data: DailyRecordRequest, user_id: int) -> DailyRecordResponse:
-        saved_record = await self.repo.create_record(data)
+        saved_record = await self.repo.create_record(data, user_id)
         settings = await self.user_profile_settings.get_by_user_id(user_id)
 
         if settings.ai_auto_process:

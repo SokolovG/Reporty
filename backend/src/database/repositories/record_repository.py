@@ -13,12 +13,12 @@ from backend.src.database.models import DailyRecord, ExternalTask
 class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]):  # type: ignore
     model_type: type[DailyRecord] = DailyRecord
 
-    async def create_record(self, data: DailyRecordRequest) -> DailyRecord:
+    async def create_record(self, data: DailyRecordRequest, user_id: int) -> DailyRecord:
         if data.external_task_id is not None:
             await self._validate_external_task_exists(data.external_task_id)
 
         record = DailyRecord(
-            user_id=data.user_id,
+            user_id=user_id,
             title=data.title,
             raw_input=data.raw_input,
             external_task_id=data.external_task_id,

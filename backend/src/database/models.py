@@ -216,7 +216,8 @@ class UserProfile(Base):
     position: Mapped[str | None] = mapped_column(String(100), nullable=True)
 
     ai_auto_process: Mapped[bool] = mapped_column(default=False)
-    ai_provider: Mapped[AIProviders] = mapped_column(default=AIProviders.LOCAL)
+    ai_provider: Mapped[str] = mapped_column(default=AIProviders.LOCAL)
     encrypted_api_key: Mapped[str] = mapped_column(String(500), default=REPORTY_LOCAL_API_KEY)
+    task_type: Mapped[str] = mapped_column(String(255), nullable=True)
 
     user: Mapped["User"] = relationship("User")
