@@ -18,12 +18,11 @@
         records = await getRecords();
     }
 
-    async function handleCreateRecord() {
-        let title = `${newRecordTaskType}: ${newRecordTitle.trim()}`
+    async function handleCreateRecord(text: string, title: string, taskType: string) {
         const data = {
-            content: newRecordText,
-            title: title
-        };
+        content: text,
+        title: `${taskType}: ${title.trim()}`
+    };
         try {
             await createRecord(data);
             errorMessage = '';
@@ -44,7 +43,7 @@
 
     function handleKeydown(event: KeyboardEvent) {
         if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
-            handleCreateRecord();
+            handleCreateRecord(newRecordText, newRecordTitle, newRecordTaskType);
         }
     }
     onMount(async () => {
@@ -84,7 +83,7 @@
                 class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             />
             <button
-                on:click={handleCreateRecord}
+                on:click={() => handleCreateRecord(newRecordText, newRecordTitle, newRecordTaskType)}
                 disabled={!newRecordText.trim() || !newRecordTitle.trim()}
                 class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 transition-colors"
             >

@@ -76,6 +76,7 @@ litestar_users_config = LitestarUsersConfig(
     auth_exclude_paths=[
         "/admin",
         "/schema",
-        "docs/",  # only for development
+        "/schema/",
+        "/docs/",  # only for development
     ],  # In the future, delete admin here.
 )
