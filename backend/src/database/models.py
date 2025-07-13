@@ -14,7 +14,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from backend.src.core.constants import REPORTY_LOCAL_API_KEY
 from backend.src.database.base import Base, RecordStatus
 
 
@@ -214,6 +213,7 @@ class AIProvider(Base):
 
     requires_api_key: Mapped[bool] = mapped_column(default=True)
     is_active: Mapped[bool] = mapped_column(default=True)
+    encrypted_api_key: Mapped[str] = mapped_column(String(500), nullable=True)
 
     __table_args__ = (Index("ix_ai_providers_active", "is_active"),)
 
@@ -253,7 +253,6 @@ class UserProfile(Base):
 
     ai_auto_process: Mapped[bool] = mapped_column(default=False)
     ai_provider_id: Mapped[int] = mapped_column(ForeignKey("ai_providers.id"), nullable=False)
-    encrypted_api_key: Mapped[str] = mapped_column(String(500), default=REPORTY_LOCAL_API_KEY)
 
     ai_provider: Mapped["AIProvider"] = relationship("AIProvider")
     task_types: Mapped[list["TaskType"]] = relationship(

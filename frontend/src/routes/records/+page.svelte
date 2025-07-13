@@ -19,6 +19,10 @@
         records = await getRecords();
     }
 
+    async function handleTaskTypes(userId: number) {
+
+    }
+
     async function handleCreateRecord(text: string, title: string, taskType: string) {
         const data = {
         rawInput: text,

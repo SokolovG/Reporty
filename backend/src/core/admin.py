@@ -8,6 +8,8 @@ from backend.src.database.models import (
     Report,
     User,
     UserProfile,
+    TaskType,
+    AIProvider,
 )
 
 
@@ -95,6 +97,31 @@ class UserProfileAdmin(ModelView, model=UserProfile):
         UserProfile.department,
         UserProfile.position,
         UserProfile.ai_auto_process,
-        UserProfile.ai_provider,
-        UserProfile.encrypted_api_key,
+    ]
+
+
+class TaskTypeAdmin(ModelView, model=TaskType):
+    name = "Task type"
+    name_plural = "Task types"
+
+    column_list = [
+        TaskType.id,
+        TaskType.title,
+        TaskType.color,
+        TaskType.is_active,
+    ]
+
+
+class AIProviderAdmin(ModelView, model=AIProvider):
+    name = "AI provider"
+    name_plural = "AI providers"
+
+    column_list = [
+        AIProvider.id,
+        AIProvider.name,
+        AIProvider.base_prompt,
+        AIProvider.model_name,
+        AIProvider.requires_api_key,
+        AIProvider.encrypted_api_key,
+        AIProvider.is_active,
     ]

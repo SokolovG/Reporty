@@ -14,6 +14,8 @@ from backend.src.core.admin import (
     ReportAdmin,
     UserAdmin,
     UserProfileAdmin,
+    AIProviderAdmin,
+    TaskTypeAdmin,
 )
 from backend.src.core.config import (
     get_sqlalchemy_config,
@@ -36,6 +38,8 @@ admin_plugin = SQLAdminPlugin(
         ReportAdmin,
         UserAdmin,
         UserProfileAdmin,
+        AIProviderAdmin,
+        TaskTypeAdmin,
     ],
 )
 litestar_users = LitestarUsersPlugin(config=litestar_users_config)
