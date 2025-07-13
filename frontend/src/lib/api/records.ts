@@ -4,13 +4,9 @@ import apiClient from "$lib/api/client";
 export async function createRecord(newRecord:CreateRecordRequest): Promise<Record> {
     try{
         console.log(newRecord)
-        const response = await apiClient.post('/records', {
+        const response = await apiClient.post('/v1/records', {
         body: JSON.stringify(newRecord)
     });
-    if (!response.status) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         return response.data();
     } catch (error) {
         console.log(error);
@@ -20,7 +16,7 @@ export async function createRecord(newRecord:CreateRecordRequest): Promise<Recor
 
 export async function getRecord(record_id: number):Promise<Record>{
     try {
-        const response = await apiClient.get(`/records/${record_id}`);
+        const response = await apiClient.get(`/v1/records/${record_id}`);
         return response.data();
     } catch (error) {
         console.log(error)
@@ -32,7 +28,7 @@ export async function getRecord(record_id: number):Promise<Record>{
 
 export async function getRecords() : Promise<Record[]>{
     try {
-        const response = await apiClient.get('/records');
+        const response = await apiClient.get('/v1/records');
         return response.data();
     } catch (error) {
         console.log(error)
