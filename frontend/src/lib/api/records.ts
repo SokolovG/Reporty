@@ -1,19 +1,17 @@
 import type {Record, CreateRecordRequest} from  '../types/record'
-import {API_BASE_URL} from '$lib/config'
+import apiClient from "$lib/api/client";
 
 export async function createRecord(newRecord:CreateRecordRequest): Promise<Record> {
     try{
         console.log(newRecord)
-        const response = await fetch(`${API_BASE_URL}/records`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        const response = await apiClient.post('/records', {
         body: JSON.stringify(newRecord)
     });
-    if (!response.ok) {
+    if (!response.status) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        return response.json();
+        return response.data();
     } catch (error) {
         console.log(error);
         throw new Error("Error during record creation");
@@ -22,8 +20,8 @@ export async function createRecord(newRecord:CreateRecordRequest): Promise<Recor
 
 export async function getRecord(record_id: number):Promise<Record>{
     try {
-        const response = await fetch(`${API_BASE_URL}/records/${record_id}`);
-        return response.json();
+        const response = await apiClient.get(`/records/${record_id}`);
+        return response.data();
     } catch (error) {
         console.log(error)
         throw new Error("Unexpected error");
@@ -34,8 +32,8 @@ export async function getRecord(record_id: number):Promise<Record>{
 
 export async function getRecords() : Promise<Record[]>{
     try {
-        const response = await fetch(`${API_BASE_URL}/records`);
-        return response.json();
+        const response = await apiClient.get('/records');
+        return response.data();
     } catch (error) {
         console.log(error)
         throw new Error("Unexpected error");
