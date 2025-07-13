@@ -120,7 +120,9 @@
                     <!-- Header -->
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-2">
-                            <span class="text-sm text-gray-500">#{record.id}</span>
+                            <span class="text-sm text-gray-500">{record.id}.</span>
+                            <span class="text-sm text-gray-500">{record.title}</span>
+                            <span class="text-sm text-gray-500">{record.rawInput}</span>
                             <span class="px-2 py-1 text-xs rounded-full {record.isProcessed ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">
                                 {record.isProcessed ? 'Processed' : 'Pending'}
                             </span>

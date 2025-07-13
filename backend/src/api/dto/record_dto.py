@@ -1,8 +1,9 @@
 from datetime import datetime
 
 import msgspec
-from litestar.dto import DTOConfig, MsgspecDTO
+from litestar.dto import DTOConfig
 
+from backend.src.api.dto.base import BaseMsgspecDTO
 from backend.src.database.base import RecordStatus
 
 
@@ -78,28 +79,28 @@ class RecordStatusUpdateRequest(msgspec.Struct):
     status: RecordStatus
 
 
-class DailyRecordRequestDTO(MsgspecDTO[DailyRecordRequest]):
-    config = DTOConfig()
+class DailyRecordRequestDTO(BaseMsgspecDTO[DailyRecordRequest]):
+    pass
 
 
-class DailyRecordUpdateRequestDTO(MsgspecDTO[DailyRecordUpdateRequest]):
-    config = DTOConfig()
+class DailyRecordUpdateRequestDTO(BaseMsgspecDTO[DailyRecordUpdateRequest]):
+    pass
 
 
-class AppendToRecordRequestDTO(MsgspecDTO[AppendToRecordRequest]):
-    config = DTOConfig()
+class AppendToRecordRequestDTO(BaseMsgspecDTO[AppendToRecordRequest]):
+    pass
 
 
-class DailyRecordResponseDTO(MsgspecDTO[DailyRecordResponse]):
-    config = DTOConfig()
+class DailyRecordResponseDTO(BaseMsgspecDTO[DailyRecordResponse]):
+    pass
 
 
-class DailyRecordWithTaskResponseDTO(MsgspecDTO[DailyRecordWithTaskResponse]):
-    config = DTOConfig()
+class DailyRecordWithTaskResponseDTO(BaseMsgspecDTO[DailyRecordWithTaskResponse]):
+    pass
 
 
-class LinkTaskRequestDTO(MsgspecDTO[LinkTaskRequest]):
-    config = DTOConfig()
+class LinkTaskRequestDTO(BaseMsgspecDTO[LinkTaskRequest]):
+    pass
 
 
 class ExternalTaskCreateRequest(msgspec.Struct):
@@ -116,12 +117,12 @@ class ExternalTaskUpdateRequest(msgspec.Struct):
     description: str | None = None
 
 
-class ExternalTaskCreateRequestDTO(MsgspecDTO[ExternalTaskCreateRequest]):
-    config = DTOConfig()
+class ExternalTaskCreateRequestDTO(BaseMsgspecDTO[ExternalTaskCreateRequest]):
+    pass
 
 
-class ExternalTaskUpdateRequestDTO(MsgspecDTO[ExternalTaskUpdateRequest]):
-    config = DTOConfig(partial=True)
+class ExternalTaskUpdateRequestDTO(BaseMsgspecDTO[ExternalTaskUpdateRequest]):
+    config = DTOConfig(partial=True, rename_strategy="camel")
 
 
 class ExternalTaskResponse(msgspec.Struct):
@@ -138,9 +139,9 @@ class ExternalTaskResponse(msgspec.Struct):
     last_sync: datetime
 
 
-class ExternalTaskResponseDTO(MsgspecDTO[ExternalTaskResponse]):
-    config = DTOConfig()
+class ExternalTaskResponseDTO(BaseMsgspecDTO[ExternalTaskResponse]):
+    pass
 
 
-class RecordStatusUpdateRequestDTO(MsgspecDTO[RecordStatusUpdateRequest]):
-    config = DTOConfig()
+class RecordStatusUpdateRequestDTO(BaseMsgspecDTO[RecordStatusUpdateRequest]):
+    pass
