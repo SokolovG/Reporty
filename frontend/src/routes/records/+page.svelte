@@ -12,6 +12,8 @@
     let newRecordTaskType = "";
     let errorMessage = "";
     let taskTypes: TaskType[] = [];
+    let showQuickAdd: { [key: number]: boolean } = {};
+    let quickAddText: { [key: number]: string } = {};
 
     async function loadRecords() {
         records = await getRecords();
@@ -178,8 +180,43 @@
                             </button>
                         </div>
                     </div>
+                        <div class="mt-3 pt-3 border-t border-gray-100">
+                            {#if !showQuickAdd[record.id]}
+                                <button
+                                    class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1 bg-blue-50 font-medium px-3 py-2">
+<!--                                    on:click={() => toggleQuickAdd(record.id)}-->
 
-                    <!-- Content -->
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                    </svg>
+                                    Quick add follow-up
+                                </button>
+                            {:else}
+                                <!-- Inline форма -->
+                                <div class="space-y-2">
+                                    <input>
+<!--                                        bind:value={quickAddText[record.id]}-->
+                                        placeholder="Add follow-up note..."
+                                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+<!--                                        on:keydown={(e) => handleQuickAddKeydown(e, record.id)}-->
+                                    />
+                                    <div class="flex gap-2">
+                                        <button
+                                            class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700">
+<!--                                            on:click={() => saveQuickAdd(record.id)}-->
+                                        >
+                                            Add
+                                        </button>
+                                        <button
+                                            class="px-3 py-1 text-sm text-gray-600 hover:text-gray-700">
+<!--                                            on:click={() => cancelQuickAdd(record.id)}-->
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+                            {/if}
+                        </div>
+                                    <!-- Content -->
                     <div class="text-gray-900 mb-3">
                         {record.rawInput}
                     </div>
