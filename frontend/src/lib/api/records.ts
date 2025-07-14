@@ -36,8 +36,8 @@ export async function getRecords() : Promise<Record[]>{
 
 export async function deleteRecord(recordId: number): Promise<undefined> {
     try {
-        const response = await apiClient.delete(`/v1/records/${recordId}`);
-        return response.data;
+        await apiClient.delete(`/v1/records/${recordId}`);
+        return
     } catch (error) {
         console.log(error)
         throw new Error("Unexpected error");
