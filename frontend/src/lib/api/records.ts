@@ -1,4 +1,4 @@
-import type {Record, CreateRecordRequest} from  '../types/record'
+import type {Record, CreateRecordRequest, appendRecordRequest} from '../types/record'
 import apiClient from "$lib/api/client";
 
 export async function createRecord(newRecord:CreateRecordRequest): Promise<Record> {
@@ -11,9 +11,9 @@ export async function createRecord(newRecord:CreateRecordRequest): Promise<Recor
     }
 }
 
-export async function getRecord(record_id: number):Promise<Record>{
+export async function getRecord(recordId: number):Promise<Record>{
     try {
-        const response = await apiClient.get(`/v1/records/${record_id}`);
+        const response = await apiClient.get(`/v1/records/${recordId}`);
         return response.data;
     } catch (error) {
         console.log(error)
@@ -52,5 +52,16 @@ export async function updateStatus(recordId: number, newStatus: string) {
     } catch (error) {
         console.log(error)
         throw new Error("Unexpected error");
+    }
+}
+
+export async function appendToRecord(recordId: number, recordData: appendRecordRequest) {
+    try {
+        const response = await apiClient.post(`/v1/records/${recordId}/append`, recordData);
+        return response.data;
+    } catch (error) {
+        console.log(error)
+        throw new Error("Unexpected error");
+
     }
 }

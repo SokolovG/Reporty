@@ -1,6 +1,6 @@
 export interface Record {
     id: number,
-    created_at: string,
+    createdAt: string,
     aiProcessed: boolean
     externalTaskId: boolean
     finalDescription: boolean
@@ -14,4 +14,8 @@ export interface Record {
 export interface CreateRecordRequest {
     rawInput: string
     title: string
+}
+
+export interface appendRecordRequest {
+    additionalInput: string
 }

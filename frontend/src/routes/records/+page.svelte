@@ -1,5 +1,11 @@
 <script lang="ts">
-    import {getRecords, createRecord, deleteRecord, updateStatus} from "$lib/api/records";
+    import {
+        getRecords,
+        createRecord,
+        deleteRecord,
+        updateStatus,
+        appendToRecord, getRecord
+    } from "$lib/api/records";
     import { STATUS_STYLES, STATUS_LABELS } from '$lib/constants.js';
     import type {Record} from "$lib/types/record";
     import type {TaskType} from "$lib/types/settings";
@@ -82,9 +88,28 @@
     function cancelQuickAdd(recordId: number) {
         showQuickAdd[recordId] = false;
     }
-    function saveQuickAdd(recordId: number) {
+    async function saveQuickAdd(recordId: number) {
         const text = quickAddText[recordId];
-        console.log("Saving:", text);
+        try {
+            const data = {
+                additionalInput: text
+            }
+            await appendToRecord(recordId, data);
+            errorMessage = '';
+            const updatedRecord = await getRecord(recordId);
+            const index = records.findIndex(r => r.id === recordId);
+            if (index !== -1) {
+                records[index] = updatedRecord;
+                records = records;
+            }
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            } else {
+                errorMessage = 'Error during record delete';
+            }
+        }
         quickAddText[recordId] = "";
         showQuickAdd[recordId] = false;
     }
@@ -202,7 +227,7 @@
                         <div class="mt-3 pt-3 border-t border-gray-100">
                             {#if !showQuickAdd[record.id]}
                                 <button
-                                    class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1 bg-blue-50 font-medium px-3 py-2"
+                                    class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1 bg-blue-50 font-medium px-3 py-2 mb-4"
                                     on:click={() => toggleQuickAdd(record.id)}>
 
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -221,9 +246,10 @@
                                     />
                                     <div class="flex gap-2">
                                         <button
-                                            class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
-                                           on:click={() => saveQuickAdd(record.id)}>
-
+                                            class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-300"
+                                            on:click={() => saveQuickAdd(record.id)}
+                                            disabled={!quickAddText[record.id]?.trim()}
+                                        >
                                             Add
                                         </button>
                                         <button
@@ -251,7 +277,13 @@
                     <!-- Footer -->
                     <div class="flex items-center justify-between text-sm text-gray-500">
                         <span>
-                            {new Date(record.created_at).toLocaleDateString()}
+                            {new Date(record.createdAt).toLocaleString('eu-EU', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            })}
                         </span>
 
                         <div class="flex gap-3">
@@ -268,7 +300,6 @@
                             {:else if !record.isApproved}
                                 <button class="text-green-600 hover:underline">Approve</button>
                             {/if}
-                            <button class="text-gray-600 hover:underline">Details</button>
                         </div>
                     </div>
                 </div>
