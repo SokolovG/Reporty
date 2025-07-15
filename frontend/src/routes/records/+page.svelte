@@ -4,13 +4,14 @@
         createRecord,
         deleteRecord,
         updateStatus,
-        appendToRecord, getRecord
+        appendToRecord, getRecord, editRecord
     } from "$lib/api/records";
     import { STATUS_STYLES, STATUS_LABELS } from '$lib/constants.js';
     import type {Record} from "$lib/types/record";
     import type {TaskType} from "$lib/types/settings";
     import { onMount } from 'svelte';
     import {getTaskTypes} from "$lib/api/settings";
+    import { goto } from '$app/navigation';
 
     let records: Record[] = [];
     let newRecordText = "";
@@ -52,9 +53,9 @@
         await loadRecords();
     }
 
-    async function handleDeleteRecord(record_id: number) {
+    async function handleDeleteRecord(recordId: number) {
         try {
-            await deleteRecord(record_id);
+            await deleteRecord(recordId);
             errorMessage = '';
             await loadRecords();
         }
@@ -67,9 +68,9 @@
         }
     }
 
-    async function handleUpdateStatus(record_id: number, newStatus: string) {
+    async function handleUpdateStatus(recordId: number, newStatus: string) {
         try {
-            await updateStatus(record_id, newStatus);
+            await updateStatus(recordId, newStatus);
             errorMessage = '';
             await loadRecords();
         }
@@ -112,6 +113,20 @@
         }
         quickAddText[recordId] = "";
         showQuickAdd[recordId] = false;
+    }
+
+    async function handleEditRecord(recordId: number) {
+        try {
+            await getRecord(recordId);
+            errorMessage = '';
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            } else {
+                errorMessage = 'Error during record delete';
+            }
+        }
     }
 
     function handleQuickAddKeydown(event: KeyboardEvent, recordId: number) {
@@ -212,7 +227,7 @@
                         </div>
 
                         <div class="flex items-center gap-1">
-                            <button class="p-1 text-gray-400 hover:text-blue-600 rounded" aria-label="Edit record">
+                            <button class="p-1 text-gray-400 hover:text-blue-600 rounded" aria-label="Edit record" on:click={() => goto(`/record/${record.id}`)}>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>

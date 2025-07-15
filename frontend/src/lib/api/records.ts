@@ -13,6 +13,7 @@ export async function createRecord(newRecord:CreateRecordRequest): Promise<Recor
 
 export async function getRecord(recordId: number):Promise<Record>{
     try {
+        console.log('Calling API:', `/v1/records/${recordId}`);
         const response = await apiClient.get(`/v1/records/${recordId}`);
         return response.data;
     } catch (error) {
@@ -58,6 +59,17 @@ export async function updateStatus(recordId: number, newStatus: string) {
 export async function appendToRecord(recordId: number, recordData: appendRecordRequest) {
     try {
         const response = await apiClient.post(`/v1/records/${recordId}/append`, recordData);
+        return response.data;
+    } catch (error) {
+        console.log(error)
+        throw new Error("Unexpected error");
+
+    }
+}
+
+export async function editRecord(recordId: number, newData: string):Promise<Record> {
+    try {
+        const response = await apiClient.patch(`/v1/records/${recordId}/`, newData);
         return response.data;
     } catch (error) {
         console.log(error)
