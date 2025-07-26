@@ -3,29 +3,12 @@
     import type {Record} from "$lib/types/record";
     import type {TaskType} from "$lib/types/settings";
     import { goto } from '$app/navigation';
-    import { enhance } from '$app/forms';
 
     let { data, form } = $props();
 
     let records: Record[] = data.records;
     let taskTypes: TaskType[] = data.taskTypes;
 
-    let showQuickAdd: { [key: number]: boolean } = {};
-    let quickAddForms: { [key: number]: HTMLFormElement } = {};
-
-    function toggleQuickAdd(recordId: number) {
-        showQuickAdd[recordId] = !showQuickAdd[recordId];
-    }
-
-    function cancelQuickAdd(recordId: number) {
-        showQuickAdd[recordId] = false;
-    }
-
-    function handleQuickAddKeydown(event: KeyboardEvent, recordId: number) {
-        if (event.key === 'Enter' && quickAddForms[recordId]) {
-            quickAddForms[recordId].requestSubmit();
-        }
-    }
 </script>
 
 <div class="container mx-auto px-4 py-8 max-w-4xl">
@@ -36,7 +19,7 @@
 
     <!-- Quick Add Form -->
     <div class="mb-6">
-        <form method="POST" action="?/create" class="space-y-3" use:enhance>
+        <form method="POST" action="?/create" class="space-y-3">
             <div class="flex gap-3">
                 <input
                     name="title"
@@ -119,7 +102,7 @@
                             </button>
 
                             <!-- Delete Form -->
-                            <form method="POST" action="?/delete" use:enhance style="display: inline;">
+                            <form method="POST" action="?/delete" style="display: inline;">
                                 <input type="hidden" name="recordId" value={record.id} />
                                 <button
                                     type="submit"
@@ -141,23 +124,10 @@
 
                     <!-- Quick Add Section -->
                     <div class="mt-3 pt-3 border-t border-gray-100">
-                        {#if !showQuickAdd[record.id]}
-                            <button
-                                class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1 bg-blue-50 font-medium px-3 py-2 mb-4"
-                                onclick={() => toggleQuickAdd(record.id)}
-                            >
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                </svg>
-                                Quick add follow-up
-                            </button>
-                        {:else}
                             <!-- Quick Add Form -->
                             <form
                                 method="POST"
                                 action="?/appendText"
-                                use:enhance
-                                bind:this={quickAddForms[record.id]}
                                 class="space-y-2"
                             >
                                 <input type="hidden" name="recordId" value={record.id} />
@@ -165,7 +135,6 @@
                                     name="additionalInput"
                                     placeholder="Add follow-up note..."
                                     class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                    onkeydown={(e) => handleQuickAddKeydown(e, record.id)}
                                     required
                                 />
                                 <div class="flex gap-2">
@@ -175,16 +144,8 @@
                                     >
                                         Add
                                     </button>
-                                    <button
-                                        type="button"
-                                        class="px-3 py-1 text-sm text-gray-600 hover:text-gray-700"
-                                        onclick={() => cancelQuickAdd(record.id)}
-                                    >
-                                        Cancel
-                                    </button>
                                 </div>
                             </form>
-                        {/if}
                     </div>
 
                     {#if record.isProcessed}
@@ -209,7 +170,7 @@
 
                         <div class="flex gap-3">
                             {#if record.status === 'OPEN'}
-                                <form method="POST" action="?/updateStatus" use:enhance style="display: inline;">
+                                <form method="POST" action="?/updateStatus" style="display: inline;">
                                     <input type="hidden" name="recordId" value={record.id} />
                                     <input type="hidden" name="status" value="CLOSED" />
                                     <button type="submit" class="text-green-600 hover:text-green-700 hover:underline">
@@ -219,7 +180,7 @@
                             {/if}
 
                             {#if !record.isProcessed}
-                                <form method="POST" action="?/processAI" use:enhance style="display: inline;">
+                                <form method="POST" action="?/processAI" style="display: inline;">
                                     <input type="hidden" name="recordId" value={record.id} />
                                     <button type="submit" class="text-blue-600 hover:underline">Process</button>
                                 </form>

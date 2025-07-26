@@ -1,7 +1,8 @@
 import type { Actions, PageServerLoad } from "./$types";
 import {redirect} from "@sveltejs/kit";
+import { API_BASE } from "$lib/constants.js"
 
-const API_BASE = 'http://localhost:8080';
+
 
 export const actions: Actions = {
     create: async ({ request, cookies }) => {

@@ -12,3 +12,5 @@ export const STATUS_LABELS = {
     [RECORD_STATUS.OPEN]: 'Open',
     [RECORD_STATUS.CLOSED]: 'Closed'
 };
+
+export const API_BASE = 'http://localhost:8080';
