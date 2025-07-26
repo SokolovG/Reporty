@@ -1,119 +1,31 @@
 <script lang="ts">
-    import {
-        getRecords,
-        deleteRecord,
-        updateStatus,
-        appendToRecord, getRecord, editRecord
-    } from "$lib/api/records";
     import { STATUS_STYLES, STATUS_LABELS } from '$lib/constants.js';
     import type {Record} from "$lib/types/record";
     import type {TaskType} from "$lib/types/settings";
-    import { onMount } from 'svelte';
-    import {getTaskTypes} from "$lib/api/settings";
     import { goto } from '$app/navigation';
+    import { enhance } from '$app/forms';
 
-    let records: Record[] = [];
-    let newRecordText = "";
-    let newRecordTitle = "";
-    let newRecordTaskType = "";
-    let errorMessage = "";
-    let taskTypes: TaskType[] = [];
+    let { data, form } = $props();
+
+    let records: Record[] = data.records;
+    let taskTypes: TaskType[] = data.taskTypes;
+
     let showQuickAdd: { [key: number]: boolean } = {};
-    let quickAddText: { [key: number]: string } = {};
-
-    async function loadRecords() {
-        records = await getRecords();
-    }
-
-    async function handleTaskTypes() {
-        taskTypes = await getTaskTypes();
-    }
-
-    async function handleDeleteRecord(recordId: number) {
-        try {
-            await deleteRecord(recordId);
-            errorMessage = '';
-            await loadRecords();
-        }
-        catch (error) {
-            if (error instanceof Error) {
-                errorMessage = error.message;
-            } else {
-                errorMessage = 'Error during record delete';
-            }
-        }
-    }
-
-    async function handleUpdateStatus(recordId: number, newStatus: string) {
-        try {
-            await updateStatus(recordId, newStatus);
-            errorMessage = '';
-            await loadRecords();
-        }
-        catch (error) {
-            if (error instanceof Error) {
-                errorMessage = error.message;
-            } else {
-                errorMessage = 'Error during record delete';
-            }
-        }
-    }
+    let quickAddForms: { [key: number]: HTMLFormElement } = {};
 
     function toggleQuickAdd(recordId: number) {
         showQuickAdd[recordId] = !showQuickAdd[recordId];
     }
+
     function cancelQuickAdd(recordId: number) {
         showQuickAdd[recordId] = false;
     }
-    async function saveQuickAdd(recordId: number) {
-        const text = quickAddText[recordId];
-        try {
-            const data = {
-                additionalInput: text
-            }
-            await appendToRecord(recordId, data);
-            errorMessage = '';
-            const updatedRecord = await getRecord(recordId);
-            const index = records.findIndex(r => r.id === recordId);
-            if (index !== -1) {
-                records[index] = updatedRecord;
-                records = records;
-            }
-        }
-        catch (error) {
-            if (error instanceof Error) {
-                errorMessage = error.message;
-            } else {
-                errorMessage = 'Error during record delete';
-            }
-        }
-        quickAddText[recordId] = "";
-        showQuickAdd[recordId] = false;
-    }
-
-    async function handleEditRecord(recordId: number) {
-        try {
-            await getRecord(recordId);
-            errorMessage = '';
-        }
-        catch (error) {
-            if (error instanceof Error) {
-                errorMessage = error.message;
-            } else {
-                errorMessage = 'Error during record delete';
-            }
-        }
-    }
 
     function handleQuickAddKeydown(event: KeyboardEvent, recordId: number) {
-        if (event.key === 'Enter') {
-            saveQuickAdd(recordId);
+        if (event.key === 'Enter' && quickAddForms[recordId]) {
+            quickAddForms[recordId].requestSubmit();
         }
-}
-    onMount(async () => {
-        await handleTaskTypes();
-        await loadRecords();
-    });
+    }
 </script>
 
 <div class="container mx-auto px-4 py-8 max-w-4xl">
@@ -122,75 +34,50 @@
         <h1 class="text-2xl font-bold text-gray-900">Records</h1>
     </div>
 
-    <!-- Quick Add -->
+    <!-- Quick Add Form -->
     <div class="mb-6">
-        <div class="flex gap-3 mb-2">
-            <input
-                bind:value={newRecordTitle}
-                placeholder="Title"
-                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-            />
-            <select
-                bind:value={newRecordTaskType}
-                class="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-            >
-                {#each taskTypes as taskType}
-                    <option value={taskType.title}>{taskType.title}</option>
-                {/each}
-            </select>
-        </div>
-        <div class="flex gap-3">
-            <input
-                bind:value={newRecordText}
-                placeholder="What did you work on? (Ctrl/CMD +Enter to save)"
-                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-            />
-            <form method="POST" action="?/create">
+        <form method="POST" action="?/create" class="space-y-3" use:enhance>
+            <div class="flex gap-3">
                 <input
                     name="title"
                     placeholder="Title"
-                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                     required
                 />
-
-                <input
-                    name="rawInput"
-                    placeholder="What did you work on?"
-                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
-                    required
-                />
-
                 <select
                     name="taskType"
-                    class="w-40 px-3 py-2 border border-gray-300 rounded-lg"
+                    class="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                 >
                     <option value="">Select type</option>
                     {#each taskTypes as taskType}
                         <option value={taskType.title}>{taskType.title}</option>
                     {/each}
                 </select>
-
+            </div>
+            <div class="flex gap-3">
+                <input
+                    name="rawInput"
+                    placeholder="What did you work on? (Enter to save)"
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    required
+                />
                 <button
                     type="submit"
-                    class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 transition-colors"
+                    class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                     Add
                 </button>
-            </form>
-            <button
-                on:click={loadRecords}
-                class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
-            >
-                Refresh
-            </button>
-        </div>
-        {#if errorMessage}
+            </div>
+        </form>
+
+        <!-- Error Message -->
+        {#if form?.error}
             <div class="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
                 <div class="flex items-center gap-2">
                     <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
                     </svg>
-                    <span class="text-red-800 text-sm">{errorMessage}</span>
+                    <span class="text-red-800 text-sm">{form.error}</span>
                 </div>
             </div>
         {/if}
@@ -221,58 +108,83 @@
                         </div>
 
                         <div class="flex items-center gap-1">
-                            <button class="p-1 text-gray-400 hover:text-blue-600 rounded" aria-label="Edit record" on:click={() => goto(`/records/${record.id}`)}>
+                            <button
+                                class="p-1 text-gray-400 hover:text-blue-600 rounded"
+                                aria-label="Edit record"
+                                onclick={() => goto(`/records/${record.id}`)}
+                            >
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
                             </button>
-                            <button class="p-1 text-gray-400 hover:text-red-600 rounded" aria-label="Delete record" on:click = {() => handleDeleteRecord(record.id)}>
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                            </button>
+
+                            <!-- Delete Form -->
+                            <form method="POST" action="?/delete" use:enhance style="display: inline;">
+                                <input type="hidden" name="recordId" value={record.id} />
+                                <button
+                                    type="submit"
+                                    class="p-1 text-gray-400 hover:text-red-600 rounded"
+                                    aria-label="Delete record"
+                                >
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            </form>
                         </div>
                     </div>
-                        <div class="mt-3 pt-3 border-t border-gray-100">
-                            {#if !showQuickAdd[record.id]}
-                                <button
-                                    class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1 bg-blue-50 font-medium px-3 py-2 mb-4"
-                                    on:click={() => toggleQuickAdd(record.id)}>
 
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                    </svg>
-                                    Quick add follow-up
-                                </button>
-                            {:else}
-                                <!-- Inline форма -->
-                                <div class="space-y-2">
-                                    <input
-                                        bind:value={quickAddText[record.id]}
-                                        placeholder="Add follow-up note..."
-                                        class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                        on:keydown={(e) => handleQuickAddKeydown(e, record.id)}
-                                    />
-                                    <div class="flex gap-2">
-                                        <button
-                                            class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-gray-300"
-                                            on:click={() => saveQuickAdd(record.id)}
-                                            disabled={!quickAddText[record.id]?.trim()}
-                                        >
-                                            Add
-                                        </button>
-                                        <button
-                                            class="px-3 py-1 text-sm text-gray-600 hover:text-gray-700"
-                                            on:click={() => cancelQuickAdd(record.id)}>
-                                            Cancel
-                                        </button>
-                                    </div>
-                                </div>
-                            {/if}
-                        </div>
-                                    <!-- Content -->
+                    <!-- Content -->
                     <div class="text-gray-900 mb-3">
                         {record.rawInput}
+                    </div>
+
+                    <!-- Quick Add Section -->
+                    <div class="mt-3 pt-3 border-t border-gray-100">
+                        {#if !showQuickAdd[record.id]}
+                            <button
+                                class="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1 bg-blue-50 font-medium px-3 py-2 mb-4"
+                                onclick={() => toggleQuickAdd(record.id)}
+                            >
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                </svg>
+                                Quick add follow-up
+                            </button>
+                        {:else}
+                            <!-- Quick Add Form -->
+                            <form
+                                method="POST"
+                                action="?/appendText"
+                                use:enhance
+                                bind:this={quickAddForms[record.id]}
+                                class="space-y-2"
+                            >
+                                <input type="hidden" name="recordId" value={record.id} />
+                                <input
+                                    name="additionalInput"
+                                    placeholder="Add follow-up note..."
+                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    onkeydown={(e) => handleQuickAddKeydown(e, record.id)}
+                                    required
+                                />
+                                <div class="flex gap-2">
+                                    <button
+                                        type="submit"
+                                        class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                                    >
+                                        Add
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="px-3 py-1 text-sm text-gray-600 hover:text-gray-700"
+                                        onclick={() => cancelQuickAdd(record.id)}
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        {/if}
                     </div>
 
                     {#if record.isProcessed}
@@ -286,7 +198,7 @@
                     <!-- Footer -->
                     <div class="flex items-center justify-between text-sm text-gray-500">
                         <span>
-                            {new Date(record.createdAt).toLocaleString('eu-EU', {
+                            {new Date(record.createdAt).toLocaleString('ru-RU', {
                                 year: 'numeric',
                                 month: '2-digit',
                                 day: '2-digit',
@@ -297,15 +209,20 @@
 
                         <div class="flex gap-3">
                             {#if record.status === 'OPEN'}
-                            <button
-                                class="text-green-600 hover:text-green-700 hover:underline"
-                                on:click={() => handleUpdateStatus(record.id, 'CLOSED')}
-                            >
-                                ✓ Complete
-                            </button>
-                        {/if}
+                                <form method="POST" action="?/updateStatus" use:enhance style="display: inline;">
+                                    <input type="hidden" name="recordId" value={record.id} />
+                                    <input type="hidden" name="status" value="CLOSED" />
+                                    <button type="submit" class="text-green-600 hover:text-green-700 hover:underline">
+                                        ✓ Complete
+                                    </button>
+                                </form>
+                            {/if}
+
                             {#if !record.isProcessed}
-                                <button class="text-blue-600 hover:underline">Process</button>
+                                <form method="POST" action="?/processAI" use:enhance style="display: inline;">
+                                    <input type="hidden" name="recordId" value={record.id} />
+                                    <button type="submit" class="text-blue-600 hover:underline">Process</button>
+                                </form>
                             {:else if !record.isApproved}
                                 <button class="text-green-600 hover:underline">Approve</button>
                             {/if}

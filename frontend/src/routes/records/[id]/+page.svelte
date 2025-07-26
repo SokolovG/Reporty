@@ -2,7 +2,6 @@
     import { page } from '$app/stores';
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
-    import { getRecord } from '$lib/api/records';
     import { STATUS_STYLES, STATUS_LABELS } from '$lib/constants.js';
     import type { Record } from '$lib/types/record';
 
