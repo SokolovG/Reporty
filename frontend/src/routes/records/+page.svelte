@@ -1,7 +1,6 @@
 <script lang="ts">
     import {
         getRecords,
-        createRecord,
         deleteRecord,
         updateStatus,
         appendToRecord, getRecord, editRecord
@@ -28,29 +27,6 @@
 
     async function handleTaskTypes() {
         taskTypes = await getTaskTypes();
-    }
-
-    async function handleCreateRecord(text: string, title: string, taskType: string) {
-        const data = {
-        rawInput: text,
-        title: taskType ? `${taskType}: ${title.trim()}` : title.trim()
-    };
-        try {
-            await createRecord(data);
-            errorMessage = '';
-        }
-        catch (error) {
-            if (error instanceof Error) {
-                errorMessage = error.message;
-            } else {
-                errorMessage = 'Error during record creation';
-            }
-        }
-
-        newRecordText = "";
-        newRecordTitle = "";
-        newRecordTaskType = "";
-        await loadRecords();
     }
 
     async function handleDeleteRecord(recordId: number) {
@@ -134,12 +110,6 @@
             saveQuickAdd(recordId);
         }
 }
-
-    function handleKeydown(event: KeyboardEvent) {
-        if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
-            handleCreateRecord(newRecordText, newRecordTitle, newRecordTaskType);
-        }
-    }
     onMount(async () => {
         await handleTaskTypes();
         await loadRecords();
@@ -172,17 +142,41 @@
         <div class="flex gap-3">
             <input
                 bind:value={newRecordText}
-                on:keydown={handleKeydown}
                 placeholder="What did you work on? (Ctrl/CMD +Enter to save)"
                 class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
             />
-            <button
-                on:click={() => handleCreateRecord(newRecordText, newRecordTitle, newRecordTaskType)}
-                disabled={!newRecordText.trim() || !newRecordTitle.trim()}
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 transition-colors"
-            >
-                Add
-            </button>
+            <form method="POST" action="?/create">
+                <input
+                    name="title"
+                    placeholder="Title"
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                    required
+                />
+
+                <input
+                    name="rawInput"
+                    placeholder="What did you work on?"
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+                    required
+                />
+
+                <select
+                    name="taskType"
+                    class="w-40 px-3 py-2 border border-gray-300 rounded-lg"
+                >
+                    <option value="">Select type</option>
+                    {#each taskTypes as taskType}
+                        <option value={taskType.title}>{taskType.title}</option>
+                    {/each}
+                </select>
+
+                <button
+                    type="submit"
+                    class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 transition-colors"
+                >
+                    Add
+                </button>
+            </form>
             <button
                 on:click={loadRecords}
                 class="bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 transition-colors"
