@@ -2,7 +2,20 @@ import type { Actions, PageServerLoad } from "./$types";
 import {API_BASE} from "$lib/constants";
 import {error, redirect} from "@sveltejs/kit";
 
-export const actions: Actions = {}
+export const actions: Actions = {
+    edit: async ({}) => {
+
+    },
+    process: async ({}) => {
+
+    },
+    approve: async ({}) => {
+
+    },
+    delete: async ({}) => {
+
+    }
+}
 
 export const load: PageServerLoad = async ({ cookies, params }) => {
      const token = cookies.get('authToken');
