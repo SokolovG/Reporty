@@ -1,6 +1,5 @@
 import type { Actions, PageServerLoad } from "./$types";
 import {redirect} from "@sveltejs/kit";
-import { API_BASE } from "$lib/constants.js"
 
 
 
@@ -26,7 +25,7 @@ export const actions: Actions = {
         };
 
         try {
-            const response = await fetch(`${API_BASE}/v1/records`, {
+            const response = await fetch('/v1/records', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -59,7 +58,7 @@ export const actions: Actions = {
         }
 
         try {
-            const response = await fetch(`${API_BASE}/v1/records/${recordId}`, {
+            const response = await fetch(`/v1/records/${recordId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': token }
             });
@@ -89,7 +88,7 @@ export const actions: Actions = {
         }
 
         try {
-            const response = await fetch(`${API_BASE}/v1/records/${recordId}/status`, {
+            const response = await fetch(`/v1/records/${recordId}/status`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -122,7 +121,7 @@ export const actions: Actions = {
         }
 
         try {
-            const response = await fetch(`${API_BASE}/v1/records/${recordId}/append`, {
+            const response = await fetch(`/v1/records/${recordId}/append`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -155,7 +154,7 @@ export const actions: Actions = {
         }
 
         try {
-            const response = await fetch(`${API_BASE}/v1/records/${recordId}/process`, {
+            const response = await fetch(`/v1/records/${recordId}/process`, {
                 method: 'POST',
                 headers: { 'Authorization': token }
             });
@@ -172,23 +171,22 @@ export const actions: Actions = {
 };
 export const load: PageServerLoad = async ({ cookies }) => {
     const token = cookies.get('authToken');
-
     if (!token) {
         throw redirect(303, '/login');
     }
 
     try {
         const [recordsResponse, taskTypesResponse] = await Promise.all([
-            fetch(`${API_BASE}/v1/records`, {
+            fetch('/v1/records', {
                 headers: { 'Authorization': token }
             }),
-            fetch(`${API_BASE}/v1/settings/task-types`, {
+            fetch('/v1/settings/task-types', {
                 headers: { 'Authorization': token }
             })
         ]);
 
         if (!recordsResponse.ok || !taskTypesResponse.ok) {
-            throw redirect(303, '/login');
+            return { records: [], taskTypes: [] };
         }
 
         const records = await recordsResponse.json();
@@ -196,6 +194,6 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
         return { records, taskTypes };
     } catch (error) {
-        console.log("❌ Error loading data:", error);
+        return { records: [], taskTypes: [] };
     }
 };

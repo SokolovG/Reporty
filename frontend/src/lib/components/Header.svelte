@@ -1,3 +1,7 @@
+<script lang="ts">
+  let { user } = $props();
+</script>
+
 <header class="w-full bg-white border-b border-gray-200 shadow-sm">
   <nav class="container mx-auto px-4 py-4">
     <div class="flex items-center justify-between">

@@ -1,5 +1,8 @@
 <script lang="ts">
-    let { form } = $props();
+    import { enhance } from '$app/forms';
+    import type { PageData, ActionData } from './$types';
+
+    let { data, form }: { data: PageData, form: ActionData } = $props();
 </script>
 
 <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -9,7 +12,7 @@
             <p class="text-gray-600 text-base">Sign in to your account</p>
         </div>
 
-        <form method="POST" class="space-y-6">
+        <form method="POST" action="?/login" use:enhance class="space-y-6">
             <input
                 name="email"
                 type="email"

@@ -1,5 +1,4 @@
 import type { Actions, PageServerLoad } from "./$types";
-import {API_BASE} from "$lib/constants";
 import {error, redirect} from "@sveltejs/kit";
 
 export const actions: Actions = {
@@ -25,7 +24,7 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
      }
 
      try {
-        const recordResponse = await fetch(`${API_BASE}/v1/records/${params.id}`, {
+        const recordResponse = await fetch(`/v1/records/${params.id}`, {
                 headers: { 'Authorization': token }
             })
 
