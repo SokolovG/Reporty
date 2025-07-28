@@ -6,7 +6,7 @@
         <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
           <span class="text-white font-bold text-sm">R</span>
         </div>
-        <span class="text-xl font-bold text-gray-900">Reporty</span>
+        <span class="text-xl font-bold text-gray-900"><a href="/">Reporty</a></span>
       </div>
 
       <!-- Navigation -->
@@ -24,13 +24,6 @@
           Settings
         </a>
       </div>
-
-      <!-- Mobile menu button -->
-      <button class="md:hidden p-2 rounded-lg hover:bg-gray-100">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
     </div>
   </nav>
 </header>
