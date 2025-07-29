@@ -20,10 +20,8 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
     throw redirect(302, '/');
   }
 
-  // Validate token by making a simple request to backend
-  // Change to api me endpoint
   try {
-    const response = await fetch(`${BACKEND_API_URL}/v1/records`, {
+    const response = await fetch(`${BACKEND_API_URL}/me`, {
       headers: { 'Authorization': authToken }
     });
 
@@ -33,7 +31,6 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
       throw redirect(302, '/login');
     }
   } catch (error) {
-    // If there's a network error, don't redirect - let the page handle it
     console.log('Token validation failed:', error);
   }
 

@@ -10,6 +10,13 @@ class UserRegistrationSchema(Struct):
     password: str
 
 
+class UserReadSchema(Struct):
+    email: str
+    user_id: int
+    is_active: bool
+    is_verified: bool
+
+
 class UserRegistrationDTO(BaseMsgspecDTO[UserRegistrationSchema]):
     """User registration DTO."""
 
