@@ -28,11 +28,36 @@ Reporty solves the problem of creating daily reports for developers. Instead of 
 
 ## 🛠️ Tech Stack
 
-- **Language:** Python 3.12
-- **Framework:** Litestar 2.16+
-- **Database:** PostgreSQL with SQLAlchemy 2.0, Alembic
-- **API:** REST with automatic OpenAPI docs
-- **Auth:** JWT with litestar-users
-- **Validation:** MSGSPEC
-- **Code Quality:** Ruff, MyPy, Pre-commit
-- **Deployment:** Docker + Docker Compose
+## Backend
+- **Language**: Python 3.12+
+- **Framework**: Litestar 2.16+ (async web framework)
+- **Database**: PostgreSQL with SQLAlchemy 2.0 ORM
+- **Migrations**: Alembic for database schema management
+- **Authentication**: JWT with litestar-users plugin
+- **Dependency Injection**: Dishka container
+- **Validation**: MSGSPEC for fast serialization/validation
+- **Admin Interface**: SQLAdmin plugin
+-
+## Frontend
+- **Framework**: SvelteKit 5.0+ with TypeScript
+- **Styling**: TailwindCSS 4.1+
+- **Build Tool**: Vite 6.2+
+
+## Development Tools
+- **Code Quality**: Ruff (linting & formatting), MyPy (type checking)
+- **Pre-commit**: Automated code quality checks
+- **Package Management**: UV (Python), npm (Node.js)
+- **Containerization**: Docker + Docker Compose
+
+### Database Operations
+```bash
+# Create new migration
+make migration msg="description"
+
+# Apply migrations
+make migrate
+
+# Direct alembic commands
+docker compose exec backend uv run alembic revision --autogenerate -m "message"
+docker compose exec backend uv run alembic upgrade head
+```

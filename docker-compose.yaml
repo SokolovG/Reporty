@@ -31,7 +31,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD:-postgres}
       - DB_NAME=${DB_NAME:-reporty}
     env_file:
-      - .env
+      - backend/.env.${MODE:-local}
     depends_on:
       db:
         condition: service_healthy

@@ -1,5 +1,6 @@
 import type { Actions, PageServerLoad } from "./$types";
 import {redirect} from "@sveltejs/kit";
+import { BACKEND_API_URL } from '$env/static/private';
 
 
 
@@ -25,7 +26,7 @@ export const actions: Actions = {
         };
 
         try {
-            const response = await fetch('/v1/records', {
+            const response = await fetch(`${BACKEND_API_URL}/v1/records`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -58,7 +59,7 @@ export const actions: Actions = {
         }
 
         try {
-            const response = await fetch(`/v1/records/${recordId}`, {
+            const response = await fetch(`${BACKEND_API_URL}/v1/records/${recordId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': token }
             });
@@ -88,7 +89,7 @@ export const actions: Actions = {
         }
 
         try {
-            const response = await fetch(`/v1/records/${recordId}/status`, {
+            const response = await fetch(`${BACKEND_API_URL}/v1/records/${recordId}/status`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -121,7 +122,7 @@ export const actions: Actions = {
         }
 
         try {
-            const response = await fetch(`/v1/records/${recordId}/append`, {
+            const response = await fetch(`${BACKEND_API_URL}/v1/records/${recordId}/append`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -154,7 +155,7 @@ export const actions: Actions = {
         }
 
         try {
-            const response = await fetch(`/v1/records/${recordId}/process`, {
+            const response = await fetch(`${BACKEND_API_URL}/v1/records/${recordId}/process`, {
                 method: 'POST',
                 headers: { 'Authorization': token }
             });
@@ -177,10 +178,10 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
     try {
         const [recordsResponse, taskTypesResponse] = await Promise.all([
-            fetch('/v1/records', {
+            fetch(`${BACKEND_API_URL}/v1/records`, {
                 headers: { 'Authorization': token }
             }),
-            fetch('/v1/settings/task-types', {
+            fetch(`${BACKEND_API_URL}/v1/settings/task-types`, {
                 headers: { 'Authorization': token }
             })
         ]);

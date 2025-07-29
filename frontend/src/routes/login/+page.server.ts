@@ -1,5 +1,6 @@
 import {redirect} from "@sveltejs/kit";
 import type { PageServerLoad, Actions } from './$types';
+import { BACKEND_API_URL } from '$env/static/private';
 
 export const load: PageServerLoad = async ({ parent }) => {
   const { user } = await parent();
@@ -27,7 +28,7 @@ export const actions: Actions = {
                 password: password.toString()
             };
 
-            const response = await fetch('http://localhost:8080/login', {
+            const response = await fetch(`${BACKEND_API_URL}/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

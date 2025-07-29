@@ -1,5 +1,6 @@
 import type { Actions, PageServerLoad } from "./$types";
 import {error, redirect} from "@sveltejs/kit";
+import { BACKEND_API_URL } from '$env/static/private';
 
 export const actions: Actions = {
     edit: async ({}) => {
@@ -24,7 +25,7 @@ export const load: PageServerLoad = async ({ cookies, params }) => {
      }
 
      try {
-        const recordResponse = await fetch(`/v1/records/${params.id}`, {
+        const recordResponse = await fetch(`${BACKEND_API_URL}/v1/records/${params.id}`, {
                 headers: { 'Authorization': token }
             })
 

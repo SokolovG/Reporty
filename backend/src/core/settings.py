@@ -14,7 +14,6 @@ class Settings(BaseSettings):
     db_name: str = os.getenv("DB_NAME", "reporty")
     db_user: str = os.getenv("DB_USER", "postgres")
     db_password: str = os.getenv("DB_PASSWORD", "password")
-
     debug: bool = os.getenv("DEBUG", "False").lower() == "true"
     secret_key: str = os.getenv("SECRET_KEY", "")
 
@@ -79,6 +78,11 @@ class Settings(BaseSettings):
     def get_system_config(self, system_name: str) -> dict:
         """Get configuration for a specific system."""
         return self.external_systems_config.get(system_name, {})  # type: ignore
+
+    class Config:
+        mode = os.getenv("MODE", "local")
+        env_file = f"backend/.env.{mode}"
+        env_file_encoding = "utf-8"
 
 
 settings = Settings()
