@@ -223,6 +223,10 @@ class User(Base, SQLAlchemyUserMixin):
 
     __tablename__ = "users"
 
+    username: Mapped[str] = mapped_column(
+        String(50), unique=True, nullable=False, comment="Username for authentication"
+    )
+
 
 class TaskType(Base):
     __tablename__ = "task_types"

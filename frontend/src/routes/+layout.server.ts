@@ -20,21 +20,21 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
     throw redirect(302, '/');
   }
 
-  try {
+try {
     const response = await fetch(`${BACKEND_API_URL}/me`, {
       headers: { 'Authorization': authToken }
     });
 
     if (response.status === 401) {
-      // Token is invalid, clear it and redirect to login
       cookies.delete('authToken', { path: '/' });
       throw redirect(302, '/login');
+    }
+
+    if (response.ok) {
+      const user = await response.json();
+      return { user };
     }
   } catch (error) {
     console.log('Token validation failed:', error);
   }
-
-  return {
-    user: null
-  };
 };

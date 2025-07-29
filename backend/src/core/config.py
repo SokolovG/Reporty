@@ -16,6 +16,7 @@ from litestar_users.config import (
 from sqlalchemy import Engine, create_engine
 
 from backend.src.api.dto import UserReadDTO, UserRegistrationDTO, UserUpdateDTO
+from backend.src.api.dto.user_dto import AuthenticationSchema
 from backend.src.core.settings import settings
 from backend.src.database.base import Base
 from backend.src.database.models import User
@@ -71,9 +72,11 @@ litestar_users_config = LitestarUsersConfig(
     user_registration_dto=UserRegistrationDTO,
     user_update_dto=UserUpdateDTO,
     user_service_class=UserService,
+    authentication_request_schema=AuthenticationSchema,
     auth_handler_config=AuthHandlerConfig(),
     register_handler_config=RegisterHandlerConfig(),
     verification_handler_config=VerificationHandlerConfig(),
+    user_auth_identifier="username",
     default_token_expiration=timedelta(days=7),
     auth_exclude_paths=[
         "/admin",

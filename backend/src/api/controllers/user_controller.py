@@ -11,7 +11,7 @@ class UserController(Controller):
         current_user = request.user
         user_dto = UserReadSchema(
             user_id=current_user.id,
-            email=current_user.id,
+            username=current_user.username,
             is_verified=current_user.is_verified,
             is_active=current_user.is_active,
         )

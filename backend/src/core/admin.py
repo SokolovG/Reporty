@@ -27,7 +27,7 @@ class UserAdmin(ModelView, model=User):
     icon = "fa-solid fa-user"
     column_list = [
         User.id,
-        User.email,
+        User.username,
         User.is_active,
         User.created_at,
         User.is_verified,

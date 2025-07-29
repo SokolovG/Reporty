@@ -6,12 +6,17 @@ from backend.src.database.models import User
 
 
 class UserRegistrationSchema(Struct):
-    email: str
+    username: str
+    password: str
+
+
+class AuthenticationSchema(Struct):
+    username: str
     password: str
 
 
 class UserReadSchema(Struct):
-    email: str
+    username: str
     user_id: int
     is_active: bool
     is_verified: bool
