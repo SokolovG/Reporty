@@ -1,5 +1,5 @@
 import type { Actions, PageServerLoad } from "./$types";
-import {redirect} from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
 import { BACKEND_API_URL } from '$env/static/private';
 
 
@@ -40,6 +40,9 @@ export const actions: Actions = {
             }
 
         } catch (error) {
+            if (error instanceof Response) {
+                throw error;
+            }
             return { error: 'Error during record creation' };
         }
         throw redirect(303, '/records');
@@ -69,6 +72,9 @@ export const actions: Actions = {
             }
 
         } catch (error) {
+            if (error instanceof Response) {
+                throw error;
+            }
             return { error: 'Error during record deletion' };
         }
         throw redirect(303, '/records');
@@ -97,11 +103,15 @@ export const actions: Actions = {
                 },
                 body: JSON.stringify({ status: newStatus })
             });
+
             if (!response.ok) {
                 return { error: 'Failed to update status' };
             }
 
         } catch (error) {
+            if (error instanceof Response) {
+                throw error;
+            }
             return { error: 'Error during status update' };
         }
         throw redirect(303, '/records');
@@ -136,6 +146,9 @@ export const actions: Actions = {
             }
 
         } catch (error) {
+            if (error instanceof Response) {
+                throw error;
+            }
             return { error: 'Error during text append' };
         }
         throw redirect(303, '/records');
@@ -165,6 +178,9 @@ export const actions: Actions = {
             }
 
         } catch (error) {
+            if (error instanceof Response) {
+                throw error;
+            }
             return { error: 'Error during AI processing' };
         }
         throw redirect(303, '/records');
@@ -195,6 +211,10 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
         return { records, taskTypes };
     } catch (error) {
+        // If it's a redirect, re-throw it
+        if (error instanceof Response) {
+            throw error;
+        }
         return { records: [], taskTypes: [] };
     }
 };

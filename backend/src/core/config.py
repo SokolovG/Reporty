@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 from advanced_alchemy.config import AsyncSessionConfig
 from advanced_alchemy.extensions.litestar import EngineConfig
@@ -73,6 +74,7 @@ litestar_users_config = LitestarUsersConfig(
     auth_handler_config=AuthHandlerConfig(),
     register_handler_config=RegisterHandlerConfig(),
     verification_handler_config=VerificationHandlerConfig(),
+    default_token_expiration=timedelta(days=7),
     auth_exclude_paths=[
         "/admin",
         "/schema",
