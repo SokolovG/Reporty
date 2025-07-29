@@ -123,28 +123,26 @@
                     </div>
 
                     <!-- Quick Add Section -->
-                    <div class="mt-3 pt-3 border-t border-gray-100">
+                    <div class="mt-3 pt-3 border-t border-gray-100 mb-4">
                             <!-- Quick Add Form -->
                             <form
                                 method="POST"
                                 action="?/appendText"
-                                class="space-y-2"
+                                class="flex gap-2"
                             >
                                 <input type="hidden" name="recordId" value={record.id} />
                                 <input
                                     name="additionalInput"
                                     placeholder="Add follow-up note..."
-                                    class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                     required
                                 />
-                                <div class="flex gap-2">
-                                    <button
-                                        type="submit"
-                                        class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
-                                    >
-                                        Add
-                                    </button>
-                                </div>
+                                <button
+                                    type="submit"
+                                    class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
+                                >
+                                    Add
+                                </button>
                             </form>
                     </div>
 
@@ -158,7 +156,7 @@
 
                     <!-- Footer -->
                     <div class="flex items-center justify-between text-sm text-gray-500">
-                        <span>
+                        <span class="ml-1">
                             {new Date(record.createdAt).toLocaleString('ru-RU', {
                                 year: 'numeric',
                                 month: '2-digit',
