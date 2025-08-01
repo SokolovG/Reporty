@@ -5,11 +5,7 @@ import { BACKEND_API_URL } from '$env/static/private';
 
 
 export const actions: Actions = {
-    create: async ({ request, cookies }) => {
-        const token = cookies.get('authToken');
-        if (!token) {
-            throw redirect(303, '/login');
-        }
+    create: async ({ request }) => {
 
         const formData = await request.formData();
         const text = formData.get('rawInput');
@@ -30,7 +26,6 @@ export const actions: Actions = {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': token
                 },
                 body: JSON.stringify(data)
             });
@@ -48,11 +43,7 @@ export const actions: Actions = {
         throw redirect(303, '/records');
     },
 
-    delete: async ({ request, cookies }) => {
-        const token = cookies.get('authToken');
-        if (!token) {
-            throw redirect(303, '/login');
-        }
+    delete: async ({ request }) => {
 
         const formData = await request.formData();
         const recordId = formData.get('recordId');
@@ -64,7 +55,6 @@ export const actions: Actions = {
         try {
             const response = await fetch(`${BACKEND_API_URL}/v1/records/${recordId}`, {
                 method: 'DELETE',
-                headers: { 'Authorization': token }
             });
 
             if (!response.ok) {
@@ -80,11 +70,7 @@ export const actions: Actions = {
         throw redirect(303, '/records');
     },
 
-    updateStatus: async ({ request, cookies }) => {
-        const token = cookies.get('authToken');
-        if (!token) {
-            throw redirect(303, '/login');
-        }
+    updateStatus: async ({ request }) => {
 
         const formData = await request.formData();
         const recordId = formData.get('recordId');
@@ -99,7 +85,6 @@ export const actions: Actions = {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': token
                 },
                 body: JSON.stringify({ status: newStatus })
             });
@@ -117,11 +102,7 @@ export const actions: Actions = {
         throw redirect(303, '/records');
     },
 
-    appendText: async ({ request, cookies }) => {
-        const token = cookies.get('authToken');
-        if (!token) {
-            throw redirect(303, '/login');
-        }
+    appendText: async ({ request }) => {
 
         const formData = await request.formData();
         const recordId = formData.get('recordId');
@@ -136,7 +117,6 @@ export const actions: Actions = {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': token
                 },
                 body: JSON.stringify({ additionalInput: additionalInput.toString() })
             });
@@ -154,11 +134,7 @@ export const actions: Actions = {
         throw redirect(303, '/records');
     },
 
-    processAI: async ({ request, cookies }) => {
-        const token = cookies.get('authToken');
-        if (!token) {
-            throw redirect(303, '/login');
-        }
+    processAI: async ({ request }) => {
 
         const formData = await request.formData();
         const recordId = formData.get('recordId');
@@ -170,7 +146,6 @@ export const actions: Actions = {
         try {
             const response = await fetch(`${BACKEND_API_URL}/v1/records/${recordId}/process`, {
                 method: 'POST',
-                headers: { 'Authorization': token }
             });
 
             if (!response.ok) {
@@ -186,19 +161,13 @@ export const actions: Actions = {
         throw redirect(303, '/records');
     }
 };
-export const load: PageServerLoad = async ({ cookies }) => {
-    const token = cookies.get('authToken');
-    if (!token) {
-        throw redirect(303, '/login');
-    }
+export const load: PageServerLoad = async ({  }) => {
 
     try {
         const [recordsResponse, taskTypesResponse] = await Promise.all([
             fetch(`${BACKEND_API_URL}/v1/records`, {
-                headers: { 'Authorization': token }
             }),
             fetch(`${BACKEND_API_URL}/v1/settings/task-types`, {
-                headers: { 'Authorization': token }
             })
         ]);
 

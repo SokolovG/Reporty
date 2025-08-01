@@ -6,7 +6,7 @@ from advanced_alchemy.extensions.litestar import EngineConfig
 from dotenv import load_dotenv
 from litestar.contrib.sqlalchemy.plugins import SQLAlchemyAsyncConfig, SQLAlchemyPlugin
 from litestar.logging import LoggingConfig
-from litestar.security.jwt import JWTAuth
+from litestar.security.jwt import JWTCookieAuth
 from litestar_users import LitestarUsersConfig
 from litestar_users.config import (
     AuthHandlerConfig,
@@ -65,7 +65,7 @@ def get_sync_engine() -> Engine:
 
 
 litestar_users_config = LitestarUsersConfig(
-    auth_backend_class=JWTAuth,
+    auth_backend_class=JWTCookieAuth,
     secret=os.getenv("SECRET_KEY", ""),
     user_model=User,  # type: ignore
     user_read_dto=UserReadDTO,
