@@ -1,6 +1,7 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
+import { BACKEND_API_URL } from '$env/static/private';
 
 export default defineConfig({
   plugins: [
@@ -10,7 +11,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: BACKEND_API_URL,
         changeOrigin: true,
       }
     }

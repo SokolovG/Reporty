@@ -1,6 +1,5 @@
 import type { LayoutServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
-import { BACKEND_API_URL } from '$env/static/private';
 
 export const load: LayoutServerLoad = async ({ url, fetch }) => {
 
