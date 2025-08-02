@@ -1,44 +1,14 @@
 import type { Actions, PageServerLoad } from "./$types";
 import { redirect } from "@sveltejs/kit";
-
+import {createRecord} from "$lib/server/records";
 
 
 export const actions: Actions = {
     create: async ({ request, fetch }) => {
-
         const formData = await request.formData();
-        const text = formData.get('rawInput');
-        const title = formData.get('title');
-        const taskType = formData.get('taskType');
+        const result = await createRecord(formData, fetch);
 
-        if (!text || !title) {
-            return { error: 'Title and text are required' };
-        }
-
-        const data = {
-            rawInput: text.toString(),
-            title: taskType ? `${taskType}: ${title}` : title.toString()
-        };
-
-        try {
-            const response = await fetch('/api/v1/records', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            });
-
-            if (!response.ok) {
-                return { error: 'Failed to create record' };
-            }
-
-        } catch (error) {
-            if (error instanceof Response) {
-                throw error;
-            }
-            return { error: 'Error during record creation' };
-        }
+        if (result.error) return result;
         throw redirect(303, '/records');
     },
 
