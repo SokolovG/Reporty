@@ -1,6 +1,5 @@
 import type { Actions, PageServerLoad } from "./$types";
 import { redirect } from "@sveltejs/kit";
-import { BACKEND_API_URL } from '$env/static/private';
 
 
 

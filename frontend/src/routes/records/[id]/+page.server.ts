@@ -1,6 +1,5 @@
 import type { Actions, PageServerLoad } from "./$types";
 import {error, redirect} from "@sveltejs/kit";
-import { BACKEND_API_URL } from '$env/static/private';
 
 export const actions: Actions = {
     edit: async ({}) => {
@@ -17,17 +16,10 @@ export const actions: Actions = {
     }
 }
 
-export const load: PageServerLoad = async ({ cookies, params }) => {
-     const token = cookies.get('authToken');
-
-     if (!token) {
-        throw redirect(303, '/login');
-     }
+export const load: PageServerLoad = async ({ params, fetch }) => {
 
      try {
-        const recordResponse = await fetch(`${BACKEND_API_URL}/v1/records/${params.id}`, {
-                headers: { 'Authorization': token }
-            })
+        const recordResponse = await fetch(`/api/v1/records/${params.id}`)
 
         if (!recordResponse.ok) {
             throw error(404, 'Record not found');

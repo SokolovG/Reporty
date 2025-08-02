@@ -1,6 +1,5 @@
 import {redirect} from "@sveltejs/kit";
 import type { PageServerLoad, Actions } from './$types';
-import { BACKEND_API_URL } from '$env/static/private';
 
 export const load: PageServerLoad = async ({ parent }) => {
   const { user } = await parent();

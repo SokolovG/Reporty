@@ -12,7 +12,7 @@ export const load: LayoutServerLoad = async ({ url, fetch }) => {
   }
 
 try {
-    const response = await fetch('/api/users/me');
+    const response = await fetch('/api/v1/users/me');
 
     if (response.status === 401) {
       throw redirect(302, '/login?error=session_expired');
