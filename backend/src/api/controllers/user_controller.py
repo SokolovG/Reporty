@@ -1,11 +1,11 @@
 from dishka.integrations.litestar import inject
-from litestar import Controller, post, Request
+from litestar import Controller, get, Request
 
 from backend.src.api.dto.user_dto import UserReadSchema, UserReadDTO
 
 
 class UserController(Controller):
-    @post("/me", return_dto=UserReadDTO)
+    @get("/me", return_dto=UserReadDTO)
     @inject
     async def get_me(self, request: Request) -> UserReadSchema:
         current_user = request.user

@@ -73,15 +73,16 @@ litestar_users_config = LitestarUsersConfig(
     user_update_dto=UserUpdateDTO,
     user_service_class=UserService,
     authentication_request_schema=AuthenticationSchema,
-    auth_handler_config=AuthHandlerConfig(),
+    auth_handler_config=AuthHandlerConfig(login_path="/api/login", logout_path="/api/logout"),
     register_handler_config=RegisterHandlerConfig(),
     verification_handler_config=VerificationHandlerConfig(),
     user_auth_identifier="username",
     default_token_expiration=timedelta(days=7),
     auth_exclude_paths=[
-        "/admin",
+        "/admin",  # only for development
         "/schema",
         "/schema/",
-        "/docs/",  # only for development
+        "/docs/",
+        "/api/login",
     ],  # In the future, delete admin here.
 )

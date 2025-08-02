@@ -2,32 +2,21 @@ import type { LayoutServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
 import { BACKEND_API_URL } from '$env/static/private';
 
-export const load: LayoutServerLoad = async ({ cookies, url }) => {
-  const authToken = cookies.get('authToken');
+export const load: LayoutServerLoad = async ({ url, fetch }) => {
 
   const publicPaths = ['/login', '/register'];
   const isPublicPath = publicPaths.some(path => url.pathname.startsWith(path));
 
-  if (!authToken && !isPublicPath) {
-    throw redirect(302, '/login');
-  }
 
-  if (!authToken) {
-    return { user: null };
-  }
-
-  if (isPublicPath && url.pathname === '/login') {
-    throw redirect(302, '/');
+  if (isPublicPath) {
+        return {user: null};
   }
 
 try {
-    const response = await fetch(`${BACKEND_API_URL}/me`, {
-      headers: { 'Authorization': authToken }
-    });
+    const response = await fetch('/api/users/me');
 
     if (response.status === 401) {
-      cookies.delete('authToken', { path: '/' });
-      throw redirect(302, '/login');
+      throw redirect(302, '/login?error=session_expired');
     }
 
     if (response.ok) {
@@ -35,6 +24,9 @@ try {
       return { user };
     }
   } catch (error) {
-    console.log('Token validation failed:', error);
+    if (!(error instanceof Response)) {
+      throw redirect(302, '/login?error=connection_error');
+    }
+    throw error;
   }
 };

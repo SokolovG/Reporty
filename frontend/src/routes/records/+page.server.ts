@@ -5,7 +5,7 @@ import { BACKEND_API_URL } from '$env/static/private';
 
 
 export const actions: Actions = {
-    create: async ({ request }) => {
+    create: async ({ request, fetch }) => {
 
         const formData = await request.formData();
         const text = formData.get('rawInput');
@@ -22,7 +22,7 @@ export const actions: Actions = {
         };
 
         try {
-            const response = await fetch(`${BACKEND_API_URL}/v1/records`, {
+            const response = await fetch('/api/v1/records', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ export const actions: Actions = {
         throw redirect(303, '/records');
     },
 
-    delete: async ({ request }) => {
+    delete: async ({ request, fetch }) => {
 
         const formData = await request.formData();
         const recordId = formData.get('recordId');
@@ -53,7 +53,7 @@ export const actions: Actions = {
         }
 
         try {
-            const response = await fetch(`${BACKEND_API_URL}/v1/records/${recordId}`, {
+            const response = await fetch(`/api/v1/records/${recordId}`, {
                 method: 'DELETE',
             });
 
@@ -70,7 +70,7 @@ export const actions: Actions = {
         throw redirect(303, '/records');
     },
 
-    updateStatus: async ({ request }) => {
+    updateStatus: async ({ request, fetch }) => {
 
         const formData = await request.formData();
         const recordId = formData.get('recordId');
@@ -81,7 +81,7 @@ export const actions: Actions = {
         }
 
         try {
-            const response = await fetch(`${BACKEND_API_URL}/v1/records/${recordId}/status`, {
+            const response = await fetch(`/api/v1/records/${recordId}/status`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ export const actions: Actions = {
         throw redirect(303, '/records');
     },
 
-    appendText: async ({ request }) => {
+    appendText: async ({ request, fetch }) => {
 
         const formData = await request.formData();
         const recordId = formData.get('recordId');
@@ -113,7 +113,7 @@ export const actions: Actions = {
         }
 
         try {
-            const response = await fetch(`${BACKEND_API_URL}/v1/records/${recordId}/append`, {
+            const response = await fetch(`/api/v1/records/${recordId}/append`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -134,7 +134,7 @@ export const actions: Actions = {
         throw redirect(303, '/records');
     },
 
-    processAI: async ({ request }) => {
+    processAI: async ({ request, fetch }) => {
 
         const formData = await request.formData();
         const recordId = formData.get('recordId');
@@ -144,7 +144,7 @@ export const actions: Actions = {
         }
 
         try {
-            const response = await fetch(`${BACKEND_API_URL}/v1/records/${recordId}/process`, {
+            const response = await fetch(`/api/v1/records/${recordId}/process`, {
                 method: 'POST',
             });
 
@@ -161,14 +161,12 @@ export const actions: Actions = {
         throw redirect(303, '/records');
     }
 };
-export const load: PageServerLoad = async ({  }) => {
+export const load: PageServerLoad = async ({ fetch }) => {
 
     try {
         const [recordsResponse, taskTypesResponse] = await Promise.all([
-            fetch(`${BACKEND_API_URL}/v1/records`, {
-            }),
-            fetch(`${BACKEND_API_URL}/v1/settings/task-types`, {
-            })
+            fetch('/api/v1/records'),
+            fetch('/api/v1/settings/task-types')
         ]);
 
         if (!recordsResponse.ok || !taskTypesResponse.ok) {

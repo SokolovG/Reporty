@@ -18,20 +18,14 @@ class ReportAdmin(ModelView, model=Report):
     name_plural = "Reports"
     icon = "fa-solid fa-file-lines"
     column_list = [Report.report_date, Report.content, Report.generated_at]
-    column_formatters = {"content": lambda m, a: Markup(m.content.replace("\n", "<br>"))}  # type: ignore
+    column_formatters = {"content": lambda m, a: Markup(m.content.replace("\n", "<br>"))}  # type:ignore
 
 
 class UserAdmin(ModelView, model=User):
     name = "User"
     name_plural = "Users"
     icon = "fa-solid fa-user"
-    column_list = [
-        User.id,
-        User.username,
-        User.is_active,
-        User.created_at,
-        User.is_verified,
-    ]
+    column_exclude_list = [User.email, User.password_hash]
 
 
 class DailyRecordAdmin(ModelView, model=DailyRecord):

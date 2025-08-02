@@ -13,35 +13,37 @@ export const load: PageServerLoad = async ({ parent }) => {
 };
 
 export const actions: Actions = {
-    login: async ({ request }) => {
+    login: async ({ request, fetch }) => {
         const formData = await request.formData();
-        const email = formData.get('email');
+        const username = formData.get('username');
         const password = formData.get('password');
 
-        if (!email || !password) {
-            return { error: 'Email and password are required' };
+        if (!username || !password) {
+            return { error: 'Username and password are required' };
         }
 
         try {
             const loginData = {
-                email: email.toString(),
+                username: username.toString(),
                 password: password.toString()
             };
 
-            const response = await fetch(`${BACKEND_API_URL}/login`, {
+            const response = await fetch('/api/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(loginData)
+                body: JSON.stringify(loginData),
+                credentials: 'include'
             });
 
             if (!response.ok) {
-                return { error: 'Invalid email or password' };
+                return { error: 'Invalid username or password' };
             }
 
 
         } catch (error) {
+            console.log(error)
             return { error: 'Server connection error' };
         }
 
