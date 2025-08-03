@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { STATUS_STYLES, STATUS_LABELS } from '$lib/constants.js';
     import type {Record} from "$lib/types/record";
     import type {TaskType} from "$lib/types/settings";
     import { goto } from '$app/navigation';
+    import {StatusBadge} from "$lib";
 
     let { data, form } = $props();
 
@@ -79,15 +79,10 @@
                     <div class="flex items-center justify-between mb-3">
                         <div class="flex items-center gap-2">
                             <span class="text-sm text-gray-500">{record.title}</span>
-                            <span class="px-2 py-1 text-xs rounded-full {STATUS_STYLES[record.status]}">
-                                {STATUS_LABELS[record.status]}
-                            </span>
-                            <span class="px-2 py-1 text-xs rounded-full {record.isProcessed ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}">
+                            <StatusBadge status={record.status}/>
+                            <StatusBadge variant={record.isProcessed ? 'success' : 'warning'}>
                                 {record.isProcessed ? 'Processed' : 'Pending'}
-                            </span>
-                            {#if record.isApproved}
-                                <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700">Approved</span>
-                            {/if}
+                            </StatusBadge>
                         </div>
 
                         <div class="flex items-center gap-1">
