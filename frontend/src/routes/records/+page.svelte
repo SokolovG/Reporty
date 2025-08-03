@@ -2,7 +2,7 @@
     import type {Record} from "$lib/types/record";
     import type {TaskType} from "$lib/types/settings";
     import { goto } from '$app/navigation';
-    import {StatusBadge} from "$lib";
+    import {StatusBadge, Button} from "$lib";
 
     let { data, form } = $props();
 
@@ -132,12 +132,7 @@
                                     class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                     required
                                 />
-                                <button
-                                    type="submit"
-                                    class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
-                                >
-                                    Add
-                                </button>
+                                <Button text="Add" variant="primary"></Button>
                             </form>
                     </div>
 

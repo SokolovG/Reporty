@@ -1,7 +1,7 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
     import type { Record } from '$lib/types/record';
-    import {StatusBadge} from "$lib"
+    import {StatusBadge, Button} from "$lib"
 
     let { data } = $props();
 
@@ -90,32 +90,24 @@
         <div class="flex gap-3 pt-4 border-t border-gray-200">
             <form method="POST" action="?/complete" style="display: inline;">
             {#if record.status === 'OPEN'}
-                <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-                    Mark as Complete
-                </button>
+                {#if record.status === 'OPEN'}
+                    <Button text="Mark as Complete" variant="success"></Button>
+                {/if}
             {/if}
             </form>
             <form method="POST" action="?/edit" style="display: inline;">
-                <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                    Edit Record
-                </button>
+                <Button text="Edit Record" variant="primary"></Button>
             </form>
             {#if !record.isProcessed}
-                <button class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
-                    Process with AI
-                </button>
+                <Button text="Process with AI" variant="purple"></Button>
             {:else if !record.isApproved}
                 <form method="POST" action="?/approve" style="display: inline;">
-                    <button class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
-                    Approve
-                </button>
+                    <Button text="Approve" variant="indigo"></Button>
                 </form>
             {/if}
              <form method="POST" action="?/delete" style="display: inline;">
                 <input type="hidden" name="recordId" value={record.id} />
-                 <button class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
-                    Delete
-                </button>
+                 <Button text="Delete" variant="danger"></Button>
              </form>
         </div>
     </div>
