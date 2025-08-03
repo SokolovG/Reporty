@@ -156,7 +156,18 @@ export const actions: Actions = {
             return { error: 'Error during AI processing' };
         }
         throw redirect(303, '/records');
-    }
+    },
+
+    approve: async ({request, fetch }) => {
+
+    },
+
+    edit: async ({request, fetch }) => {
+
+    },
+    complete: async ({request, fetch }) => {
+
+    },
 };
 
 export const load: PageServerLoad = async ({ params, fetch }) => {
