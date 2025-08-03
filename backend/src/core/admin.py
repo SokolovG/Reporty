@@ -17,7 +17,7 @@ class ReportAdmin(ModelView, model=Report):
     name = "Report"
     name_plural = "Reports"
     icon = "fa-solid fa-file-lines"
-    column_list = [Report.report_date, Report.content, Report.generated_at]
+    column_list = [Report.id, Report.report_date, Report.content, Report.generated_at]
     column_formatters = {"content": lambda m, a: Markup(m.content.replace("\n", "<br>"))}  # type:ignore
 
 

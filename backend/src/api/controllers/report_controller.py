@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from dishka import FromDishka
 from dishka.integrations.litestar import inject
 from litestar import Controller, delete, get, patch, post
@@ -26,6 +28,13 @@ class ReportController(Controller):
         self, report_service: FromDishka[ReportService], report_id: int
     ) -> DailyReportResponse:
         return await report_service.get_report(report_id)
+
+    @get(return_dto=DailyReportResponseDTO)
+    @inject
+    async def get_reports(
+        self, report_service: FromDishka[ReportService], date: datetime | None
+    ) -> list[DailyReportResponse]:
+        return await report_service.get_reports()
 
     @delete("/{report_id:int}")
     @inject

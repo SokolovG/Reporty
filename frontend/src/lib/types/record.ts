@@ -10,12 +10,3 @@ export interface Record {
     title: string
     status: string
 }
-
-export interface CreateRecordRequest {
-    rawInput: string
-    title: string
-}
-
-export interface appendRecordRequest {
-    additionalInput: string
-}

@@ -3,7 +3,7 @@ import {redirect} from "@sveltejs/kit";
 
 export const actions: Actions = {
     create: async ({ request, fetch }) => {
-        const formData = await request.formData();
+        const formData: FormData = await request.formData();
         const text = formData.get('rawInput');
         const title = formData.get('title');
         const taskType = formData.get('taskType');

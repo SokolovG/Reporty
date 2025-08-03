@@ -79,6 +79,20 @@ class ReportService:
     async def update_report(self, update_data: DailyReportRequestUpdate) -> None:
         pass
 
+    async def get_reports(self) -> list[DailyReportResponse]:
+        reports = await self.repo.list()
+        response_list = []
+        for report in reports:
+            rep = DailyReportResponse(
+                id=report.id,
+                report_date=report.report_date,
+                content=report.content,
+                entries_count=report.entries_count,
+                generated_at=report.generated_at,
+            )
+            response_list.append(rep)
+        return response_list
+
     def _format_records_to_text(self, records: list, report_date: datetime) -> str:
         date_str = report_date.strftime("%d.%m.%Y")
 
