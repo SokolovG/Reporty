@@ -102,7 +102,7 @@
                             </button>
 
                             <!-- Delete Form -->
-                            <form method="POST" action="?/delete" style="display: inline;">
+                            <form method="POST" action="/records/{record.id}?/delete" style="display: inline;">
                                 <input type="hidden" name="recordId" value={record.id} />
                                 <button
                                     type="submit"
@@ -127,7 +127,7 @@
                             <!-- Quick Add Form -->
                             <form
                                 method="POST"
-                                action="?/appendText"
+                                action="/records/{record.id}?/extendRecord"
                                 class="flex gap-2"
                             >
                                 <input type="hidden" name="recordId" value={record.id} />
@@ -168,7 +168,7 @@
 
                         <div class="flex gap-3">
                             {#if record.status === 'OPEN'}
-                                <form method="POST" action="?/updateStatus" style="display: inline;">
+                                <form method="POST" action="/records/{record.id}?/updateStatus" style="display: inline;">
                                     <input type="hidden" name="recordId" value={record.id} />
                                     <input type="hidden" name="status" value="CLOSED" />
                                     <button type="submit" class="text-green-600 hover:text-green-700 hover:underline">
@@ -178,7 +178,7 @@
                             {/if}
 
                             {#if !record.isProcessed}
-                                <form method="POST" action="?/processAI" style="display: inline;">
+                                <form method="POST" action="/records/{record.id}?/processAI" style="display: inline;">
                                     <input type="hidden" name="recordId" value={record.id} />
                                     <button type="submit" class="text-blue-600 hover:underline">Process</button>
                                 </form>
