@@ -54,5 +54,6 @@
           </span>
         </a>
       </div>
+      </section>
   </div>
 </div>
