@@ -10,10 +10,6 @@ export const actions: Actions = {
         const title = formData.get('title');
         const taskType = formData.get('taskType');
 
-        if (!text || !title) {
-            return { error: 'Title and text are required' };
-        }
-
         const data = {
             rawInput: text.toString(),
             title: taskType ? `${taskType}: ${title}` : title.toString()
@@ -45,10 +41,6 @@ export const actions: Actions = {
         const formData = await request.formData();
         const recordId = formData.get('recordId');
 
-        if (!recordId) {
-            return { error: 'Record ID is required' };
-        }
-
         try {
             const response = await fetch(`/api/v1/records/${recordId}`, {
                 method: 'DELETE',
@@ -71,11 +63,7 @@ export const actions: Actions = {
 
         const formData = await request.formData();
         const recordId = formData.get('recordId');
-        const newStatus = formData.get('status');
-
-        if (!recordId || !newStatus) {
-            return { error: 'Record ID and status are required' };
-        }
+        const newStatus = formData.get('newStatus');
 
         try {
             const response = await fetch(`/api/v1/records/${recordId}/status`, {
@@ -96,7 +84,7 @@ export const actions: Actions = {
             }
             return { error: 'Error during status update' };
         }
-        throw redirect(303, '/records');
+        throw redirect(303, `/records/${recordId}`);
     },
 
     extendRecord: async ({ request, fetch }) => {
@@ -104,10 +92,6 @@ export const actions: Actions = {
         const formData = await request.formData();
         const recordId = formData.get('recordId');
         const additionalInput = formData.get('additionalInput');
-
-        if (!recordId || !additionalInput) {
-            return { error: 'Record ID and text are required' };
-        }
 
         try {
             const response = await fetch(`/api/v1/records/${recordId}/append`, {
@@ -136,10 +120,6 @@ export const actions: Actions = {
         const formData = await request.formData();
         const recordId = formData.get('recordId');
 
-        if (!recordId) {
-            return { error: 'Record ID is required' };
-        }
-
         try {
             const response = await fetch(`/api/v1/records/${recordId}/process`, {
                 method: 'POST',
@@ -163,9 +143,6 @@ export const actions: Actions = {
     },
 
     edit: async ({request, fetch }) => {
-
-    },
-    complete: async ({request, fetch }) => {
 
     },
 };

@@ -45,13 +45,44 @@
 
         </div>
 
-        <!-- Main Content -->
         <div class="mb-6">
-            <h3 class="text-lg font-medium text-gray-900 mb-3">Original Input</h3>
-            <div class="bg-gray-50 rounded-lg p-4 text-gray-900">
-                {record.rawInput}
+    <div class="flex items-center gap-2 mb-4">
+        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <h3 class="text-lg font-medium text-gray-900">Original Input</h3>
+    </div>
+
+    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-400 rounded-r-lg p-4 mb-6">
+        <p class="text-gray-900 leading-relaxed">{record.rawInput}</p>
+    </div>
+
+    <div class="bg-white border-2 border-gray-200 rounded-lg p-4">
+        <h4 class="text-sm font-medium text-gray-700 mb-3">Edit Content:</h4>
+
+        <form method="POST" action="?/updateText" class="space-y-4">
+            <input type="hidden" name="recordId" value={record.id} />
+
+            <div class="relative">
+                <textarea
+                    name="rawInput"
+                    class="w-full border-2 border-gray-300 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none transition-all duration-200 shadow-sm"
+                    rows="4"
+                    placeholder="Update your input..."
+                >{record.rawInput}</textarea>
+
+                <div class="absolute bottom-3 right-3 text-xs text-gray-400">
+                    Press Ctrl+Enter to save
+                </div>
             </div>
-        </div>
+
+            <div class="flex gap-3 justify-end pt-2">
+                <Button text="Cancel"></Button>
+                <Button text="Save Changes" variant="primary" />
+            </div>
+        </form>
+    </div>
+</div>
 
         <!-- Metadata -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -88,12 +119,15 @@
 
         <!-- Actions -->
         <div class="flex gap-3 pt-4 border-t border-gray-200">
-            <form method="POST" action="?/complete" style="display: inline;">
-            {#if record.status === 'OPEN'}
+            <form method="POST" action="?/updateStatus" style="display: inline;">
+                <input type="hidden" name="recordId" value={record.id} />
                 {#if record.status === 'OPEN'}
+                    <input type="hidden" name="newStatus" value="CLOSED"/>
                     <Button text="Mark as Complete" variant="success"></Button>
+                {:else}
+                    <input type="hidden" name="newStatus" value="OPEN"/>
+                    <Button text="Reopen" variant="success"></Button>
                 {/if}
-            {/if}
             </form>
             <form method="POST" action="?/edit" style="display: inline;">
                 <Button text="Edit Record" variant="primary"></Button>
