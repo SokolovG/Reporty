@@ -57,5 +57,5 @@ class AuthController(Controller):
         service: FromDishka[AuthService],
         request: Request,
     ) -> UserReadSchema:
-        user = await service.get_me()
+        user = await service.get_me()  # type: ignore
         return user  # type: ignore

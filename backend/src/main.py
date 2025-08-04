@@ -3,7 +3,6 @@ from dishka import make_async_container
 from dishka.integrations.litestar import setup_dishka, LitestarProvider
 from litestar import Litestar
 from litestar.config.cors import CORSConfig
-from litestar_users import LitestarUsersPlugin
 from sqladmin_litestar_plugin import SQLAdminPlugin
 
 from backend.src.api.routes import (
@@ -11,7 +10,6 @@ from backend.src.api.routes import (
     report_router,
     task_router,
     settings_router,
-    user_router,
     auth_router,
 )
 from backend.src.core.admin import (
@@ -28,7 +26,6 @@ from backend.src.core.config import (
     get_sqlalchemy_config,
     get_sqlalchemy_plugin,
     get_sync_engine,
-    litestar_users_config,
     logging_config,
 )
 from backend.src.core.dependencies import MyProvider
@@ -49,7 +46,6 @@ admin_plugin = SQLAdminPlugin(
         TaskTypeAdmin,
     ],
 )
-litestar_users = LitestarUsersPlugin(config=litestar_users_config)
 cors_config = CORSConfig(
     allow_origins=["http://localhost:5173", "http://0.0.0.0:8080"],
     allow_methods=["*"],
@@ -62,10 +58,9 @@ app = Litestar(
         task_router,
         record_router,
         settings_router,
-        user_router,
         auth_router,
     ],
-    plugins=[sqlalchemy_plugin, admin_plugin, litestar_users],
+    plugins=[sqlalchemy_plugin, admin_plugin],
     debug=True,
     logging_config=logging_config,
     cors_config=cors_config,
