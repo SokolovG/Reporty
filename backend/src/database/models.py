@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from litestar_users.adapter.sqlalchemy.mixins import SQLAlchemyUserMixin
 from sqlalchemy import (
     JSON,
     Boolean,
@@ -218,7 +217,7 @@ class AIProvider(Base):
     __table_args__ = (Index("ix_ai_providers_active", "is_active"),)
 
 
-class User(Base, SQLAlchemyUserMixin):
+class User(Base):
     """Application user."""
 
     __tablename__ = "users"
@@ -226,6 +225,14 @@ class User(Base, SQLAlchemyUserMixin):
     username: Mapped[str] = mapped_column(
         String(50), unique=True, nullable=False, comment="Username for authentication"
     )
+    email: Mapped[str] = mapped_column(
+        String(50), unique=True, nullable=True, comment="Email for authentication"
+    )
+    password_hash: Mapped[str] = mapped_column(
+        String, unique=True, nullable=False, comment="Password hash"
+    )
+    is_active: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_verify: Mapped[bool] = mapped_column(Boolean, default=False)
 
 
 class TaskType(Base):

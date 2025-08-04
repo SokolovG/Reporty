@@ -1,3 +1,15 @@
+from backend.src.api.dto.auth_dto import (
+    ChangePasswordRequest,
+    ChangePasswordRequestSchemaDTO,
+    RefreshTokenRequest,
+    RefreshTokenRequestSchemaDTO,
+    LogoutRequest,
+    LogoutRequestDTO,
+    LoginRequest,
+    LoginRequestDTO,
+    RegisterRequestDTO,
+    RegisterRequest,
+)
 from backend.src.api.dto.record_dto import (
     DailyRecordRequest,
     DailyRecordRequestDTO,
@@ -77,4 +89,14 @@ __all__ = [
     "ExternalSystemResponseDTO",
     "ExternalSystemUpdateRequest",
     "ExternalSystemUpdateRequestDTO",
+    "ChangePasswordRequest",
+    "ChangePasswordRequestSchemaDTO",
+    "RefreshTokenRequest",
+    "RefreshTokenRequestSchemaDTO",
+    "LogoutRequest",
+    "LogoutRequestDTO",
+    "LoginRequest",
+    "LoginRequestDTO",
+    "RegisterRequest",
+    "RegisterRequestDTO",
 ]

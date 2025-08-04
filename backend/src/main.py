@@ -12,6 +12,7 @@ from backend.src.api.routes import (
     task_router,
     settings_router,
     user_router,
+    auth_router,
 )
 from backend.src.core.admin import (
     DailyRecordAdmin,
@@ -56,7 +57,14 @@ cors_config = CORSConfig(
     expose_headers=["authorization"],
 )
 app = Litestar(
-    route_handlers=[report_router, task_router, record_router, settings_router, user_router],
+    route_handlers=[
+        report_router,
+        task_router,
+        record_router,
+        settings_router,
+        user_router,
+        auth_router,
+    ],
     plugins=[sqlalchemy_plugin, admin_plugin, litestar_users],
     debug=True,
     logging_config=logging_config,

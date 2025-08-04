@@ -14,10 +14,14 @@ from backend.src.database.repositories import (
     AIProviderRepository,
     UserProfileRepository,
 )
-from backend.src.services import ReportService, CryptoService
-from backend.src.services.record_service import RecordService
-from backend.src.services.task_service import TaskService
-from backend.src.services.settings_service import SettingsService
+from backend.src.services import (
+    ReportService,
+    CryptoService,
+    AuthService,
+    TaskService,
+    SettingsService,
+    RecordService,
+)
 
 
 class MyProvider(Provider):
@@ -102,3 +106,7 @@ class MyProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def user_repository(self, db_session: AsyncSession) -> UserRepository:
         return UserRepository(session=db_session)
+
+    @provide(scope=Scope.REQUEST)
+    def auth_service(self, user_repo: UserRepository) -> AuthService:
+        return AuthService(user_repo)
