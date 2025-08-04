@@ -4,26 +4,30 @@ from backend.src.api.dto.base import BaseMsgspecDTO
 
 
 class ChangePasswordRequest(msgspec.Struct):
-    pass
+    old_password: str
+    new_password: str
 
 
 class RefreshTokenRequest(msgspec.Struct):
-    pass
+    username: str
 
 
 class LogoutRequest(msgspec.Struct):
-    pass
+    username: str
 
 
 class LoginRequest(msgspec.Struct):
-    pass
-
-
-class LoginRequestDTO(BaseMsgspecDTO[LoginRequest]):
-    pass
+    username: str
+    password: str
 
 
 class RegisterRequest(msgspec.Struct):
+    username: str
+    password: str
+    email: str | None = None
+
+
+class LoginRequestDTO(BaseMsgspecDTO[LoginRequest]):
     pass
 
 

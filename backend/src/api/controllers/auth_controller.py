@@ -37,7 +37,7 @@ class AuthController(Controller):
         return None
 
     @inject
-    async def refresh(
+    async def refresh_token(
         self, service: FromDishka[AuthService], request: Request, data: RefreshTokenRequest
     ) -> None:
         result = await service.refresh(data)  # type: ignore

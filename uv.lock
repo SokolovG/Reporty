@@ -910,6 +910,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/61/ad/689f02752eeec26aed679477e80e632ef1b682313be70793d798c1d5fc8f/PyJWT-2.10.1-py3-none-any.whl", hash = "sha256:dcdd193e30abefd5debf142f9adfcdd2b58004e644f25406ffaebd50bd98dacb", size = 22997 },
 ]
 
+[package.optional-dependencies]
+crypto = [
+    { name = "cryptography" },
+]
+
 [[package]]
 name = "python-dotenv"
 version = "1.1.0"
@@ -973,6 +978,7 @@ dependencies = [
     { name = "pre-commit" },
     { name = "psycopg2-binary" },
     { name = "pydantic-settings" },
+    { name = "pyjwt", extra = ["crypto"] },
     { name = "ruff" },
     { name = "sqladmin-litestar-plugin" },
     { name = "sqlalchemy" },
@@ -995,6 +1001,7 @@ requires-dist = [
     { name = "pre-commit", specifier = ">=4.2.0" },
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
     { name = "pydantic-settings", specifier = ">=2.9.1" },
+    { name = "pyjwt", extras = ["crypto"], specifier = ">=2.10.1" },
     { name = "ruff", specifier = ">=0.11.12" },
     { name = "sqladmin-litestar-plugin", specifier = ">=0.2.0" },
     { name = "sqlalchemy", specifier = ">=2.0.41" },
