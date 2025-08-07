@@ -38,7 +38,7 @@ class AuthService:
         self._to_response = get_converter(User, UserResponse)
 
     async def register(self, data: RegisterRequest) -> UserResponse | FailResponse:
-        user = self.repo.get_one_or_none(email=data.email)
+        user = await self.repo.get_one_or_none(email=data.email)
         if user:
             return FailResponse(
                 msg="Authentication failed",
@@ -50,14 +50,13 @@ class AuthService:
                     },
                 ),
             )
-        hash_password = self.jwt_service.hash_password(data.password)
-        data.password = hash_password
-        user = await self.repo.create_user(data)
+        hashed_password = self.jwt_service.hash_password(data.password)
+        user = await self.repo.create_user(data.email, data.name, hashed_password)
         await self.notification_service.send_register_notification()
         return self._to_response(user)
 
     async def login(self, data: LoginRequest) -> SuccessLoginResponse | FailedLoginResponse:
-        user = await self.repo.get_one_or_none(data)  # type: ignore
+        user = await self.repo.get_one_or_none(data.email)  # type: ignore
         if not user:
             return FailedLoginResponse()
         return SuccessLoginResponse()
