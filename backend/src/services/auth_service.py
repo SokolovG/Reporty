@@ -10,7 +10,6 @@ from backend.src.api.dto import (
 from backend.src.api.dto.auth_dto import (
     UserResponse,
     SuccessLoginResponse,
-    FailedLoginResponse,
     SuccessLogoutResponse,
     FailedRefreshResponse,
     SuccessRefreshResponse,
@@ -51,15 +50,43 @@ class AuthService:
                 ),
             )
         hashed_password = self.jwt_service.hash_password(data.password)
-        user = await self.repo.create_user(data.email, data.name, hashed_password)
+        user = await self.repo.create_user(
+            email=data.email, name=data.name, password_hash=hashed_password
+        )
         await self.notification_service.send_register_notification()
         return self._to_response(user)
 
-    async def login(self, data: LoginRequest) -> SuccessLoginResponse | FailedLoginResponse:
+    async def login(self, data: LoginRequest) -> SuccessLoginResponse | FailResponse:
         user = await self.repo.get_one_or_none(data.email)  # type: ignore
         if not user:
-            return FailedLoginResponse()
-        return SuccessLoginResponse()
+            return FailResponse(
+                msg="Authentication failed",
+                error_code=ErrorCode.USER_NOT_EXIST,
+                details=BaseErrorDetails(
+                    reason="User with provided email not exist in database",
+                    context={
+                        "email": data.email,
+                    },
+                ),
+            )
+        hashed_password = await self.repo.get_hashed_password(email=data.email)
+        success = await self.jwt_service.verify_password(data.password, hashed_password)
+        refresh, access = await self.jwt_service.login()
+        if success:
+            return SuccessLoginResponse(
+                refresh=refresh,
+                access=access,
+            )
+        return FailResponse(
+            msg="Authentication failed",
+            error_code=ErrorCode.INVALID_CREDENTIALS,
+            details=BaseErrorDetails(
+                reason="Email or password are invalid",
+                context={
+                    "email": data.email,
+                },
+            ),
+        )
 
     async def logout(self, data: LogoutRequest) -> SuccessLogoutResponse:
         user = await self.repo.get(data.email)  # noqa

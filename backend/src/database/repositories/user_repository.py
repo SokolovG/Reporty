@@ -15,3 +15,8 @@ class UserRepository(repository.SQLAlchemyAsyncRepository[User]):  # type: ignor
         await self.add(user)
         await self.session.commit()
         return user
+
+    async def get_hashed_password(self, email: str) -> str:
+        user = await self.get_one(email=email)
+        password_hash = user.password_hash
+        return password_hash
