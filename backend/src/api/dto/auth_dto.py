@@ -24,7 +24,7 @@ class LoginRequest(msgspec.Struct):
 class RegisterRequest(msgspec.Struct):
     username: str
     password: str
-    email: str | None = None
+    email: str
 
 
 class LoginRequestDTO(BaseMsgspecDTO[LoginRequest]):
@@ -32,6 +32,42 @@ class LoginRequestDTO(BaseMsgspecDTO[LoginRequest]):
 
 
 class RegisterRequestDTO(BaseMsgspecDTO[RegisterRequest]):
+    pass
+
+
+class UserResponse(msgspec.Struct):
+    username: str
+    email: str
+    user_id: int
+    is_active: bool
+    is_verified: bool
+
+
+class FailedLoginResponse(msgspec.Struct):
+    pass
+
+
+class SuccessLogoutResponse(msgspec.Struct):
+    pass
+
+
+class SuccessLoginResponse(msgspec.Struct):
+    pass
+
+
+class SuccessRefreshResponse(msgspec.Struct):
+    pass
+
+
+class FailedRefreshResponse(msgspec.Struct):
+    pass
+
+
+class SuccessChangePasswordResponse(msgspec.Struct):
+    pass
+
+
+class FailedChangePasswordResponse(msgspec.Struct):
     pass
 
 

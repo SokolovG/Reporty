@@ -9,6 +9,13 @@ from backend.src.api.dto.auth_dto import (
     LoginRequestDTO,
     RegisterRequestDTO,
     RegisterRequest,
+    FailedLoginResponse,
+    SuccessLoginResponse,
+    SuccessLogoutResponse,
+    SuccessRefreshResponse,
+    FailedRefreshResponse,
+    SuccessChangePasswordResponse,
+    FailedChangePasswordResponse,
 )
 from backend.src.api.dto.record_dto import (
     DailyRecordRequest,
@@ -99,4 +106,11 @@ __all__ = [
     "LoginRequestDTO",
     "RegisterRequest",
     "RegisterRequestDTO",
+    "FailedLoginResponse",
+    "SuccessLoginResponse",
+    "SuccessLogoutResponse",
+    "SuccessRefreshResponse",
+    "FailedRefreshResponse",
+    "SuccessChangePasswordResponse",
+    "FailedChangePasswordResponse",
 ]
