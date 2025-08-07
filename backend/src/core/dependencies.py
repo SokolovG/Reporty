@@ -21,6 +21,8 @@ from backend.src.services import (
     TaskService,
     SettingsService,
     RecordService,
+    JWTService,
+    NotificationService,
 )
 
 
@@ -108,5 +110,18 @@ class MyProvider(Provider):
         return UserRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
-    def auth_service(self, user_repo: UserRepository) -> AuthService:
-        return AuthService(user_repo)
+    def jwt_service(self) -> JWTService:
+        return JWTService()
+
+    @provide(scope=Scope.REQUEST)
+    def notification_service(self) -> NotificationService:
+        return NotificationService()
+
+    @provide(scope=Scope.REQUEST)
+    def auth_service(
+        self,
+        user_repo: UserRepository,
+        jwt_service: JWTService,
+        notification_service: NotificationService,
+    ) -> AuthService:
+        return AuthService(user_repo, jwt_service, notification_service)

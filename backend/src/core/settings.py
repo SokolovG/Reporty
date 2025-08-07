@@ -19,8 +19,8 @@ class Settings(BaseSettings):
     db_password: str = os.getenv("DB_PASSWORD", "password")
     debug: bool = os.getenv("DEBUG", "False").lower() == "true"
     secret_key: str = os.getenv("SECRET_KEY", "")
-    public_key: Path = BASE_DIR / ".certs" / "jwt-private.pem"
-    private_key: Path = BASE_DIR / ".certs" / "jwt-public.pem"
+    public_key: Path = BASE_DIR / ".certs" / "jwt-public.pem"
+    private_key: Path = BASE_DIR / ".certs" / "jwt-private.pem"
     algorithm: str = "RS256"
 
     ai_api_key: str | None = os.getenv("AI_API_KEY", None)

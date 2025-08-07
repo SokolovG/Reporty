@@ -9,20 +9,20 @@ class ChangePasswordRequest(msgspec.Struct):
 
 
 class RefreshTokenRequest(msgspec.Struct):
-    username: str
+    email: str
 
 
 class LogoutRequest(msgspec.Struct):
-    username: str
+    email: str
 
 
 class LoginRequest(msgspec.Struct):
-    username: str
+    email: str
     password: str
 
 
 class RegisterRequest(msgspec.Struct):
-    username: str
+    name: str
     password: str
     email: str
 
@@ -36,7 +36,7 @@ class RegisterRequestDTO(BaseMsgspecDTO[RegisterRequest]):
 
 
 class UserResponse(msgspec.Struct):
-    username: str
+    name: str
     email: str
     user_id: int
     is_active: bool

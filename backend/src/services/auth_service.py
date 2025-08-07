@@ -17,18 +17,43 @@ from backend.src.api.dto.auth_dto import (
     SuccessChangePasswordResponse,
     FailedChangePasswordResponse,
 )
-from backend.src.api.dto.responses import FailResponse
+from backend.src.api.responses import FailResponse
+from backend.src.api.responses.base_responses import BaseErrorDetails
+from backend.src.core.errors import ErrorCode
 from backend.src.database.models import User
 from backend.src.database.repositories import UserRepository
+from backend.src.services import JWTService, NotificationService
 
 
 class AuthService:
-    def __init__(self, user_repository: UserRepository) -> None:
+    def __init__(
+        self,
+        user_repository: UserRepository,
+        jwt_service: JWTService,
+        notification_service: NotificationService,
+    ) -> None:
         self.repo = user_repository
+        self.jwt_service = jwt_service
+        self.notification_service = notification_service
         self._to_response = get_converter(User, UserResponse)
 
-    async def register(self, data: RegisterRequest) -> UserResponse:
+    async def register(self, data: RegisterRequest) -> UserResponse | FailResponse:
+        user = self.repo.get_one_or_none(email=data.email)
+        if user:
+            return FailResponse(
+                msg="Authentication failed",
+                error_code=ErrorCode.USER_ALREADY_EXISTS,
+                details=BaseErrorDetails(
+                    reason="User with provided email already exist",
+                    context={
+                        "email": data.email,
+                    },
+                ),
+            )
+        hash_password = self.jwt_service.hash_password(data.password)
+        data.password = hash_password
         user = await self.repo.create_user(data)
+        await self.notification_service.send_register_notification()
         return self._to_response(user)
 
     async def login(self, data: LoginRequest) -> SuccessLoginResponse | FailedLoginResponse:
@@ -38,14 +63,14 @@ class AuthService:
         return SuccessLoginResponse()
 
     async def logout(self, data: LogoutRequest) -> SuccessLogoutResponse:
-        user = await self.repo.get(data.username)  # noqa
+        user = await self.repo.get(data.email)  # noqa
         # DELETE TOKEN FROM COOKIES
         return SuccessLogoutResponse()
 
     async def refresh(
         self, data: RefreshTokenRequest
     ) -> SuccessRefreshResponse | FailedRefreshResponse:
-        user = await self.repo.get(data.username)
+        user = await self.repo.get(data.email)
         if not user:
             return FailedRefreshResponse()
         return SuccessRefreshResponse()
@@ -67,3 +92,5 @@ class AuthService:
         if not user:
             return FailResponse()
         return UserResponse()  # type: ignore
+
+    async def forgot_password(self) -> None: ...

@@ -8,4 +8,11 @@ class UserRepository(repository.SQLAlchemyAsyncRepository[User]):  # type: ignor
     model_type: type[User] = User
 
     async def create_user(self, data: RegisterRequest) -> User:
-        return User()
+        user = User(
+            email=data.email,
+            password_hash=data.password,
+            name=data.name,
+        )
+        await self.add(user)
+        await self.session.commit()
+        return user
