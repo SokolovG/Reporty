@@ -1,3 +1,3 @@
-from backend.src.api.dto.responses.error_responses import FailResponse
+from backend.src.api.responses.error_responses import ErrorResponse
 
-__all__ = ["FailResponse"]
+__all__ = ["ErrorResponse"]

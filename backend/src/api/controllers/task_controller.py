@@ -1,6 +1,4 @@
-from litestar import Controller
-from litestar import post
-from litestar import put, delete
+from litestar import Controller, post, put, delete
 from backend.src.api.dto.record_dto import (
     ExternalTaskCreateRequest,
     ExternalTaskCreateRequestDTO,
@@ -9,66 +7,41 @@ from backend.src.api.dto.record_dto import (
     ExternalTaskResponse,
     ExternalTaskResponseDTO,
 )
+from backend.src.api.decorators import crud_error_handler
+from backend.src.api.responses import ErrorResponse
 from backend.src.services.task_service import TaskService
 from dishka.integrations.litestar import inject
 from dishka import FromDishka
 
 
 class TaskController(Controller):
-    @post(
-        "/external-tasks/",
-        dto=ExternalTaskCreateRequestDTO,
-        return_dto=ExternalTaskResponseDTO,
-    )
+    @post("/external-tasks/", dto=ExternalTaskCreateRequestDTO, return_dto=ExternalTaskResponseDTO)
+    @crud_error_handler
     @inject
     async def create_external_task(
         self, data: ExternalTaskCreateRequest, task_service: FromDishka[TaskService]
-    ) -> ExternalTaskResponse:
-        task = await task_service.create_external_task(data)
-        return ExternalTaskResponse(
-            id=task.id,
-            external_id=task.external_id,
-            external_system_id=task.external_system_id,
-            title=task.title,
-            description=task.description,
-            status=task.status,
-            url=task.url,
-            external_created_at=task.external_created_at,
-            external_updated_at=task.external_updated_at,
-            completed_at=task.completed_at,
-            last_sync=task.last_sync,
-        )
+    ) -> ExternalTaskResponse | ErrorResponse:
+        return await task_service.create_external_task(data)
 
     @put(
         "/external-tasks/{task_id:int}",
         dto=ExternalTaskUpdateRequestDTO,
         return_dto=ExternalTaskResponseDTO,
     )
+    @crud_error_handler
     @inject
     async def update_external_task(
         self,
         task_id: int,
         data: ExternalTaskUpdateRequest,
         task_service: FromDishka[TaskService],
-    ) -> ExternalTaskResponse:
-        task = await task_service.update_external_task(task_id, data)
-        return ExternalTaskResponse(
-            id=task.id,
-            external_id=task.external_id,
-            external_system_id=task.external_system_id,
-            title=task.title,
-            description=task.description,
-            status=task.status,
-            url=task.url,
-            external_created_at=task.external_created_at,
-            external_updated_at=task.external_updated_at,
-            completed_at=task.completed_at,
-            last_sync=task.last_sync,
-        )
+    ) -> ExternalTaskResponse | ErrorResponse:
+        return await task_service.update_external_task(task_id, data)
 
     @delete("/external-tasks/{task_id:int}", status_code=204)
+    @crud_error_handler
     @inject
     async def delete_external_task(
         self, task_id: int, task_service: FromDishka[TaskService]
-    ) -> None:
-        await task_service.delete_external_task(task_id)
+    ) -> ErrorResponse | None:
+        return await task_service.delete_external_task(task_id)

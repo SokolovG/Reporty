@@ -1,61 +1,73 @@
 from dishka import FromDishka
 from dishka.integrations.litestar import inject
-from litestar import Controller, get, Request
+from litestar import Controller, get, post, Request
 
 from backend.src.api.dto import (
-    UserReadDTO,
     ChangePasswordRequest,
     RefreshTokenRequest,
     LogoutRequest,
     LoginRequest,
     RegisterRequest,
 )
-from backend.src.api.dto.user_dto import UserReadSchema
+from backend.src.api.decorators import auth_error_handler
+from backend.src.api.dto.auth_dto import (
+    UserResponse,
+    SuccessLoginResponse,
+    SuccessLogoutResponse,
+    SuccessRefreshResponse,
+    SuccessChangePasswordResponse,
+)
+from backend.src.api.responses import ErrorResponse
 from backend.src.services import AuthService
 
 
 class AuthController(Controller):
+    @post("/register")
+    @auth_error_handler
     @inject
     async def register(
         self, service: FromDishka[AuthService], request: Request, data: RegisterRequest
-    ) -> None:
-        result = await service.register(data)  # type: ignore
-        return None
+    ) -> UserResponse | ErrorResponse:
+        return await service.register(data)
 
+    @post("/login")
+    @auth_error_handler
     @inject
     async def login(
         self, service: FromDishka[AuthService], request: Request, data: LoginRequest
-    ) -> None:
-        result = await service.login(data)  # type: ignore
-        return None
+    ) -> SuccessLoginResponse | ErrorResponse:
+        return await service.login(data)
 
+    @post("/logout")
+    @auth_error_handler
     @inject
     async def logout(
         self, service: FromDishka[AuthService], request: Request, data: LogoutRequest
-    ) -> None:
-        result = await service.logout(data)  # type: ignore
-        return None
+    ) -> SuccessLogoutResponse | ErrorResponse:
+        return await service.logout(data)
 
+    @post("/refresh")
+    @auth_error_handler
     @inject
     async def refresh_token(
         self, service: FromDishka[AuthService], request: Request, data: RefreshTokenRequest
-    ) -> None:
-        result = await service.refresh(data)  # type: ignore
-        return None
+    ) -> SuccessRefreshResponse | ErrorResponse:
+        return await service.refresh(data)
 
+    @post("/change-password")
+    @auth_error_handler
     @inject
     async def change_password(
         self, service: FromDishka[AuthService], request: Request, data: ChangePasswordRequest
-    ) -> None:
-        result = await service.change_password(data)  # type: ignore
-        return None
+    ) -> SuccessChangePasswordResponse | ErrorResponse:
+        return await service.change_password(data)
 
-    @get("/me", return_dto=UserReadDTO)
+    @get("/me")
+    @auth_error_handler
     @inject
     async def get_me(
         self,
         service: FromDishka[AuthService],
         request: Request,
-    ) -> UserReadSchema:
-        user = await service.get_me()  # type: ignore
-        return user  # type: ignore
+    ) -> UserResponse | ErrorResponse:
+        return await service.get_me()
