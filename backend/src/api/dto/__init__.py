@@ -16,6 +16,8 @@ from backend.src.api.dto.auth_dto import (
     FailedRefreshResponse,
     SuccessChangePasswordResponse,
     FailedChangePasswordResponse,
+    TokenInfo,
+    TokenInfoDTO,
 )
 from backend.src.api.dto.record_dto import (
     DailyRecordRequest,
@@ -113,4 +115,6 @@ __all__ = [
     "FailedRefreshResponse",
     "SuccessChangePasswordResponse",
     "FailedChangePasswordResponse",
+    "TokenInfo",
+    "TokenInfoDTO",
 ]

@@ -56,7 +56,7 @@ class AuthService:
 
         hashed_password = await self.repo.get_hashed_password(email=data.email)
         success = await self.jwt_service.verify_password(data.password, hashed_password)
-        refresh, access = await self.jwt_service.login()
+        refresh, access = await self.jwt_service.login()  # type: ignore
 
         if success:
             return SuccessLoginResponse(

@@ -56,6 +56,11 @@ class SuccessLoginResponse(msgspec.Struct):
     access: str
 
 
+class TokenInfo(msgspec.Struct):
+    access: str
+    token_type: str
+
+
 class SuccessRefreshResponse(msgspec.Struct):
     pass
 
@@ -77,6 +82,10 @@ class LogoutRequestDTO(BaseMsgspecDTO[LogoutRequest]):
 
 
 class RefreshTokenRequestSchemaDTO(BaseMsgspecDTO[RefreshTokenRequest]):
+    pass
+
+
+class TokenInfoDTO(BaseMsgspecDTO[TokenInfo]):
     pass
 
 

@@ -2,6 +2,8 @@ from typing import NamedTuple
 
 import bcrypt
 
+from backend.src.api.dto import TokenInfo
+
 
 class Tokens(NamedTuple):
     access: str
@@ -23,8 +25,6 @@ class JWTService:
         hash_bytes = hash_password.encode("utf-8")
         return bcrypt.checkpw(password_bytes, hash_bytes)
 
-    async def login(self) -> Tokens:
-        return Tokens(
-            access="",
-            refresh="",
-        )
+    async def login(self) -> TokenInfo:
+        access = ""
+        return TokenInfo(access=access, token_type="Bearer")
