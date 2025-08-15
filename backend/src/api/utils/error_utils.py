@@ -1,5 +1,3 @@
-"""Утилиты для создания ErrorResponse."""
-
 from typing import Any
 from backend.src.api.responses import ErrorResponse
 from backend.src.api.responses.base_responses import BaseErrorDetails
@@ -24,12 +22,10 @@ def create_error(
 def auth_error(
     message: str = "Authentication failed", context: dict[str, Any] | None = None
 ) -> ErrorResponse:
-    """Создать ошибку аутентификации."""
     return create_error(ErrorCode.INVALID_CREDENTIALS, message, "Authentication failed", context)
 
 
 def user_not_found_error(email: str | None = None) -> ErrorResponse:
-    """Ошибка - пользователь не найден."""
     context = {"email": email} if email else {}
     return create_error(
         ErrorCode.USER_NOT_EXIST,
@@ -40,7 +36,6 @@ def user_not_found_error(email: str | None = None) -> ErrorResponse:
 
 
 def user_already_exists_error(email: str) -> ErrorResponse:
-    """Ошибка - пользователь уже существует."""
     return create_error(
         ErrorCode.USER_ALREADY_EXISTS,
         "User already exists",
@@ -50,12 +45,10 @@ def user_already_exists_error(email: str) -> ErrorResponse:
 
 
 def validation_error(message: str, context: dict[str, Any] | None = None) -> ErrorResponse:
-    """Ошибка валидации."""
     return create_error("VALIDATION_ERROR", message, "Validation failed", context)
 
 
 def not_found_error(resource: str, resource_id: Any | None = None) -> ErrorResponse:
-    """Ошибка - ресурс не найден."""
     context = {"resource_id": resource_id} if resource_id else {}
     return create_error(
         "NOT_FOUND",
@@ -68,5 +61,4 @@ def not_found_error(resource: str, resource_id: Any | None = None) -> ErrorRespo
 def internal_error(
     message: str = "Internal server error", context: dict[str, Any] | None = None
 ) -> ErrorResponse:
-    """Внутренняя ошибка сервера."""
     return create_error("INTERNAL_ERROR", message, "An internal error occurred", context)
