@@ -59,9 +59,7 @@ class AuthService:
         token_info = await self.jwt_service.login(user_id=user.id)
 
         if success:
-            return SuccessLoginResponse(
-                access=token_info.access,
-            )
+            return SuccessLoginResponse(access=token_info.access, refresh=token_info.refresh)
 
         return auth_error("Invalid email or password", {"email": data.email})
 

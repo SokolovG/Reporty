@@ -53,10 +53,13 @@ class SuccessLogoutResponse(msgspec.Struct):
 
 class SuccessLoginResponse(msgspec.Struct):
     access: str
+    refresh: str
+    token_type: str = "Bearer"
 
 
 class TokenInfo(msgspec.Struct):
     access: str
+    refresh: str
     token_type: str
 
 

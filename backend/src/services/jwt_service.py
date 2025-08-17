@@ -28,7 +28,7 @@ class JWTService:
         return token
 
     async def verify_token(self, token: str) -> dict | None: ...
-    async def create_refresh_token(self, user_id: int) -> str:
+    async def _create_refresh_token(self, user_id: int) -> str:
         payload = {
             "sub": str(user_id),
             "iat": datetime.utcnow(),
@@ -55,4 +55,5 @@ class JWTService:
 
     async def login(self, user_id: int) -> TokenInfo:
         access = await self._create_access_token(user_id)
-        return TokenInfo(access=access, token_type="Bearer")
+        refresh = await self._create_refresh_token(user_id)
+        return TokenInfo(refresh=refresh, access=access, token_type="Bearer")

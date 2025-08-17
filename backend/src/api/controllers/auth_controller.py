@@ -1,6 +1,6 @@
 from dishka import FromDishka
 from dishka.integrations.litestar import inject
-from litestar import Controller, get, post, Request
+from litestar import Controller, get, post, Request, Response
 
 from backend.src.api.dto import (
     ChangePasswordRequest,
@@ -34,9 +34,19 @@ class AuthController(Controller):
     @auth_error_handler
     @inject
     async def login(
-        self, service: FromDishka[AuthService], request: Request, data: LoginRequest
+        self, service: FromDishka[AuthService], response: Response, data: LoginRequest
     ) -> SuccessLoginResponse | ErrorResponse:
-        return await service.login(data)
+        result = await service.login(data)
+        if isinstance(result, SuccessLoginResponse):
+            response.set_cookie(
+                "refresh_token",
+                result.refresh,
+                httponly=True,
+                secure=True,
+                samesite="strict",
+                max_age=7 * 24 * 60 * 60,
+            )
+        return result
 
     @post("/logout")
     @auth_error_handler
