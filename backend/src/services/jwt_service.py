@@ -1,4 +1,3 @@
-from typing import NamedTuple
 from datetime import datetime, timedelta
 
 import bcrypt
@@ -6,11 +5,6 @@ import jwt
 
 from backend.src.api.dto import TokenInfo
 from backend.src.core.settings import settings
-
-
-class Tokens(NamedTuple):
-    access: str
-    refresh: str
 
 
 class JWTService:
