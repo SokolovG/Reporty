@@ -30,7 +30,6 @@ class AuthController(Controller):
     ) -> SuccessResponse | ErrorResponse:
         result = await service.login(data)
         if isinstance(result, SuccessResponse):
-            # Извлекаем refresh токен из data
             refresh_token = result.data.get("refresh")
             if refresh_token:
                 response.set_cookie(
