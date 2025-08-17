@@ -27,7 +27,20 @@ class JWTService:
         token: str = jwt.encode(payload=payload, key=pv_key, algorithm=settings.algorithm)  # type: ignore[attr-defined]
         return token
 
-    async def verify_token(self, token: str) -> dict | None: ...
+    async def verify_token(self, token: str) -> dict | None:
+        try:
+            with open(settings.public_key, "rb") as key_file:
+                public_key = key_file.read()
+
+            payload: dict = jwt.decode(  # type: ignore[attr-defined]
+                token, public_key, algorithms=[settings.algorithm]
+            )
+            return payload
+        except jwt.ExpiredSignatureError:  # type: ignore[attr-defined]
+            return None
+        except jwt.InvalidTokenError:  # type: ignore[attr-defined]
+            return None
+
     async def create_refresh_token(self, user_id: int) -> str:
         payload = {
             "sub": str(user_id),
