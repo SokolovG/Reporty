@@ -52,7 +52,6 @@ class SuccessLogoutResponse(msgspec.Struct):
 
 
 class SuccessLoginResponse(msgspec.Struct):
-    refresh: str
     access: str
 
 

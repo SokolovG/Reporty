@@ -56,12 +56,11 @@ class AuthService:
 
         hashed_password = await self.repo.get_hashed_password(email=data.email)
         success = await self.jwt_service.verify_password(data.password, hashed_password)
-        refresh, access = await self.jwt_service.login()  # type: ignore
+        token_info = await self.jwt_service.login(user_id=user.id)
 
         if success:
             return SuccessLoginResponse(
-                refresh=refresh,
-                access=access,
+                access=token_info.access,
             )
 
         return auth_error("Invalid email or password", {"email": data.email})
