@@ -3,22 +3,22 @@ from adaptix._internal.conversion.facade.func import get_converter
 from backend.src.api.dto import (
     RefreshTokenRequest,
     ChangePasswordRequest,
-    LogoutRequest,
     LoginRequest,
     RegisterRequest,
 )
-from backend.src.api.dto.auth_dto import (
-    UserResponse,
-    SuccessLoginResponse,
-    SuccessLogoutResponse,
-    SuccessRefreshResponse,
-    SuccessChangePasswordResponse,
-)
-from backend.src.api.responses import ErrorResponse
+from backend.src.api.dto.auth_dto import UserResponse
+from backend.src.api.responses import ErrorResponse, SuccessResponse
 from backend.src.api.utils.error_utils import (
     user_already_exists_error,
     user_not_found_error,
     auth_error,
+)
+from backend.src.api.utils.success_utils import (
+    login_success,
+    user_registration_success,
+    refresh_success,
+    password_change_success,
+    user_profile_success,
 )
 from backend.src.database.models import User
 from backend.src.database.repositories import UserRepository
@@ -37,7 +37,7 @@ class AuthService:
         self.notification_service = notification_service
         self._to_response = get_converter(User, UserResponse)
 
-    async def register(self, data: RegisterRequest) -> UserResponse | ErrorResponse:
+    async def register(self, data: RegisterRequest) -> SuccessResponse | ErrorResponse:
         user = await self.repo.get_one_or_none(email=data.email)
         if user:
             return user_already_exists_error(data.email)
@@ -47,49 +47,49 @@ class AuthService:
             email=data.email, name=data.name, password_hash=hashed_password
         )
         await self.notification_service.send_register_notification()
-        return self._to_response(user)
+        user_response = self._to_response(user)
+        return user_registration_success(user_response)
 
-    async def login(self, data: LoginRequest) -> SuccessLoginResponse | ErrorResponse:
-        user = await self.repo.get_one_or_none(data.email)  # type: ignore
+    async def login(self, data: LoginRequest) -> SuccessResponse | ErrorResponse:
+        user = await self.repo.get_one_or_none(email=data.email)
         if not user:
             return user_not_found_error(data.email)
 
         hashed_password = await self.repo.get_hashed_password(email=data.email)
         success = await self.jwt_service.verify_password(data.password, hashed_password)
+
+        if not success:
+            return auth_error("Invalid email or password", {"email": data.email})
+
         token_info = await self.jwt_service.login(user_id=user.id)
+        return login_success(token_info)
 
-        if success:
-            return SuccessLoginResponse(access=token_info.access, refresh=token_info.refresh)
-
-        return auth_error("Invalid email or password", {"email": data.email})
-
-    async def logout(self, data: LogoutRequest) -> SuccessLogoutResponse | ErrorResponse:
-        user = await self.repo.get(data.email)  # noqa
-        # DELETE TOKEN FROM COOKIES
-        return SuccessLogoutResponse()
-
-    async def refresh(self, data: RefreshTokenRequest) -> SuccessRefreshResponse | ErrorResponse:
-        user = await self.repo.get(data.email)
+    async def refresh(self, data: RefreshTokenRequest) -> SuccessResponse | ErrorResponse:
+        user = await self.repo.get_one_or_none(email=data.email)
         if not user:
             return user_not_found_error(data.email)
-        return SuccessRefreshResponse()
 
-    async def change_password(
-        self, data: ChangePasswordRequest
-    ) -> SuccessChangePasswordResponse | ErrorResponse:
+        # TODO: Проверить refresh токен и создать новый access
+        new_access_token = await self.jwt_service.create_access_token(user.id)
+        return refresh_success(new_access_token)
+
+    async def change_password(self, data: ChangePasswordRequest) -> SuccessResponse | ErrorResponse:
         user = await self.repo.get_one_or_none()
         if not user:
             return auth_error("User not found")
-        password_hash = data.new_password
-        # HASH PASSWORD
-        user.password_hash = password_hash
+
+        # TODO: Проверить старый пароль и захешировать новый
+        new_password_hash = self.jwt_service.hash_password(data.new_password)
+        user.password_hash = new_password_hash
         await self.repo.session.commit()
-        return SuccessChangePasswordResponse()
+        return password_change_success()
 
-    async def get_me(self) -> UserResponse | ErrorResponse:
+    async def get_me(self) -> SuccessResponse | ErrorResponse:
         user = await self.repo.get_one_or_none()
         if not user:
             return auth_error("User not found")
-        return UserResponse()  # type: ignore
+
+        user_response = self._to_response(user)
+        return user_profile_success(user_response)
 
     async def forgot_password(self) -> None: ...

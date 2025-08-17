@@ -14,7 +14,7 @@ class Tokens(NamedTuple):
 
 
 class JWTService:
-    async def _create_access_token(self, user_id: int) -> str:
+    async def create_access_token(self, user_id: int) -> str:
         payload = {
             "sub": str(user_id),
             "iat": datetime.utcnow(),
@@ -28,7 +28,7 @@ class JWTService:
         return token
 
     async def verify_token(self, token: str) -> dict | None: ...
-    async def _create_refresh_token(self, user_id: int) -> str:
+    async def create_refresh_token(self, user_id: int) -> str:
         payload = {
             "sub": str(user_id),
             "iat": datetime.utcnow(),
@@ -54,6 +54,6 @@ class JWTService:
         return bcrypt.checkpw(password_bytes, hash_bytes)
 
     async def login(self, user_id: int) -> TokenInfo:
-        access = await self._create_access_token(user_id)
-        refresh = await self._create_refresh_token(user_id)
+        access = await self.create_access_token(user_id)
+        refresh = await self.create_refresh_token(user_id)
         return TokenInfo(refresh=refresh, access=access, token_type="Bearer")

@@ -43,53 +43,7 @@ class UserResponse(msgspec.Struct):
     is_verified: bool
 
 
-class FailedLoginResponse(msgspec.Struct):
-    pass
-
-
-class SuccessLogoutResponse(msgspec.Struct):
-    pass
-
-
-class SuccessLoginResponse(msgspec.Struct):
-    access: str
-    refresh: str
-    token_type: str = "Bearer"
-
-
 class TokenInfo(msgspec.Struct):
     access: str
     refresh: str
     token_type: str
-
-
-class SuccessRefreshResponse(msgspec.Struct):
-    pass
-
-
-class FailedRefreshResponse(msgspec.Struct):
-    pass
-
-
-class SuccessChangePasswordResponse(msgspec.Struct):
-    pass
-
-
-class FailedChangePasswordResponse(msgspec.Struct):
-    pass
-
-
-class LogoutRequestDTO(BaseMsgspecDTO[LogoutRequest]):
-    pass
-
-
-class RefreshTokenRequestSchemaDTO(BaseMsgspecDTO[RefreshTokenRequest]):
-    pass
-
-
-class TokenInfoDTO(BaseMsgspecDTO[TokenInfo]):
-    pass
-
-
-class ChangePasswordRequestSchemaDTO(BaseMsgspecDTO[ChangePasswordRequest]):
-    pass

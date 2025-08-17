@@ -5,19 +5,11 @@ from litestar import Controller, get, post, Request, Response
 from backend.src.api.dto import (
     ChangePasswordRequest,
     RefreshTokenRequest,
-    LogoutRequest,
     LoginRequest,
     RegisterRequest,
 )
 from backend.src.api.decorators import auth_error_handler
-from backend.src.api.dto.auth_dto import (
-    UserResponse,
-    SuccessLoginResponse,
-    SuccessLogoutResponse,
-    SuccessRefreshResponse,
-    SuccessChangePasswordResponse,
-)
-from backend.src.api.responses import ErrorResponse
+from backend.src.api.responses import ErrorResponse, SuccessResponse
 from backend.src.services import AuthService
 
 
@@ -27,7 +19,7 @@ class AuthController(Controller):
     @inject
     async def register(
         self, service: FromDishka[AuthService], request: Request, data: RegisterRequest
-    ) -> UserResponse | ErrorResponse:
+    ) -> SuccessResponse | ErrorResponse:
         return await service.register(data)
 
     @post("/login")
@@ -35,33 +27,37 @@ class AuthController(Controller):
     @inject
     async def login(
         self, service: FromDishka[AuthService], response: Response, data: LoginRequest
-    ) -> SuccessLoginResponse | ErrorResponse:
+    ) -> SuccessResponse | ErrorResponse:
         result = await service.login(data)
-        if isinstance(result, SuccessLoginResponse):
-            response.set_cookie(
-                "refresh_token",
-                result.refresh,
-                httponly=True,
-                secure=True,
-                samesite="strict",
-                max_age=7 * 24 * 60 * 60,
-            )
+        if isinstance(result, SuccessResponse):
+            # Извлекаем refresh токен из data
+            refresh_token = result.data.get("refresh")
+            if refresh_token:
+                response.set_cookie(
+                    "refresh_token",
+                    refresh_token,
+                    httponly=True,
+                    secure=True,
+                    samesite="strict",
+                    max_age=7 * 24 * 60 * 60,
+                )
         return result
 
     @post("/logout")
     @auth_error_handler
     @inject
-    async def logout(
-        self, service: FromDishka[AuthService], request: Request, data: LogoutRequest
-    ) -> SuccessLogoutResponse | ErrorResponse:
-        return await service.logout(data)
+    async def logout(self, response: Response) -> SuccessResponse:
+        from backend.src.api.utils.success_utils import logout_success
+
+        response.delete_cookie(key="refresh_token")
+        return logout_success()
 
     @post("/refresh")
     @auth_error_handler
     @inject
     async def refresh_token(
         self, service: FromDishka[AuthService], request: Request, data: RefreshTokenRequest
-    ) -> SuccessRefreshResponse | ErrorResponse:
+    ) -> SuccessResponse | ErrorResponse:
         return await service.refresh(data)
 
     @post("/change-password")
@@ -69,7 +65,7 @@ class AuthController(Controller):
     @inject
     async def change_password(
         self, service: FromDishka[AuthService], request: Request, data: ChangePasswordRequest
-    ) -> SuccessChangePasswordResponse | ErrorResponse:
+    ) -> SuccessResponse | ErrorResponse:
         return await service.change_password(data)
 
     @get("/me")
@@ -79,5 +75,5 @@ class AuthController(Controller):
         self,
         service: FromDishka[AuthService],
         request: Request,
-    ) -> UserResponse | ErrorResponse:
+    ) -> SuccessResponse | ErrorResponse:
         return await service.get_me()
