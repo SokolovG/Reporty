@@ -38,9 +38,9 @@ class RegisterRequestDTO(BaseMsgspecDTO[RegisterRequest]):
 class UserResponse(msgspec.Struct):
     name: str
     email: str
-    user_id: int
+    id: int
     is_active: bool
-    is_verified: bool
+    is_verify: bool
 
 
 class TokenInfo(msgspec.Struct):

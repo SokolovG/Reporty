@@ -49,9 +49,9 @@ def user_registration_success(user: UserResponse) -> SuccessResponse:
             "user": {
                 "name": user.name,
                 "email": user.email,
-                "user_id": user.user_id,
+                "user_id": user.id,
                 "is_active": user.is_active,
-                "is_verified": user.is_verified,
+                "is_verified": user.is_verify,
             }
         },
     )
@@ -64,9 +64,9 @@ def user_profile_success(user: UserResponse) -> SuccessResponse:
             "user": {
                 "name": user.name,
                 "email": user.email,
-                "user_id": user.user_id,
+                "user_id": user.id,
                 "is_active": user.is_active,
-                "is_verified": user.is_verified,
+                "is_verified": user.is_verify,
             }
         },
     )

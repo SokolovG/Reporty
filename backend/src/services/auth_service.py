@@ -22,7 +22,8 @@ from backend.src.api.utils.success_utils import (
 )
 from backend.src.database.models import User
 from backend.src.database.repositories import UserRepository
-from backend.src.services import JWTService, NotificationService
+from backend.src.services.jwt_service import JWTService
+from backend.src.services.notification_service import NotificationService
 
 
 class AuthService:
