@@ -11,10 +11,10 @@ from backend.src.api.dto import (
 from backend.src.api.decorators import auth_error_handler
 from backend.src.api.responses import ErrorResponse, SuccessResponse
 from backend.src.services import AuthService
-
+from backend.src.api.dto import SuccessResponseDTO
 
 class AuthController(Controller):
-    @post("/register")
+    @post("/register", return_dto=SuccessResponseDTO)
     @auth_error_handler
     @inject
     async def register(

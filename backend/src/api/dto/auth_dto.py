@@ -1,6 +1,7 @@
 import msgspec
 
 from backend.src.api.dto.base import BaseMsgspecDTO
+from backend.src.api.responses.success_responses import BaseSuccessResponse
 
 
 class ChangePasswordRequest(msgspec.Struct):
@@ -47,3 +48,6 @@ class TokenInfo(msgspec.Struct):
     access: str
     refresh: str
     token_type: str
+
+class SuccessResponseDTO(BaseMsgspecDTO[BaseSuccessResponse]):
+    pass
