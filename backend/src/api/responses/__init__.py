@@ -1,4 +1,3 @@
-from backend.src.api.responses.error_responses import ErrorResponse
-from backend.src.api.responses.success_responses import SuccessResponse
+from backend.src.api.responses.base_responses import ErrorResponse, SuccessResponse
 
 __all__ = ["ErrorResponse", "SuccessResponse"]

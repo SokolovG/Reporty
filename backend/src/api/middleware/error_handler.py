@@ -1,8 +1,9 @@
 from typing import Any
-from litestar import Request, Response
+import msgspec
+from litestar import Request
 from litestar.middleware.base import BaseHTTPMiddleware
 from litestar.status_codes import HTTP_500_INTERNAL_SERVER_ERROR
-from litestar.exceptions import HTTPException, LitestarException
+from litestar.exceptions import HTTPException
 from litestar.responses import JSONResponse
 
 from backend.src.core.exceptions import ApiException
@@ -14,7 +15,8 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
         try:
             await self.app(scope, receive, send)
         except Exception as exc:
-            request = Request(scope) if scope.get("type") == "http" else None
+            # TODO: request usage
+            request = Request(scope) if scope.get("type") == "http" else None  # noqa
 
             if isinstance(exc, ApiException):
                 error_response = ErrorResponse(
@@ -24,9 +26,9 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
                     details=exc.details,
                 )
 
-                response = JSONResponse(
-                    content=error_response.model_dump(), status_code=exc.status_code
-                )
+                response_data = msgspec.to_builtins(error_response)
+
+                response = JSONResponse(content=response_data, status_code=exc.status_code)
 
                 await response(scope, receive, send)
                 return
@@ -39,9 +41,9 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
                     details={"status_code": exc.status_code},
                 )
 
-                response = JSONResponse(
-                    content=error_response.model_dump(), status_code=exc.status_code
-                )
+                response_data = msgspec.to_builtins(error_response)
+
+                response = JSONResponse(content=response_data, status_code=exc.status_code)
 
                 await response(scope, receive, send)
                 return
@@ -54,8 +56,10 @@ class ErrorHandlerMiddleware(BaseHTTPMiddleware):
                     details={"error_type": type(exc).__name__},
                 )
 
+                response_data = msgspec.to_builtins(error_response)
+
                 response = JSONResponse(
-                    content=error_response.model_dump(), status_code=HTTP_500_INTERNAL_SERVER_ERROR
+                    content=response_data, status_code=HTTP_500_INTERNAL_SERVER_ERROR
                 )
 
                 await response(scope, receive, send)

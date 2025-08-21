@@ -5,6 +5,7 @@ from litestar import Litestar
 from litestar.config.cors import CORSConfig
 from sqladmin_litestar_plugin import SQLAdminPlugin
 
+from backend.src.api.middleware import ErrorHandlerMiddleware
 from backend.src.api.routes import (
     record_router,
     report_router,
@@ -60,6 +61,7 @@ app = Litestar(
         settings_router,
         auth_router,
     ],
+    middleware=[ErrorHandlerMiddleware],
     plugins=[sqlalchemy_plugin, admin_plugin],
     debug=True,
     logging_config=logging_config,

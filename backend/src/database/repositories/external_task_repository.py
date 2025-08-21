@@ -6,7 +6,7 @@ from sqlalchemy import and_, select
 from backend.src.database.models import ExternalTask
 
 
-class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTask]):  # type: ignore
+class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTask]):
     """Repository for managing external tasks."""
 
     model_type: type[ExternalTask] = ExternalTask

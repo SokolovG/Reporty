@@ -4,5 +4,5 @@ from litestar.dto import MsgspecDTO, DTOConfig
 T = TypeVar("T")
 
 
-class BaseMsgspecDTO(MsgspecDTO[T]):  # type: ignore
+class BaseMsgspecDTO(MsgspecDTO[T]):
     config = DTOConfig(rename_strategy="camel")

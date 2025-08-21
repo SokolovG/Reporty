@@ -7,7 +7,7 @@ from backend.src.api.dto.auth_dto import (
     RegisterRequestDTO,
     RegisterRequest,
     TokenInfo,
-    SuccessResponseDTO
+    SuccessResponseDTO,
 )
 from backend.src.api.dto.record_dto import (
     DailyRecordRequest,
@@ -96,5 +96,5 @@ __all__ = [
     "RegisterRequest",
     "RegisterRequestDTO",
     "TokenInfo",
-    "SuccessResponseDTO"
+    "SuccessResponseDTO",
 ]

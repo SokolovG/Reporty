@@ -18,7 +18,7 @@ class JWTService:
 
         with open(settings.private_key, "rb") as key_file:
             pv_key = key_file.read()
-        token: str = jwt.encode(payload=payload, key=pv_key, algorithm=settings.algorithm)  # type: ignore[attr-defined]
+        token: str = jwt.encode(payload=payload, key=pv_key, algorithm=settings.algorithm)
         return token
 
     async def verify_token(self, token: str) -> dict | None:
@@ -26,13 +26,11 @@ class JWTService:
             with open(settings.public_key, "rb") as key_file:
                 public_key = key_file.read()
 
-            payload: dict = jwt.decode(  # type: ignore[attr-defined]
-                token, public_key, algorithms=[settings.algorithm]
-            )
+            payload: dict = jwt.decode(token, public_key, algorithms=[settings.algorithm])
             return payload
-        except jwt.ExpiredSignatureError:  # type: ignore[attr-defined]
+        except jwt.ExpiredSignatureError:
             return None
-        except jwt.InvalidTokenError:  # type: ignore[attr-defined]
+        except jwt.InvalidTokenError:
             return None
 
     async def create_refresh_token(self, user_id: int) -> str:
@@ -45,7 +43,7 @@ class JWTService:
 
         with open(settings.private_key, "rb") as key_file:
             pv_key = key_file.read()
-        token: str = jwt.encode(payload=payload, key=pv_key, algorithm=settings.algorithm)  # type: ignore[attr-defined]
+        token: str = jwt.encode(payload=payload, key=pv_key, algorithm=settings.algorithm)
         return token
 
     def hash_password(self, password: str) -> str:

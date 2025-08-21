@@ -7,7 +7,7 @@ from backend.src.api.dto.report_dto import DailyReportRequestUpdate
 from backend.src.database.models import Report
 
 
-class ReportRepository(repository.SQLAlchemyAsyncRepository[Report]):  # type: ignore
+class ReportRepository(repository.SQLAlchemyAsyncRepository[Report]):
     model_type: type[Report] = Report
 
     async def get_latest_report(self) -> Report | None:

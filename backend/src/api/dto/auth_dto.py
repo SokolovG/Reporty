@@ -37,6 +37,8 @@ class RegisterRequestDTO(BaseMsgspecDTO[RegisterRequest]):
 
 
 class UserResponse(msgspec.Struct):
+    """User data for API responses."""
+
     name: str
     email: str
     id: int
@@ -45,6 +47,8 @@ class UserResponse(msgspec.Struct):
 
 
 class TokenInfo(msgspec.Struct):
+    """Token information for authentication."""
+
     access: str
     refresh: str
     token_type: str

@@ -6,11 +6,11 @@ from advanced_alchemy import repository
 from backend.src.database.models import TaskType, AIProvider, UserProfile, ExternalSystem
 
 
-class AIProviderRepository(repository.SQLAlchemyAsyncRepository[AIProvider]):  # type: ignore
+class AIProviderRepository(repository.SQLAlchemyAsyncRepository[AIProvider]):
     model_type: type[AIProvider] = AIProvider
 
 
-class UserProfileRepository(repository.SQLAlchemyAsyncRepository[UserProfile]):  # type: ignore
+class UserProfileRepository(repository.SQLAlchemyAsyncRepository[UserProfile]):
     """Repository for managing user profiles and settings"""
 
     model_type: type[UserProfile] = UserProfile
@@ -19,7 +19,7 @@ class UserProfileRepository(repository.SQLAlchemyAsyncRepository[UserProfile]): 
         result = await self.session.execute(
             select(UserProfile).where(UserProfile.user_id == user_id)
         )
-        profile = result.scalar_one_or_none()
+        profile: UserProfile = result.scalar_one_or_none()
 
         if profile is None:
             profile = UserProfile(user_id=user_id)
@@ -53,5 +53,5 @@ class UserProfileRepository(repository.SQLAlchemyAsyncRepository[UserProfile]): 
         return task_type
 
 
-class ExternalSystemRepository(repository.SQLAlchemyAsyncRepository[ExternalSystem]):  # type: ignore
+class ExternalSystemRepository(repository.SQLAlchemyAsyncRepository[ExternalSystem]):
     model_type: type[ExternalSystem] = ExternalSystem
