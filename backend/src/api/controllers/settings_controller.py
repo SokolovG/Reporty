@@ -3,7 +3,6 @@ from dishka.integrations.litestar import inject
 from litestar import Controller, get, post, patch, delete, Request
 
 from backend.src.api.dto import (
-    TaskTypeResponse,
     TaskTypeRequest,
     TaskTypeUpdateRequest,
     TaskTypeResponseDTO,
@@ -11,6 +10,7 @@ from backend.src.api.dto import (
     TaskTypeUpdateRequestDTO,
 )
 from backend.src.services.settings_service import SettingsService
+from backend.src.api.responses.base_responses import SuccessResponse
 
 
 class SettingsController(Controller):
@@ -20,10 +20,10 @@ class SettingsController(Controller):
         self,
         request: Request,
         settings_service: FromDishka[SettingsService],
-    ) -> list[TaskTypeResponse]:
+    ) -> SuccessResponse:
         user_id = request.user.id
         task_types = await settings_service.get_task_types(user_id)
-        return task_types
+        return SuccessResponse(message="Task types retrieved successfully", data=task_types)
 
     @post("/task-types", dto=TaskTypeRequestDTO, return_dto=TaskTypeResponseDTO)
     @inject
@@ -32,10 +32,10 @@ class SettingsController(Controller):
         data: TaskTypeRequest,
         request: Request,
         settings_service: FromDishka[SettingsService],
-    ) -> TaskTypeResponse:
+    ) -> SuccessResponse:
         user_id = request.user.id
         task_type = await settings_service.create_task_type(user_id, data)
-        return task_type
+        return SuccessResponse(message="Task type created successfully", data=task_type)
 
     @patch(
         "/task-types/{task_type_id:int}",
@@ -49,9 +49,9 @@ class SettingsController(Controller):
         data: TaskTypeUpdateRequest,
         request: Request,
         settings_service: FromDishka[SettingsService],
-    ) -> TaskTypeResponse:
+    ) -> SuccessResponse:
         task_type = await settings_service.update_task_type(task_type_id, data)
-        return task_type
+        return SuccessResponse(message="Task type updated successfully", data=task_type)
 
     @delete("/task-types/{task_type_id:int}")
     @inject
@@ -60,5 +60,6 @@ class SettingsController(Controller):
         task_type_id: int,
         request: Request,
         settings_service: FromDishka[SettingsService],
-    ) -> None:
+    ) -> SuccessResponse:
         await settings_service.delete_task_type(task_type_id)
+        return SuccessResponse(message="Task type deleted successfully")

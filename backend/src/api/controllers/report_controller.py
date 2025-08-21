@@ -8,10 +8,10 @@ from backend.src.api.dto import (
     DailyReportRequest,
     DailyReportRequestDTO,
     DailyReportRequestUpdate,
-    DailyReportResponse,
     DailyReportResponseDTO,
 )
 from backend.src.services import ReportService
+from backend.src.api.responses.base_responses import SuccessResponse
 
 
 class ReportController(Controller):
@@ -19,29 +19,33 @@ class ReportController(Controller):
     @inject
     async def create_report(
         self, data: DailyReportRequest, report_service: FromDishka[ReportService]
-    ) -> DailyReportResponse:
-        return await report_service.create_report(data)
+    ) -> SuccessResponse:
+        result = await report_service.create_report(data)
+        return SuccessResponse(message="Report created successfully", data=result)
 
     @get("/{report_id:int}", return_dto=DailyReportResponseDTO)
     @inject
     async def get_report(
         self, report_service: FromDishka[ReportService], report_id: int
-    ) -> DailyReportResponse:
-        return await report_service.get_report(report_id)
+    ) -> SuccessResponse:
+        result = await report_service.get_report(report_id)
+        return SuccessResponse(message="Report retrieved successfully", data=result)
 
     @get(return_dto=DailyReportResponseDTO)
     @inject
     async def get_reports(
         self, report_service: FromDishka[ReportService], date: datetime | None
-    ) -> list[DailyReportResponse]:
-        return await report_service.get_reports()
+    ) -> SuccessResponse:
+        result = await report_service.get_reports()
+        return SuccessResponse(message="Reports retrieved successfully", data=result)
 
     @delete("/{report_id:int}")
     @inject
     async def delete_report(
         self, report_service: FromDishka[ReportService], report_id: int
-    ) -> None:
+    ) -> SuccessResponse:
         await report_service.delete_report(report_id)
+        return SuccessResponse(message="Report deleted successfully")
 
     @patch("/{report_id:int}", return_dto=DailyReportResponseDTO)
     @inject
@@ -49,5 +53,6 @@ class ReportController(Controller):
         self,
         report_service: FromDishka[ReportService],
         update_data: DailyReportRequestUpdate,
-    ) -> None:
-        return await report_service.update_report(update_data)
+    ) -> SuccessResponse:
+        result = await report_service.update_report(update_data)
+        return SuccessResponse(message="Report updated successfully", data=result)

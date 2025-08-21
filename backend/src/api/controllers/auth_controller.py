@@ -8,71 +8,68 @@ from backend.src.api.dto import (
     LoginRequest,
     RegisterRequest,
 )
-from backend.src.api.decorators import auth_error_handler
-from backend.src.api.responses import ErrorResponse, SuccessResponse
+from backend.src.api.responses.base_responses import SuccessResponse
 from backend.src.services import AuthService
 from backend.src.api.dto import SuccessResponseDTO
 
+
 class AuthController(Controller):
     @post("/register", return_dto=SuccessResponseDTO)
-    @auth_error_handler
     @inject
     async def register(
         self, service: FromDishka[AuthService], request: Request, data: RegisterRequest
-    ) -> SuccessResponse | ErrorResponse:
-        return await service.register(data)
+    ) -> SuccessResponse:
+        result = await service.register(data)
+        return SuccessResponse(message="User registered successfully", data=result)
 
     @post("/login")
-    @auth_error_handler
     @inject
     async def login(
         self, service: FromDishka[AuthService], response: Response, data: LoginRequest
-    ) -> SuccessResponse | ErrorResponse:
+    ) -> SuccessResponse:
         result = await service.login(data)
-        if isinstance(result, SuccessResponse):
-            refresh_token = result.data.get("refresh")
-            if refresh_token:
-                response.set_cookie(
-                    "refresh_token",
-                    refresh_token,
-                    httponly=True,
-                    secure=True,
-                    samesite="strict",
-                    max_age=7 * 24 * 60 * 60,
-                )
-        return result
+
+        if isinstance(result, dict) and "refresh" in result:
+            refresh_token = result["refresh"]
+            response.set_cookie(
+                "refresh_token",
+                refresh_token,
+                httponly=True,
+                secure=True,
+                samesite="strict",
+                max_age=7 * 24 * 60 * 60,
+            )
+
+        return SuccessResponse(message="Login successful", data=result)
 
     @post("/logout")
-    @auth_error_handler
     @inject
     async def logout(self, response: Response) -> SuccessResponse:
-        from backend.src.api.utils.success_utils import logout_success
-
         response.delete_cookie(key="refresh_token")
-        return logout_success()
+        return SuccessResponse(message="Successfully logged out")
 
     @post("/refresh")
-    @auth_error_handler
     @inject
     async def refresh_token(
         self, service: FromDishka[AuthService], request: Request, data: RefreshTokenRequest
-    ) -> SuccessResponse | ErrorResponse:
-        return await service.refresh(data)
+    ) -> SuccessResponse:
+        result = await service.refresh(data)
+        return SuccessResponse(message="Token refreshed successfully", data=result)
 
     @post("/change-password")
-    @auth_error_handler
     @inject
     async def change_password(
         self, service: FromDishka[AuthService], request: Request, data: ChangePasswordRequest
-    ) -> SuccessResponse | ErrorResponse:
-        return await service.change_password(data)
+    ) -> SuccessResponse:
+        await service.change_password(data)
+        return SuccessResponse(message="Password changed successfully")
 
     @get("/me")
-    @auth_error_handler
     @inject
     async def get_me(
         self,
         service: FromDishka[AuthService],
         request: Request,
-    ) -> SuccessResponse | ErrorResponse:
-        return await service.get_me()
+    ) -> SuccessResponse:
+        result = await service.get_me()
+        return SuccessResponse(message="User profile retrieved", data=result)

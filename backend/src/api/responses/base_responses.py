@@ -2,16 +2,14 @@ from typing import Any, Literal
 import msgspec
 
 
-class BaseErrorResponse(msgspec.Struct):
-    error_code: str
-
-
-class BaseErrorDetails(msgspec.Struct):
-    reason: str
-    context: dict[str, Any] = {}
-
-
-class BaseSuccessResponse(msgspec.Struct):
-    status: Literal["success"] = "success"
-    data: dict[str, Any] = {}
+class SuccessResponse(msgspec.Struct):
+    success: Literal[True] = True
+    data: dict[str, Any] | None = None
     message: str | None = None
+
+
+class ErrorResponse(msgspec.Struct):
+    success: Literal[False] = False
+    error_code: str
+    message: str
+    details: dict[str, Any] | None = None
