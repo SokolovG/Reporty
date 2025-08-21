@@ -29,6 +29,6 @@ class ReportRepository(repository.SQLAlchemyAsyncRepository[Report]):
         return cast(Sequence[Report], result.scalars().all())
 
     async def update_report(self, update_data: DailyReportRequestUpdate) -> Report:
-        report = await self.get(DailyReportRequestUpdate.report_id)
+        report = await self.get(update_data.report_id)
         updated_report = await self.update(report)
         return cast(Report, updated_report)
