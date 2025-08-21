@@ -7,6 +7,7 @@ from backend.src.api.dto.auth_dto import (
     RegisterRequestDTO,
     RegisterRequest,
     TokenInfo,
+    UserResponse,
     SuccessResponseDTO,
 )
 from backend.src.api.dto.record_dto import (
@@ -52,24 +53,28 @@ from backend.src.api.dto.user_dto import UserReadDTO, UserRegistrationDTO, UserU
 
 
 __all__ = [
+    # Report DTOs
     "DailyReportRequest",
     "DailyReportResponse",
+    "DailyReportRequestDTO",
+    "DailyReportResponseDTO",
+    "DailyReportRequestUpdate",
+    # Record DTOs
     "DailyRecordRequestDTO",
     "DailyRecordResponseDTO",
     "DailyRecordRequest",
     "DailyRecordResponse",
-    "DailyReportRequestDTO",
-    "DailyReportResponseDTO",
-    "UserReadDTO",
-    "UserRegistrationDTO",
-    "UserUpdateDTO",
-    "DailyReportRequestUpdate",
     "DailyRecordUpdateRequestDTO",
     "DailyRecordUpdateRequest",
     "AppendToRecordRequestDTO",
     "AppendToRecordRequest",
     "RecordStatusUpdateRequestDTO",
     "RecordStatusUpdateRequest",
+    # User DTOs
+    "UserReadDTO",
+    "UserRegistrationDTO",
+    "UserUpdateDTO",
+    # Settings DTOs
     "TaskTypeRequest",
     "TaskTypeResponse",
     "TaskTypeRequestDTO",
@@ -88,6 +93,7 @@ __all__ = [
     "ExternalSystemResponseDTO",
     "ExternalSystemUpdateRequest",
     "ExternalSystemUpdateRequestDTO",
+    # Auth DTOs
     "ChangePasswordRequest",
     "RefreshTokenRequest",
     "LogoutRequest",
@@ -96,5 +102,6 @@ __all__ = [
     "RegisterRequest",
     "RegisterRequestDTO",
     "TokenInfo",
+    "UserResponse",
     "SuccessResponseDTO",
 ]

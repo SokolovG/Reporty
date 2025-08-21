@@ -16,13 +16,15 @@ class UserProfileRepository(repository.SQLAlchemyAsyncRepository[UserProfile]):
     model_type: type[UserProfile] = UserProfile
 
     async def get_by_user_id(self, user_id: int) -> UserProfile:
+        """Get or create user profile by user ID."""
         result = await self.session.execute(
             select(UserProfile).where(UserProfile.user_id == user_id)
         )
-        profile: UserProfile = result.scalar_one_or_none()
+        profile = result.scalar_one_or_none()
 
         if profile is None:
-            profile = UserProfile(user_id=user_id)
+            # Create default profile with AI provider ID 1 (assuming it exists)
+            profile = UserProfile(user_id=user_id, ai_provider_id=1)
             profile = await self.add(profile)
             await self.session.commit()
 
@@ -53,5 +55,5 @@ class UserProfileRepository(repository.SQLAlchemyAsyncRepository[UserProfile]):
         return task_type
 
 
-class ExternalSystemRepository(repository.SQLAlchemyAsyncRepository[ExternalSystem]):
+class ExternalSystemRepository(repository.SQLAlchemyAsyncRepository[ExternalSystem]):  # type: ignore
     model_type: type[ExternalSystem] = ExternalSystem

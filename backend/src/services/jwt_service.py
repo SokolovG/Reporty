@@ -50,13 +50,13 @@ class JWTService:
         bytes = password.encode("utf-8")
         salt = bcrypt.gensalt()
         hash_bytes = bcrypt.hashpw(bytes, salt)
-        hash = hash_bytes.decode("utf-8")
+        hash: str = hash_bytes.decode("utf-8")
         return hash
 
     async def verify_password(self, password: str, hash_password: str) -> bool:
         password_bytes = password.encode("utf-8")
         hash_bytes = hash_password.encode("utf-8")
-        return bcrypt.checkpw(password_bytes, hash_bytes)
+        return bcrypt.checkpw(password_bytes, hash_bytes)  # type: ignore
 
     async def login(self, user_id: int) -> TokenInfo:
         access = await self.create_access_token(user_id)

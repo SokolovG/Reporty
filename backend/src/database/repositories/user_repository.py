@@ -7,6 +7,7 @@ class UserRepository(repository.SQLAlchemyAsyncRepository[User]):
     model_type: type[User] = User
 
     async def create_user(self, email: str, name: str, password_hash: str) -> User:
+        """Create a new user."""
         user = User(
             email=email,
             password_hash=password_hash,
@@ -17,6 +18,7 @@ class UserRepository(repository.SQLAlchemyAsyncRepository[User]):
         return user
 
     async def get_hashed_password(self, email: str) -> str:
+        """Get user's password hash by email."""
         user = await self.get_one(email=email)
-        password_hash: str = user.password_hash
-        return password_hash
+        hash: str = user.password_hash
+        return hash

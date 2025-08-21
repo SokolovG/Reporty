@@ -10,7 +10,7 @@ from backend.src.database.base import RecordStatus
 from backend.src.database.models import DailyRecord, ExternalTask
 
 
-class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]):  # type: ignore
+class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]):
     model_type: type[DailyRecord] = DailyRecord
 
     async def create_record(self, data: DailyRecordRequest, user_id: int) -> DailyRecord:
