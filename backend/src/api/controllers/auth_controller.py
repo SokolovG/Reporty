@@ -67,7 +67,8 @@ class AuthController(Controller):
         self, service: FromDishka[AuthService], request: Request, data: ChangePasswordRequest
     ) -> SuccessResponse:
         """Change user password."""
-        await service.change_password(data)
+        user_id = request.user.id
+        await service.change_password(data, user_id)
         return SuccessResponse(message="Password changed successfully")
 
     @get("/me")
@@ -78,5 +79,6 @@ class AuthController(Controller):
         request: Request,
     ) -> SuccessResponse:
         """Get current user profile."""
-        user = await service.get_me()
+        user_id = request.user.id
+        user = await service.get_me(user_id)
         return SuccessResponse(message="User profile retrieved", data=user)

@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from typing import cast
 
 from sqlalchemy import select
 from advanced_alchemy import repository
@@ -28,7 +29,7 @@ class UserProfileRepository(repository.SQLAlchemyAsyncRepository[UserProfile]):
             profile = await self.add(profile)
             await self.session.commit()
 
-        return profile
+        return cast(UserProfile, profile)
 
     async def get_task_types_by_user_id(self, user_id: int) -> Sequence[TaskType]:
         """Get task types for user."""
@@ -39,7 +40,7 @@ class UserProfileRepository(repository.SQLAlchemyAsyncRepository[UserProfile]):
             .where(TaskType.is_active == True)  # noqa: E712
             .order_by(TaskType.title)
         )
-        return result.scalars().all()
+        return cast(Sequence[TaskType], result.scalars().all())
 
     async def create_task_type(
         self, user_id: int, title: str, color: str | None = None
@@ -55,5 +56,5 @@ class UserProfileRepository(repository.SQLAlchemyAsyncRepository[UserProfile]):
         return task_type
 
 
-class ExternalSystemRepository(repository.SQLAlchemyAsyncRepository[ExternalSystem]):  # type: ignore
+class ExternalSystemRepository(repository.SQLAlchemyAsyncRepository[ExternalSystem]):
     model_type: type[ExternalSystem] = ExternalSystem

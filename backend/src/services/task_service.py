@@ -80,8 +80,10 @@ class TaskService:
         """Update an external task."""
         try:
             task = await self.external_task_repo.get(task_id)
-        except Exception:
-            raise NotFoundError("External task", task_id)
+        except Exception as e:
+            if "not found" in str(e).lower() or "No row was found" in str(e):
+                raise NotFoundError("External task", task_id)
+            raise InternalServerError(f"Failed to get task: {str(e)}", {"task_id": task_id})
 
         try:
             if data.url is not None:
@@ -120,8 +122,10 @@ class TaskService:
         """Delete an external task."""
         try:
             task = await self.external_task_repo.get(task_id)
-        except Exception:
-            raise NotFoundError("External task", task_id)
+        except Exception as e:
+            if "not found" in str(e).lower() or "No row was found" in str(e):
+                raise NotFoundError("External task", task_id)
+            raise InternalServerError(f"Failed to get task: {str(e)}", {"task_id": task_id})
 
         try:
             await self.external_task_repo.session.delete(task)

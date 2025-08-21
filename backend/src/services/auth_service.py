@@ -1,3 +1,5 @@
+from typing import cast
+
 from adaptix._internal.conversion.facade.func import get_converter
 
 from backend.src.api.dto import (
@@ -43,7 +45,7 @@ class AuthService:
             email=data.email, name=data.name, password_hash=hashed_password
         )
         await self.notification_service.send_register_notification()
-        return self._to_response(user)
+        return cast(UserResponse, self._to_response(user))
 
     async def login(self, data: LoginRequest) -> TokenInfo:
         """Authenticate user and return tokens."""
@@ -70,24 +72,27 @@ class AuthService:
         new_access_token = await self.jwt_service.create_access_token(user.id)
         return new_access_token
 
-    async def change_password(self, data: ChangePasswordRequest) -> None:
+    async def change_password(self, data: ChangePasswordRequest, user_id: int) -> None:
         """Change user password."""
-        user = await self.repo.get_one_or_none()
+        user = await self.repo.get_one_or_none(id=user_id)  # ✅ Добавлен user_id
         if not user:
-            raise NotFoundError("User")
+            raise NotFoundError("User", user_id)
 
-        # TODO: Проверить старый пароль и захешировать новый
+        success = await self.jwt_service.verify_password(data.old_password, user.password_hash)
+        if not success:
+            raise AuthenticationError("Current password is incorrect")
+
         new_password_hash = self.jwt_service.hash_password(data.new_password)
         user.password_hash = new_password_hash
         await self.repo.session.commit()
 
-    async def get_me(self) -> UserResponse:
+    async def get_me(self, user_id: int) -> UserResponse:
         """Get current user profile."""
-        user = await self.repo.get_one_or_none()
+        user = await self.repo.get_one_or_none(id=user_id)
         if not user:
             raise NotFoundError("User")
 
-        return self._to_response(user)
+        return cast(UserResponse, self._to_response(user))
 
     async def forgot_password(self) -> None:
         """Reset user password."""

@@ -1,5 +1,6 @@
 from collections.abc import Sequence
 from datetime import date, datetime
+from typing import cast
 
 from advanced_alchemy import repository
 from sqlalchemy import and_, select
@@ -27,7 +28,7 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]):
 
         added_record = await self.add(record)
         await self.session.commit()
-        return added_record
+        return cast(DailyRecord, added_record)
 
     async def update_record_status(self, record_id: int, data: RecordStatusUpdateRequest) -> None:
         return None
@@ -44,7 +45,7 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]):
             .where(DailyRecord.created_at >= start)
             .where(DailyRecord.created_at <= end)
         )
-        return result.scalar_one_or_none()
+        return cast(DailyRecord | None, result.scalar_one_or_none())
 
     async def get_with_external_task(self, record_id: int) -> DailyRecord:
         """Get record with loaded external task and system info."""
@@ -54,7 +55,7 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]):
             .where(DailyRecord.id == record_id)
         )
         record = result.scalar_one()
-        return record
+        return cast(DailyRecord, record)
 
     async def get_records_by_date(
         self, target_date: date, user_id: int | None = None, include_external_tasks: bool = False
@@ -78,7 +79,7 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]):
         query = query.order_by(DailyRecord.created_at.asc())
 
         result = await self.session.execute(query)
-        return result.scalars().all()
+        return cast(Sequence[DailyRecord], result.scalars().all())
 
     async def get_unprocessed_records(self) -> Sequence[DailyRecord]:
         """Get records that haven't been processed by AI yet."""
@@ -87,7 +88,7 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]):
             .where(DailyRecord.is_processed == False)  # noqa: E712
             .order_by(DailyRecord.created_at.asc())
         )
-        return result.scalars().all()
+        return cast(Sequence[DailyRecord], result.scalars().all())
 
     async def get_records_for_external_task(self, external_task_id: int) -> Sequence[DailyRecord]:
         """Get all records linked to a specific external task."""
@@ -96,7 +97,7 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]):
             .where(DailyRecord.external_task_id == external_task_id)
             .order_by(DailyRecord.created_at.desc())
         )
-        return result.scalars().all()
+        return cast(Sequence[DailyRecord], result.scalars().all())
 
     async def _validate_external_task_exists(self, external_task_id: int) -> None:
         """Validate that external task exists."""
@@ -118,7 +119,7 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]):
         query = query.order_by(DailyRecord.created_at.desc())
 
         result = await self.session.execute(query)
-        return result.scalars().all()
+        return cast(Sequence[DailyRecord], result.scalars().all())
 
     async def get_all_records(self, user_id: int | None = None) -> Sequence[DailyRecord]:
         query = select(DailyRecord)
@@ -127,4 +128,4 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]):
 
         query = query.order_by(DailyRecord.created_at.desc())
         result = await self.session.execute(query)
-        return result.scalars().all()
+        return cast(Sequence[DailyRecord], result.scalars().all())
