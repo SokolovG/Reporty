@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import cast
 
 from adaptix.conversion import get_converter
 
@@ -44,9 +43,9 @@ class RecordService:
                 saved_record.ai_processed = ai_processed
                 updated_record = await self.repo.update(saved_record)
                 await self.repo.session.commit()
-                return cast(DailyRecordResponse, self._to_response(updated_record))
+                return self._to_response(updated_record)
 
-            return cast(DailyRecordResponse, self._to_response(saved_record))
+            return self._to_response(saved_record)
         except ValueError as e:
             raise ValidationError(str(e), {"user_id": user_id})
         except Exception as e:
@@ -56,7 +55,7 @@ class RecordService:
         """Get a specific record by ID."""
         try:
             record = await self.repo.get(record_id)
-            return cast(DailyRecordResponse, self._to_response(record))
+            return self._to_response(record)
         except Exception as e:
             if "not found" in str(e).lower() or "No row was found" in str(e):
                 raise NotFoundError("Daily record", record_id)
@@ -73,7 +72,7 @@ class RecordService:
             else:
                 records = await self.repo.get_all_records()
 
-            return [cast(DailyRecordResponse, self._to_response(record)) for record in records]
+            return [self._to_response(record) for record in records]
         except Exception as e:
             raise InternalServerError(f"Failed to get records: {str(e)}")
 
@@ -88,7 +87,7 @@ class RecordService:
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
-            return cast(DailyRecordResponse, self._to_response(updated_record))
+            return self._to_response(updated_record)
         except Exception as e:
             if "not found" in str(e).lower() or "No row was found" in str(e):
                 raise NotFoundError("Daily record", record_id)
@@ -117,7 +116,7 @@ class RecordService:
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
-            return cast(DailyRecordResponse, self._to_response(updated_record))
+            return self._to_response(updated_record)
         except Exception as e:
             if "not found" in str(e).lower() or "No row was found" in str(e):
                 raise NotFoundError("Daily record", record_id)
@@ -173,7 +172,7 @@ class RecordService:
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
-            return cast(DailyRecordResponse, self._to_response(updated_record))
+            return self._to_response(updated_record)
         except Exception as e:
             if "not found" in str(e).lower() or "No row was found" in str(e):
                 raise NotFoundError("Daily record", record_id)
@@ -190,7 +189,7 @@ class RecordService:
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
-            return cast(DailyRecordResponse, self._to_response(updated_record))
+            return self._to_response(updated_record)
         except Exception as e:
             if "not found" in str(e).lower() or "No row was found" in str(e):
                 raise NotFoundError("Daily record", record_id)
@@ -210,7 +209,7 @@ class RecordService:
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
-            return cast(DailyRecordResponse, self._to_response(updated_record))
+            return self._to_response(updated_record)
         except Exception as e:
             if "not found" in str(e).lower() or "No row was found" in str(e):
                 raise NotFoundError("Daily record", record_id)
@@ -229,7 +228,7 @@ class RecordService:
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
-            return cast(DailyRecordResponse, self._to_response(updated_record))
+            return self._to_response(updated_record)
         except Exception as e:
             if "not found" in str(e).lower() or "No row was found" in str(e):
                 raise NotFoundError("Daily record", record_id)

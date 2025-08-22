@@ -56,7 +56,7 @@ class JWTService:
     async def verify_password(self, password: str, hash_password: str) -> bool:
         password_bytes = password.encode("utf-8")
         hash_bytes = hash_password.encode("utf-8")
-        return bcrypt.checkpw(password_bytes, hash_bytes)  # type: ignore
+        return bcrypt.checkpw(password_bytes, hash_bytes)
 
     async def login(self, user_id: int) -> TokenInfo:
         access = await self.create_access_token(user_id)

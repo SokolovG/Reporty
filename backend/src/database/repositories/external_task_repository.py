@@ -1,5 +1,4 @@
 from collections.abc import Sequence
-from typing import cast
 
 from advanced_alchemy import repository
 from sqlalchemy import and_, select
@@ -7,7 +6,7 @@ from sqlalchemy import and_, select
 from backend.src.database.models import ExternalTask
 
 
-class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTask]):
+class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTask]):  # type: ignore
     """Repository for managing external tasks."""
 
     model_type: type[ExternalTask] = ExternalTask
@@ -22,7 +21,7 @@ class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTask])
                 )
             )
         )
-        return cast(ExternalTask | None, result.scalar_one_or_none())
+        return result.scalar_one_or_none()
 
     async def get_tasks_for_sync(self, system_id: int) -> Sequence[ExternalTask]:
         """Get tasks that need synchronization."""
@@ -31,4 +30,4 @@ class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTask])
             .where(ExternalTask.external_system_id == system_id)
             .order_by(ExternalTask.last_sync.asc())
         )
-        return cast(Sequence[ExternalTask], result.scalars().all())
+        return result.scalars().all()

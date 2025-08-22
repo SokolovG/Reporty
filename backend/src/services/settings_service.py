@@ -1,5 +1,3 @@
-from typing import cast
-
 from adaptix.conversion import get_converter
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
@@ -77,7 +75,7 @@ class SettingsService:
             )
             user_profile.task_types.append(task_type)
             await self.user_profile_repository.session.commit()
-            return cast(TaskTypeResponse, self._to_task_type_response(task_type))
+            return self._to_task_type_response(task_type)
         except NotFoundError:
             raise
         except Exception as e:
@@ -111,7 +109,7 @@ class SettingsService:
                 task_type.is_active = data.is_active
 
             await self.user_profile_repository.session.commit()
-            return cast(TaskTypeResponse, self._to_task_type_response(task_type))
+            return self._to_task_type_response(task_type)
         except NotFoundError:
             raise
         except Exception as e:
@@ -185,7 +183,7 @@ class SettingsService:
 
             updated_ai_provider = await self.ai_provider_repository.update(ai_provider)
             await self.ai_provider_repository.session.commit()
-            return cast(AIProviderResponse, self._to_ai_provider_response(updated_ai_provider))
+            return self._to_ai_provider_response(updated_ai_provider)
 
         except Exception as e:
             if "not found" in str(e).lower():
@@ -208,7 +206,7 @@ class SettingsService:
             if not profile:
                 raise NotFoundError("UserProfile", details={"user_id": user_id})
 
-            return cast(UserProfileResponse, self._to_user_profile_response(profile))
+            return self._to_user_profile_response(profile)
         except NotFoundError:
             raise
         except Exception as e:
@@ -242,7 +240,7 @@ class SettingsService:
 
             updated_profile = await self.user_profile_repository.update(profile)
             await self.user_profile_repository.session.commit()
-            return cast(UserProfileResponse, self._to_user_profile_response(updated_profile))
+            return self._to_user_profile_response(updated_profile)
         except NotFoundError:
             raise
         except Exception as e:
@@ -287,7 +285,7 @@ class SettingsService:
 
             updated_system = await self.external_system_repository.update(system)
             await self.external_system_repository.session.commit()
-            return cast(ExternalSystemResponse, self._to_external_system_response(updated_system))
+            return self._to_external_system_response(updated_system)
         except Exception as e:
             if "not found" in str(e).lower():
                 raise NotFoundError("ExternalSystem", system_id)

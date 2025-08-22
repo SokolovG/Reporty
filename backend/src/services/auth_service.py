@@ -1,5 +1,3 @@
-from typing import cast
-
 from adaptix._internal.conversion.facade.func import get_converter
 
 from backend.src.api.dto import (
@@ -45,7 +43,7 @@ class AuthService:
             email=data.email, name=data.name, password_hash=hashed_password
         )
         await self.notification_service.send_register_notification()
-        return cast(UserResponse, self._to_response(user))
+        return self._to_response(user)
 
     async def login(self, data: LoginRequest) -> TokenInfo:
         """Authenticate user and return tokens."""
@@ -92,7 +90,7 @@ class AuthService:
         if not user:
             raise NotFoundError("User")
 
-        return cast(UserResponse, self._to_response(user))
+        return self._to_response(user)
 
     async def forgot_password(self) -> None:
         """Reset user password."""

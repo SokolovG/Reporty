@@ -4,7 +4,6 @@ from backend.src.api.dto.record_dto import (
     ExternalTaskCreateRequestDTO,
     ExternalTaskUpdateRequest,
     ExternalTaskUpdateRequestDTO,
-    ExternalTaskResponse,
     ExternalTaskResponseDTO,
 )
 from backend.src.services.task_service import TaskService

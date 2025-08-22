@@ -1,10 +1,11 @@
-from typing import Any, Literal
+from typing import Any, Literal, Sequence
 import msgspec
+from msgspec import Struct
 
 
 class SuccessResponse(msgspec.Struct):
     success: Literal[True] = True
-    data: dict[str, Any] | None = None
+    data: Struct | Sequence[Struct] | dict[str, Any] | None = None
     message: str | None = None
 
 
