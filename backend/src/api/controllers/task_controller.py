@@ -40,6 +40,5 @@ class TaskController(Controller):
     @inject
     async def delete_external_task(
         self, task_id: int, task_service: FromDishka[TaskService]
-    ) -> SuccessResponse:
+    ) -> None:
         await task_service.delete_external_task(task_id)
-        return SuccessResponse(message="External task deleted successfully")

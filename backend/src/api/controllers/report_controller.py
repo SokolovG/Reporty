@@ -42,14 +42,13 @@ class ReportController(Controller):
         result = await report_service.get_reports()
         return SuccessResponse(message="Reports retrieved successfully", data=result)
 
-    @delete("/{report_id:int}")
+    @delete("/{report_id:int}", status_code=204)
     @inject
     async def delete_report(
         self, report_service: FromDishka[ReportService], report_id: int
-    ) -> SuccessResponse:
+    ) -> None:
         """Delete a report."""
         await report_service.delete_report(report_id)
-        return SuccessResponse(message="Report deleted successfully")
 
     @patch("/{report_id:int}", return_dto=DailyReportResponseDTO)
     @inject

@@ -58,8 +58,6 @@ class SettingsController(Controller):
     async def delete_task_type(
         self,
         task_type_id: int,
-        request: Request,
         settings_service: FromDishka[SettingsService],
-    ) -> SuccessResponse:
+    ) -> None:
         await settings_service.delete_task_type(task_type_id)
-        return SuccessResponse(message="Task type deleted successfully")

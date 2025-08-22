@@ -187,14 +187,13 @@ class RecordController(Controller):
     @inject
     async def delete_record(
         self, record_service: FromDishka[RecordService], record_id: int
-    ) -> SuccessResponse:
+    ) -> None:
         """
         Raises:
             NotFoundError
             InternalServerError
         """
         await record_service.delete_record(record_id)
-        return SuccessResponse(message="Record deleted successfully")
 
     @post("/{record_id:int}/process", return_dto=DailyRecordResponseDTO)
     @inject
