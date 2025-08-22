@@ -1,28 +1,26 @@
-from typing import Any
 import msgspec
-from litestar import Request
-from litestar.middleware.base import BaseHTTPMiddleware
+from litestar.middleware.base import AbstractMiddleware
 from litestar.status_codes import HTTP_500_INTERNAL_SERVER_ERROR
 from litestar.exceptions import HTTPException
 from litestar.responses import JSONResponse
+from litestar.types import Scope, Receive, Send
 
 from backend.src.core.exceptions import ApiException
 from backend.src.api.responses.base_responses import ErrorResponse
 
 
-class ErrorHandlerMiddleware(BaseHTTPMiddleware):
-    async def __call__(self, scope: dict, receive: Any, send: Any) -> None:
+class ErrorHandlerMiddleware(AbstractMiddleware):
+    async def __call__(
+        self, scope: Scope, receive: Receive, send: Send
+    ) -> None:  # Правильные типы!
         try:
             await self.app(scope, receive, send)
         except Exception as exc:
-            # TODO: request usage
-            request = Request(scope) if scope.get("type") == "http" else None  # noqa
-
             if isinstance(exc, ApiException):
                 error_response = ErrorResponse(
-                    success=False,
                     error_code=exc.error_code,
                     message=exc.message,
+                    success=False,
                     details=exc.details,
                 )
 

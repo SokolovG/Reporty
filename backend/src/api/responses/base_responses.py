@@ -9,7 +9,7 @@ class SuccessResponse(msgspec.Struct):
 
 
 class ErrorResponse(msgspec.Struct):
-    success: Literal[False] = False
     error_code: str
     message: str
+    success: Literal[False] = False
     details: dict[str, Any] | None = None
