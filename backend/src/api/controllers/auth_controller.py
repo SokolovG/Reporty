@@ -38,7 +38,15 @@ class AuthController(Controller):
             httponly=True,
             secure=True,
             samesite="strict",
-            max_age=7 * 24 * 60 * 60,  # 7 days
+            max_age=7 * 24 * 60 * 60,
+        )
+        response.set_cookie(
+            "access_token",
+            token_info.access,
+            httponly=True,
+            secure=True,
+            samesite="strict",
+            max_age=15 * 60,
         )
 
         return SuccessResponse(message="Login successful", data=token_info)
