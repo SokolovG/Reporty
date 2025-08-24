@@ -14,9 +14,9 @@
 
         <form method="POST" action="?/login" use:enhance class="space-y-6">
             <input
-                name="username"
+                name="email"
                 type="text"
-                placeholder="Enter your username"
+                placeholder="Enter your email"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg"
                 required
             />

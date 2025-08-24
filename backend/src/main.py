@@ -3,9 +3,11 @@ from dishka import make_async_container
 from dishka.integrations.litestar import setup_dishka, LitestarProvider
 from litestar import Litestar
 from litestar.config.cors import CORSConfig
+from litestar.types import ASGIApp
 from sqladmin_litestar_plugin import SQLAdminPlugin
+from litestar.middleware import DefineMiddleware
 
-from backend.src.api.middleware import ErrorHandlerMiddleware
+from backend.src.api.middleware import ErrorHandlerMiddleware, JWTAuthenticationMiddleware
 from backend.src.api.routes import (
     record_router,
     report_router,
@@ -53,22 +55,31 @@ cors_config = CORSConfig(
     allow_headers=["*"],
     expose_headers=["authorization"],
 )
-app = Litestar(
-    route_handlers=[
-        report_router,
-        task_router,
-        record_router,
-        settings_router,
-        auth_router,
-    ],
-    middleware=[ErrorHandlerMiddleware],
-    plugins=[sqlalchemy_plugin, admin_plugin],
-    debug=True,
-    logging_config=logging_config,
-    cors_config=cors_config,
-)
-container = make_async_container(MyProvider(), LitestarProvider())
-setup_dishka(container, app)
+
+
+def create_app() -> ASGIApp:
+    container = make_async_container(MyProvider(), LitestarProvider())
+
+    app = Litestar(
+        route_handlers=[
+            report_router,
+            task_router,
+            record_router,
+            settings_router,
+            auth_router,
+        ],
+        middleware=[ErrorHandlerMiddleware, DefineMiddleware(JWTAuthenticationMiddleware)],
+        plugins=[sqlalchemy_plugin, admin_plugin],
+        debug=True,
+        logging_config=logging_config,
+        cors_config=cors_config,
+    )
+
+    setup_dishka(container, app)
+    return app
+
+
+app = create_app()
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000, reload=True)

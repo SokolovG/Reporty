@@ -2,17 +2,13 @@ import msgspec
 from litestar.middleware.base import AbstractMiddleware
 from litestar.status_codes import HTTP_500_INTERNAL_SERVER_ERROR
 from litestar.exceptions import HTTPException
-from litestar.response import Response
 from litestar.types import Scope, Receive, Send
-
 from backend.src.core.exceptions import ApiException
 from backend.src.api.responses.base_responses import ErrorResponse
 
 
 class ErrorHandlerMiddleware(AbstractMiddleware):
-    async def __call__(
-        self, scope: Scope, receive: Receive, send: Send
-    ) -> None:  # Правильные типы!
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         try:
             await self.app(scope, receive, send)
         except Exception as exc:
@@ -23,14 +19,7 @@ class ErrorHandlerMiddleware(AbstractMiddleware):
                     success=False,
                     details=exc.details,
                 )
-
-                response_data = msgspec.to_builtins(error_response)
-
-                response = Response(content=response_data, status_code=exc.status_code)
-
-                await response(scope, receive, send)  # type: ignore
-                return
-
+                status_code = exc.status_code
             elif isinstance(exc, HTTPException):
                 error_response = ErrorResponse(
                     success=False,
@@ -38,14 +27,7 @@ class ErrorHandlerMiddleware(AbstractMiddleware):
                     message=exc.detail or "HTTP error occurred",
                     details={"status_code": exc.status_code},
                 )
-
-                response_data = msgspec.to_builtins(error_response)
-
-                response = Response(content=response_data, status_code=exc.status_code)
-
-                await response(scope, receive, send)  # type: ignore
-                return
-
+                status_code = exc.status_code
             else:
                 error_response = ErrorResponse(
                     success=False,
@@ -53,12 +35,21 @@ class ErrorHandlerMiddleware(AbstractMiddleware):
                     message="An unexpected error occurred",
                     details={"error_type": type(exc).__name__},
                 )
+                status_code = HTTP_500_INTERNAL_SERVER_ERROR
 
-                response_data = msgspec.to_builtins(error_response)
+            response_body = msgspec.json.encode(msgspec.to_builtins(error_response))
 
-                response = Response(
-                    content=response_data, status_code=HTTP_500_INTERNAL_SERVER_ERROR
-                )
+            await send(
+                {
+                    "type": "http.response.start",
+                    "status": status_code,
+                    "headers": [[b"content-type", b"application/json"]],
+                }
+            )
 
-                await response(scope, receive, send)  # type: ignore
-                return
+            await send(
+                {
+                    "type": "http.response.body",
+                    "body": response_body,
+                }
+            )

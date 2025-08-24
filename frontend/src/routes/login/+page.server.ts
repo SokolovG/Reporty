@@ -14,20 +14,20 @@ export const load: PageServerLoad = async ({ parent }) => {
 export const actions: Actions = {
     login: async ({ request, fetch }) => {
         const formData = await request.formData();
-        const username = formData.get('username');
+        const email = formData.get('email');
         const password = formData.get('password');
 
-        if (!username || !password) {
-            return { error: 'Username and password are required' };
+        if (!email || !password) {
+            return { error: 'email and password are required' };
         }
 
         try {
             const loginData = {
-                username: username.toString(),
+                email: email.toString(),
                 password: password.toString()
             };
 
-            const response = await fetch('/api/login', {
+            const response = await fetch('/api/v1/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ export const actions: Actions = {
             });
 
             if (!response.ok) {
-                return { error: 'Invalid username or password' };
+                return { error: 'Invalid email or password' };
             }
 
 

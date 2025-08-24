@@ -6,7 +6,7 @@ export const load: LayoutServerLoad = async ({ url, fetch }) => {
   const isPublicPath = publicPaths.some(path => url.pathname.startsWith(path));
 
   try {
-    const response = await fetch('/api/v1/users/me');
+    const response = await fetch('/api/v1/auth/me');
 
     if (response.ok) {
       const user = await response.json();

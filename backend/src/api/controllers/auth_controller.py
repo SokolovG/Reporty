@@ -1,6 +1,7 @@
 from dishka import FromDishka
 from dishka.integrations.litestar import inject
 from litestar import Controller, get, post, Request, Response
+from litestar.datastructures.cookie import Cookie
 
 from backend.src.api.dto import (
     ChangePasswordRequest,
@@ -25,31 +26,35 @@ class AuthController(Controller):
 
     @post("/login")
     @inject
-    async def login(
-        self, service: FromDishka[AuthService], response: Response, data: LoginRequest
-    ) -> SuccessResponse:
+    async def login(self, service: FromDishka[AuthService], data: LoginRequest) -> SuccessResponse:
         """Login user and return tokens."""
         token_info = await service.login(data)
 
-        # Set refresh token in httpOnly cookie
-        response.set_cookie(
-            "refresh_token",
-            token_info.refresh,
-            httponly=True,
-            secure=True,
-            samesite="strict",
-            max_age=7 * 24 * 60 * 60,
-        )
-        response.set_cookie(
-            "access_token",
-            token_info.access,
-            httponly=True,
-            secure=True,
-            samesite="strict",
-            max_age=15 * 60,
-        )
+        success_response = SuccessResponse(message="Login successful", data=token_info)
 
-        return SuccessResponse(message="Login successful", data=token_info)
+        response = Response(
+            content=success_response,
+            status_code=200,
+            cookies=[
+                Cookie(
+                    key="refresh_token",
+                    value=token_info.refresh,
+                    httponly=True,
+                    secure=True,
+                    samesite="strict",
+                    max_age=7 * 24 * 60 * 60,
+                ),
+                Cookie(
+                    key="access_token",
+                    value=token_info.access,
+                    httponly=True,
+                    secure=True,
+                    samesite="strict",
+                    max_age=15 * 60,
+                ),
+            ],
+        )
+        return response
 
     @post("/logout")
     @inject
