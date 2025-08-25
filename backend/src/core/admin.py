@@ -25,7 +25,7 @@ class UserAdmin(ModelView, model=User):
     name = "User"
     name_plural = "Users"
     icon = "fa-solid fa-user"
-    column_exclude_list = [User.email, User.password_hash]
+    column_exclude_list = [User.password_hash]
 
 
 class DailyRecordAdmin(ModelView, model=DailyRecord):

@@ -1,3 +1,4 @@
+import logging
 import msgspec
 from litestar.middleware.base import AbstractMiddleware
 from litestar.status_codes import HTTP_500_INTERNAL_SERVER_ERROR
@@ -12,6 +13,7 @@ class ErrorHandlerMiddleware(AbstractMiddleware):
         try:
             await self.app(scope, receive, send)
         except Exception as exc:
+            logging.exception(f"Unhandled exception in {scope.get('path', 'unknown')}: {exc}")
             if isinstance(exc, ApiException):
                 error_response = ErrorResponse(
                     error_code=exc.error_code,
