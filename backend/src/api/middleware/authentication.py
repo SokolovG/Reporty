@@ -35,6 +35,6 @@ class JWTAuthenticationMiddleware(AbstractAuthenticationMiddleware):
             if not payload:
                 raise AuthenticationError("Invalid token")
 
-            user = await user_repo.get(payload["sub"])
+            user = await user_repo.get(int(payload["sub"]))
 
         return AuthenticationResult(user=user, auth=access_token)

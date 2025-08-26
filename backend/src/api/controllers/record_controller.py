@@ -12,6 +12,7 @@ from backend.src.api.dto import (
     RecordStatusUpdateRequest,
     RecordStatusUpdateRequestDTO,
 )
+from backend.src.api.dto.auth_dto import SuccessResponseDTO
 from backend.src.api.dto.record_dto import (
     DailyRecordWithTaskResponseDTO,
     LinkTaskRequest,
@@ -23,7 +24,6 @@ from backend.src.api.dto.record_dto import (
 )
 from backend.src.services import RecordService
 from backend.src.api.responses.base_responses import SuccessResponse
-
 
 class RecordController(Controller):
     @post(dto=DailyRecordRequestDTO, return_dto=DailyRecordResponseDTO)
@@ -57,7 +57,7 @@ class RecordController(Controller):
         result = await record_service.get_record(record_id)
         return SuccessResponse(message="Record retrieved successfully", data=result)
 
-    @get(return_dto=DailyRecordResponseDTO)
+    @get(return_dto=SuccessResponseDTO)
     @inject
     async def get_records(
         self,
