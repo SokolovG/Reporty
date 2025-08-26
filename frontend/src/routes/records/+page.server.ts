@@ -50,8 +50,10 @@ export const load: PageServerLoad = async ({ fetch }) => {
             return { records: [], taskTypes: [] };
         }
 
-        const records = await recordsResponse.json();
-        const taskTypes = await taskTypesResponse.json();
+        const records_json = await recordsResponse.json();
+        const records = records_json.data
+        const task_types_json = await taskTypesResponse.json();
+        const taskTypes = task_types_json.data
 
         return { records, taskTypes };
     } catch (error) {

@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from dishka import FromDishka
 from dishka.integrations.litestar import inject
 from litestar import Controller, delete, get, post, patch, Request
@@ -8,13 +7,10 @@ from litestar.params import Parameter
 from backend.src.api.dto import (
     DailyRecordRequest,
     DailyRecordRequestDTO,
-    DailyRecordResponseDTO,
     RecordStatusUpdateRequest,
     RecordStatusUpdateRequestDTO,
 )
-from backend.src.api.dto.auth_dto import SuccessResponseDTO
 from backend.src.api.dto.record_dto import (
-    DailyRecordWithTaskResponseDTO,
     LinkTaskRequest,
     LinkTaskRequestDTO,
     DailyRecordUpdateRequestDTO,
@@ -23,10 +19,11 @@ from backend.src.api.dto.record_dto import (
     AppendToRecordRequest,
 )
 from backend.src.services import RecordService
-from backend.src.api.responses.base_responses import SuccessResponse
+from backend.src.api.responses.base_responses import SuccessResponse, SuccessResponseDTO
+
 
 class RecordController(Controller):
-    @post(dto=DailyRecordRequestDTO, return_dto=DailyRecordResponseDTO)
+    @post(dto=DailyRecordRequestDTO, return_dto=SuccessResponseDTO)
     @inject
     async def create_record(
         self,
@@ -44,7 +41,7 @@ class RecordController(Controller):
         result = await record_service.create_record(data, user_id)
         return SuccessResponse(message="Record created successfully", data=result)
 
-    @get("/{record_id:int}", return_dto=DailyRecordResponseDTO)
+    @get("/{record_id:int}", return_dto=SuccessResponseDTO)
     @inject
     async def get_record(
         self, record_service: FromDishka[RecordService], record_id: int
@@ -76,7 +73,7 @@ class RecordController(Controller):
     @patch(
         "/{record_id:int}/status",
         dto=RecordStatusUpdateRequestDTO,
-        return_dto=DailyRecordResponseDTO,
+        return_dto=SuccessResponseDTO,
     )
     @inject
     async def update_record_status(
@@ -96,7 +93,7 @@ class RecordController(Controller):
     @post(
         "/{record_id:int}/append",
         dto=AppendToRecordRequestDTO,
-        return_dto=DailyRecordResponseDTO,
+        return_dto=SuccessResponseDTO,
     )
     @inject
     async def append_to_record(
@@ -116,7 +113,7 @@ class RecordController(Controller):
     @patch(
         "/{record_id:int}",
         dto=DailyRecordUpdateRequestDTO,
-        return_dto=DailyRecordResponseDTO,
+        return_dto=SuccessResponseDTO,
     )
     @inject
     async def update_record(
@@ -133,7 +130,7 @@ class RecordController(Controller):
         result = await record_service.update_record(record_id, data)
         return SuccessResponse(message="Record updated successfully", data=result)
 
-    @get("/{record_id:int}/with-task", return_dto=DailyRecordWithTaskResponseDTO)
+    @get("/{record_id:int}/with-task", return_dto=SuccessResponseDTO)
     @inject
     async def get_record_with_task(
         self, record_service: FromDishka[RecordService], record_id: int
@@ -149,7 +146,7 @@ class RecordController(Controller):
     @post(
         "/{record_id:int}/link-task",
         dto=LinkTaskRequestDTO,
-        return_dto=DailyRecordResponseDTO,
+        return_dto=SuccessResponseDTO,
     )
     @inject
     async def link_external_task(
@@ -169,7 +166,7 @@ class RecordController(Controller):
     @delete(
         "/{record_id:int}/unlink-task",
         status_code=200,
-        return_dto=DailyRecordResponseDTO,
+        return_dto=SuccessResponseDTO,
     )
     @inject
     async def unlink_external_task(
@@ -195,7 +192,7 @@ class RecordController(Controller):
         """
         await record_service.delete_record(record_id)
 
-    @post("/{record_id:int}/process", return_dto=DailyRecordResponseDTO)
+    @post("/{record_id:int}/process", return_dto=SuccessResponseDTO)
     @inject
     async def process_record_with_ai(
         self, record_service: FromDishka[RecordService], record_id: int, request: Request
