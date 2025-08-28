@@ -13,6 +13,7 @@ class DailyReportRequest(msgspec.Struct):
 
 class DailyReportRequestUpdate(msgspec.Struct):
     report_id: int
+    # TODO: report update
 
 
 class DailyReportResponse(msgspec.Struct):

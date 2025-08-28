@@ -60,10 +60,9 @@ class ReportController(Controller):
     @patch("/{report_id:int}", return_dto=DailyReportResponseDTO)
     @inject
     async def update_report(
-        self, report_service: FromDishka[ReportService], report_id: int, request: Request
+        self, report_service: FromDishka[ReportService], request: Request, update_data: DailyReportRequestUpdate,
     ) -> SuccessResponse:
         """Update a report."""
         user_id = request.user.id
-        update_data = DailyReportRequestUpdate(report_id=report_id)
         result = await report_service.update_report(update_data=update_data, user_id=user_id)
         return SuccessResponse(message="Report updated successfully", data=result)
