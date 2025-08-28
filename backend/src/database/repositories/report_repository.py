@@ -30,7 +30,7 @@ class ReportRepository(repository.SQLAlchemyAsyncRepository[Report]):  # type: i
             select(Report)
             .where(and_(Report.report_date >= start_date, Report.report_date <= end_date))
             .order_by(Report.report_date.desc())
-            .where(user_id == user_id)
+            .where(Report.user_id == user_id)
         )
         return result.scalars().all()
 

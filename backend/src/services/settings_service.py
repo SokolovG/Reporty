@@ -150,9 +150,7 @@ class SettingsService:
     async def get_ai_providers(self, user_id: int) -> list[AIProviderResponse]:
         """Get all AI providers."""
         try:
-            result = await self.ai_provider_repository.session.execute(
-                select(AIProvider)
-            )
+            result = await self.ai_provider_repository.session.execute(select(AIProvider))
             return [self._to_ai_provider_response(p) for p in result.scalars().all()]
         except Exception as e:
             raise InternalServerError(f"Failed to get AI providers: {str(e)}")
