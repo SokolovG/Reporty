@@ -59,6 +59,7 @@ class RecordController(Controller):
     async def get_records(
         self,
         record_service: FromDishka[RecordService],
+        request: Request,
         date: datetime | None = Parameter(
             query="date", default=None, description="Filter records by date (YYYY-MM-DD format)"
         ),
@@ -67,7 +68,8 @@ class RecordController(Controller):
         Raises:
             InternalServerError
         """
-        result = await record_service.get_records(date)
+        user_id = request.user.id
+        result = await record_service.get_records(target_date=date, user_id=user_id)
         return SuccessResponse(message="Records retrieved successfully", data=result)
 
     @patch(

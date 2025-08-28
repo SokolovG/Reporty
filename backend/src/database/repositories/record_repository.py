@@ -107,24 +107,14 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
             raise ValueError(f"External task with id {external_task_id} not found")
 
     async def get_records_by_status(
-        self, status: RecordStatus, user_id: int | None = None
+        self, status: RecordStatus, user_id: int
     ) -> Sequence[DailyRecord]:
         """Get records by status."""
-        query = select(DailyRecord).where(DailyRecord.status == status.value)
-
-        if user_id is not None:
-            query = query.where(DailyRecord.user_id == user_id)
-
-        query = query.order_by(DailyRecord.created_at.desc())
-
+        query = select(DailyRecord).where(DailyRecord.status == status.value).order_by(DailyRecord.created_at.desc()).where(DailyRecord.user_id==user_id)
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def get_all_records(self, user_id: int | None = None) -> Sequence[DailyRecord]:
-        query = select(DailyRecord)
-        if user_id is not None:
-            query = query.where(DailyRecord.user_id == user_id)
-
-        query = query.order_by(DailyRecord.created_at.desc())
+    async def get_all_records(self, user_id) -> Sequence[DailyRecord]:
+        query = select(DailyRecord).order_by(DailyRecord.created_at.desc()).where(DailyRecord.user_id==user_id)
         result = await self.session.execute(query)
         return result.scalars().all()

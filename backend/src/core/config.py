@@ -29,15 +29,14 @@ def get_sqlalchemy_plugin() -> SQLAlchemyPlugin:
 
 
 logging_config = LoggingConfig(
-    root={"level": "INFO", "handlers": ["console"]},
-    formatters={
-        "standard": {"format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"},
-    },
+    root={"level": "INFO", "handlers": ["rich_console"]},
     handlers={
-        "console": {
-            "class": "logging.StreamHandler",
+        "rich_console": {
+            "class": "rich.logging.RichHandler",
             "level": "DEBUG",
-            "formatter": "standard",
+            "rich_tracebacks": True,
+            "show_path": False,
+            "show_time": True,
         },
     },
     log_exceptions="always",
