@@ -151,7 +151,7 @@ class SettingsService:
         """Get all AI providers."""
         try:
             result = await self.ai_provider_repository.session.execute(
-                select(AIProvider).where(UserProfile.user_id == user_id)
+                select(AIProvider)
             )
             return [self._to_ai_provider_response(p) for p in result.scalars().all()]
         except Exception as e:
@@ -161,7 +161,7 @@ class SettingsService:
         """Get only active AI providers."""
         try:
             result = await self.ai_provider_repository.session.execute(
-                select(AIProvider).where(AIProvider.is_active).where(UserProfile.user_id == user_id)  # noqa: E712
+                select(AIProvider).where(AIProvider.is_active)
             )
             return [self._to_ai_provider_response(p) for p in result.scalars().all()]
         except Exception as e:

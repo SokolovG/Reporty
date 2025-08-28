@@ -85,7 +85,8 @@ class ReportService:
     async def delete_report(self, report_id: int, user_id: int) -> None:
         """Delete a report."""
         try:
-            await self.repo.delete(report_id=report_id, user_id=user_id)
+            report = await self.repo.get_report(report_id=report_id, user_id=user_id)
+            await self.repo.delete(report)
         except Exception as e:
             raise InternalServerError(
                 f"Failed to delete report: {str(e)}", {"report_id": report_id}
