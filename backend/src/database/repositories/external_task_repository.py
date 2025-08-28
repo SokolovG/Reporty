@@ -11,7 +11,7 @@ class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTask])
 
     model_type: type[ExternalTask] = ExternalTask
 
-    async def get_by_external_id(self, system_id: int, external_id: int) -> ExternalTask | None:
+    async def get_by_external_id(self, system_id: int, external_id: int, user_id: int) -> ExternalTask | None:
         """Get a task by external system and external ID."""
         result = await self.session.execute(
             select(ExternalTask).where(
@@ -20,6 +20,7 @@ class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTask])
                     ExternalTask.external_id == external_id,
                 )
             )
+            # TODO: daily record load and check user id
         )
         return result.scalar_one_or_none()
 
@@ -30,4 +31,5 @@ class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTask])
             .where(ExternalTask.external_system_id == system_id)
             .order_by(ExternalTask.last_sync.asc())
         )
+        # TODO: daily record load and check user id
         return result.scalars().all()

@@ -172,7 +172,10 @@ class Report(Base):
     """Generated a daily/weekly report."""
 
     __tablename__ = "reports"
-
+    
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"), nullable=False, comment="User ID"
+    )
     report_date: Mapped[datetime] = mapped_column(DateTime, nullable=False, comment="Report date")
 
     content: Mapped[str] = mapped_column(Text, nullable=False, comment="Generated report content")

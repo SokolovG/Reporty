@@ -61,7 +61,9 @@ class RecordService:
                 raise NotFoundError("Daily record", record_id)
             raise InternalServerError(f"Failed to get record: {str(e)}", {"record_id": record_id})
 
-    async def get_records(self, user_id: int, target_date: datetime | None = None) -> list[DailyRecordResponse]:
+    async def get_records(
+        self, user_id: int, target_date: datetime | None = None
+    ) -> list[DailyRecordResponse]:
         """Get records, optionally filtered by date."""
         try:
             if target_date is not None:

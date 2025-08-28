@@ -30,6 +30,7 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
         return added_record
 
     async def update_record_status(self, record_id: int, data: RecordStatusUpdateRequest) -> None:
+        # TODO: create logic
         return None
 
     async def get_by_title_user_and_date(
@@ -46,18 +47,18 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
         )
         return result.scalar_one_or_none()
 
-    async def get_with_external_task(self, record_id: int) -> DailyRecord:
+    async def get_with_external_task(self, record_id: int, user_id: int) -> DailyRecord:
         """Get record with loaded external task and system info."""
         result = await self.session.execute(
             select(DailyRecord)
             .options(selectinload(DailyRecord.external_task).selectinload(ExternalTask.system))
-            .where(DailyRecord.id == record_id)
+            .where(DailyRecord.id == record_id).where(DailyRecord.user_id==user_id)
         )
         record = result.scalar_one()
         return record
 
     async def get_records_by_date(
-        self, target_date: date, user_id: int | None = None, include_external_tasks: bool = False
+        self, target_date: date, user_id: int, include_external_tasks: bool = False
     ) -> Sequence[DailyRecord]:
         """Get all records for a specific date."""
         start_datetime = datetime.combine(target_date, datetime.min.time())
@@ -67,34 +68,33 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
             and_(DailyRecord.created_at >= start_datetime, DailyRecord.created_at <= end_datetime)
         )
 
-        if user_id is not None:
-            query = query.where(DailyRecord.user_id == user_id)
-
         if include_external_tasks:
             query = query.options(
                 selectinload(DailyRecord.external_task).selectinload(ExternalTask.system)
             )
 
-        query = query.order_by(DailyRecord.created_at.asc())
+        query = query.order_by(DailyRecord.created_at.asc()).where(DailyRecord.user_id == user_id)
 
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def get_unprocessed_records(self) -> Sequence[DailyRecord]:
+    async def get_unprocessed_records(self, user_id: int) -> Sequence[DailyRecord]:
         """Get records that haven't been processed by AI yet."""
         result = await self.session.execute(
             select(DailyRecord)
             .where(DailyRecord.is_processed == False)  # noqa: E712
             .order_by(DailyRecord.created_at.asc())
+            .where(DailyRecord.user_id == user_id)
         )
         return result.scalars().all()
 
-    async def get_records_for_external_task(self, external_task_id: int) -> Sequence[DailyRecord]:
+    async def get_records_for_external_task(self, external_task_id: int, user_id: int) -> Sequence[DailyRecord]:
         """Get all records linked to a specific external task."""
         result = await self.session.execute(
             select(DailyRecord)
             .where(DailyRecord.external_task_id == external_task_id)
             .order_by(DailyRecord.created_at.desc())
+            .where(DailyRecord.user_id == user_id)
         )
         return result.scalars().all()
 
@@ -110,11 +110,20 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
         self, status: RecordStatus, user_id: int
     ) -> Sequence[DailyRecord]:
         """Get records by status."""
-        query = select(DailyRecord).where(DailyRecord.status == status.value).order_by(DailyRecord.created_at.desc()).where(DailyRecord.user_id==user_id)
+        query = (
+            select(DailyRecord)
+            .where(DailyRecord.status == status.value)
+            .order_by(DailyRecord.created_at.desc())
+            .where(DailyRecord.user_id == user_id)
+        )
         result = await self.session.execute(query)
         return result.scalars().all()
 
     async def get_all_records(self, user_id) -> Sequence[DailyRecord]:
-        query = select(DailyRecord).order_by(DailyRecord.created_at.desc()).where(DailyRecord.user_id==user_id)
+        query = (
+            select(DailyRecord)
+            .order_by(DailyRecord.created_at.desc())
+            .where(DailyRecord.user_id == user_id)
+        )
         result = await self.session.execute(query)
         return result.scalars().all()
