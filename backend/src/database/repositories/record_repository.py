@@ -6,6 +6,7 @@ from sqlalchemy import and_, select
 from sqlalchemy.orm import selectinload
 
 from backend.src.api.dto import DailyRecordRequest, RecordStatusUpdateRequest
+from backend.src.core.exceptions import NotFoundError
 from backend.src.database.base import RecordStatus
 from backend.src.database.models import DailyRecord, ExternalTask
 
@@ -28,6 +29,18 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
         added_record = await self.add(record)
         await self.session.commit()
         return added_record
+
+    async def get_record(self, record_id: int, user_id: int) -> DailyRecord:
+        query = await self.session.execute(
+            select(DailyRecord)
+            .where(DailyRecord.id == record_id)
+            .where(DailyRecord.user_id == user_id)
+        )
+
+        record = query.one_or_none()
+        if not record:
+            raise NotFoundError("Daily record", record_id)
+        return record
 
     async def update_record_status(self, record_id: int, data: RecordStatusUpdateRequest) -> None:
         # TODO: create logic
@@ -52,9 +65,12 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
         result = await self.session.execute(
             select(DailyRecord)
             .options(selectinload(DailyRecord.external_task).selectinload(ExternalTask.system))
-            .where(DailyRecord.id == record_id).where(DailyRecord.user_id==user_id)
+            .where(DailyRecord.id == record_id)
+            .where(DailyRecord.user_id == user_id)
         )
-        record = result.scalar_one()
+        record = result.scalar_one_or_none()
+        if not record:
+            raise NotFoundError(f"Record {record_id} not found for user {user_id}")
         return record
 
     async def get_records_by_date(
@@ -88,7 +104,9 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
         )
         return result.scalars().all()
 
-    async def get_records_for_external_task(self, external_task_id: int, user_id: int) -> Sequence[DailyRecord]:
+    async def get_records_for_external_task(
+        self, external_task_id: int, user_id: int
+    ) -> Sequence[DailyRecord]:
         """Get all records linked to a specific external task."""
         result = await self.session.execute(
             select(DailyRecord)

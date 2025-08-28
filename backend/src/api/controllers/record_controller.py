@@ -38,7 +38,7 @@ class RecordController(Controller):
             InternalServerError
         """
         user_id = request.user.id
-        result = await record_service.create_record(data, user_id)
+        result = await record_service.create_record(data=data, user_id=user_id)
         return SuccessResponse(message="Record created successfully", data=result)
 
     @get("/{record_id:int}", return_dto=SuccessResponseDTO)

@@ -2,7 +2,7 @@ from datetime import datetime
 
 from adaptix.conversion import get_converter
 
-from backend.src.core.exceptions import NotFoundError, InternalServerError, ValidationError
+from backend.src.core.exceptions import InternalServerError, ValidationError
 from backend.src.api.dto import DailyRecordRequest, DailyRecordResponse
 from backend.src.api.dto.record_dto import (
     DailyRecordWithTaskResponse,
@@ -51,14 +51,12 @@ class RecordService:
         except Exception as e:
             raise InternalServerError(f"Failed to create record: {str(e)}", {"user_id": user_id})
 
-    async def get_record(self, record_id: int) -> DailyRecordResponse:
+    async def get_record(self, record_id: int, user_id: int) -> DailyRecordResponse:
         """Get a specific record by ID."""
         try:
-            record = await self.repo.get(record_id)
+            record = await self.repo.get_record(record_id=record_id, user_id=user_id)
             return self._to_response(record)
         except Exception as e:
-            if "not found" in str(e).lower() or "No row was found" in str(e):
-                raise NotFoundError("Daily record", record_id)
             raise InternalServerError(f"Failed to get record: {str(e)}", {"record_id": record_id})
 
     async def get_records(
@@ -79,11 +77,11 @@ class RecordService:
             raise InternalServerError(f"Failed to get records: {str(e)}")
 
     async def append_to_record(
-        self, record_id: int, data: AppendToRecordRequest
+        self, record_id: int, user_id: int, data: AppendToRecordRequest
     ) -> DailyRecordResponse:
         """Append additional content to an existing record."""
         try:
-            record = await self.repo.get(record_id)
+            record = await self.repo.get_record(record_id=record_id, user_id=user_id)
             record.raw_input += data.separator + data.additional_input
 
             updated_record = await self.repo.update(record)
@@ -91,18 +89,16 @@ class RecordService:
 
             return self._to_response(updated_record)
         except Exception as e:
-            if "not found" in str(e).lower() or "No row was found" in str(e):
-                raise NotFoundError("Daily record", record_id)
             raise InternalServerError(
                 f"Failed to append to record: {str(e)}", {"record_id": record_id}
             )
 
     async def update_record(
-        self, record_id: int, data: DailyRecordUpdateRequest
+        self, record_id: int, user_id: int, data: DailyRecordUpdateRequest
     ) -> DailyRecordResponse:
         """Update an existing record."""
         try:
-            record = await self.repo.get(record_id)
+            record = await self.repo.get_record(record_id=record_id, user_id=user_id)
 
             if data.title is not None:
                 record.title = data.title
@@ -120,16 +116,16 @@ class RecordService:
 
             return self._to_response(updated_record)
         except Exception as e:
-            if "not found" in str(e).lower() or "No row was found" in str(e):
-                raise NotFoundError("Daily record", record_id)
             raise InternalServerError(
                 f"Failed to update record: {str(e)}", {"record_id": record_id}
             )
 
-    async def get_record_with_task(self, record_id: int) -> DailyRecordWithTaskResponse:
+    async def get_record_with_task(
+        self, record_id: int, user_id: int
+    ) -> DailyRecordWithTaskResponse:
         """Get record with loaded external task information."""
         try:
-            record = await self.repo.get_with_external_task(record_id)
+            record = await self.repo.get_with_external_task(record_id=record_id, user_id=user_id)
             external_task_info = None
 
             if record.external_task:
@@ -158,43 +154,37 @@ class RecordService:
                 user_id=record.user_id,
             )
         except Exception as e:
-            if "not found" in str(e).lower() or "No row was found" in str(e):
-                raise NotFoundError("Daily record", record_id)
             raise InternalServerError(
                 f"Failed to get record with task: {str(e)}", {"record_id": record_id}
             )
 
     async def link_to_external_task(
-        self, record_id: int, external_task_id: int
+        self, record_id: int, external_task_id: int, user_id: int
     ) -> DailyRecordResponse:
         """Link daily record to an external task."""
         try:
-            record = await self.repo.get(record_id)
+            record = await self.repo.get_record(record_id=record_id, user_id=user_id)
             record.external_task_id = external_task_id
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
             return self._to_response(updated_record)
         except Exception as e:
-            if "not found" in str(e).lower() or "No row was found" in str(e):
-                raise NotFoundError("Daily record", record_id)
             raise InternalServerError(
                 f"Failed to link external task: {str(e)}",
                 {"record_id": record_id, "external_task_id": external_task_id},
             )
 
-    async def unlink_from_external_task(self, record_id: int) -> DailyRecordResponse:
+    async def unlink_from_external_task(self, record_id: int, user_id: int) -> DailyRecordResponse:
         """Remove link to external task."""
         try:
-            record = await self.repo.get(record_id)
+            record = await self.repo.get_record(record_id=record_id, user_id=user_id)
             record.external_task_id = None
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
             return self._to_response(updated_record)
         except Exception as e:
-            if "not found" in str(e).lower() or "No row was found" in str(e):
-                raise NotFoundError("Daily record", record_id)
             raise InternalServerError(
                 f"Failed to unlink external task: {str(e)}", {"record_id": record_id}
             )
@@ -202,7 +192,7 @@ class RecordService:
     async def process_with_ai(self, record_id: int, user_id: int) -> DailyRecordResponse:
         """Process record with AI."""
         try:
-            record = await self.repo.get(record_id)
+            record = await self.repo.get_record(record_id=record_id, user_id=user_id)
             ai_processed = await self.ai_service.process(record.raw_input, user_id)
             record.ai_processed = ai_processed
             record.processed_at = datetime.now()
@@ -213,45 +203,36 @@ class RecordService:
 
             return self._to_response(updated_record)
         except Exception as e:
-            if "not found" in str(e).lower() or "No row was found" in str(e):
-                raise NotFoundError("Daily record", record_id)
             raise InternalServerError(
                 f"Failed to process record with AI: {str(e)}",
                 {"record_id": record_id, "user_id": user_id},
             )
 
     async def update_status(
-        self, record_id: int, data: RecordStatusUpdateRequest
+        self, record_id: int, user_id: int, data: RecordStatusUpdateRequest
     ) -> DailyRecordResponse:
         """Update record status."""
         try:
-            record = await self.repo.get(record_id)
+            record = await self.repo.get_record(record_id=record_id, user_id=user_id)
             record.status = data.status.value
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
             return self._to_response(updated_record)
         except Exception as e:
-            if "not found" in str(e).lower() or "No row was found" in str(e):
-                raise NotFoundError("Daily record", record_id)
             raise InternalServerError(
                 f"Failed to update record status: {str(e)}", {"record_id": record_id}
             )
 
-    async def delete_record(self, record_id: int) -> None:
+    async def delete_record(self, record_id: int, user_id: int) -> None:
         """Delete a record."""
         try:
-            record = await self.repo.get(record_id)
-            if not record:
-                raise NotFoundError("Daily record", record_id)
+            record = await self.repo.get_record(record_id=record_id, user_id=user_id)
 
-            await self.repo.delete(record_id)
+            await self.repo.delete(record.id)
             await self.repo.session.commit()
-        except NotFoundError:
-            raise
+
         except Exception as e:
-            if "not found" in str(e).lower() or "No row was found" in str(e):
-                raise NotFoundError("Daily record", record_id)
             raise InternalServerError(
                 f"Failed to delete record: {str(e)}", {"record_id": record_id}
             )
