@@ -17,13 +17,14 @@ class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTask])
     ) -> ExternalTask:
         """Get a task by external system and external ID."""
         result = await self.session.execute(
-            select(ExternalTask).where(
+            select(ExternalTask)
+            .where(
                 and_(
                     ExternalTask.external_system_id == system_id,
                     ExternalTask.external_id == external_id,
                 )
             )
-            # TODO: daily record load and check user id
+            .where(ExternalTask.user_id == user_id)
         )
         return result.scalar_one_or_none()
 

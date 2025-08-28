@@ -91,7 +91,7 @@ class SettingsService:
                 .options(selectinload(UserProfile.task_types))
                 .join(TaskType, UserProfile.id == TaskType.user_profile_id)
                 .where(TaskType.id == task_type_id)
-                .where(UserProfile.id == user_id)
+                .where(UserProfile.user_id == user_id)
             )
             user_profile = result.scalar_one_or_none()
 
@@ -126,7 +126,7 @@ class SettingsService:
                 .options(selectinload(UserProfile.task_types))
                 .join(TaskType, UserProfile.id == TaskType.user_profile_id)
                 .where(TaskType.id == task_type_id)
-                .where(UserProfile.id == user_id)
+                .where(UserProfile.user_id == user_id)
             )
             user_profile = result.scalar_one_or_none()
 
@@ -151,7 +151,7 @@ class SettingsService:
         """Get all AI providers."""
         try:
             result = await self.ai_provider_repository.session.execute(
-                select(AIProvider).where(UserProfile.id == user_id)
+                select(AIProvider).where(UserProfile.user_id == user_id)
             )
             return [self._to_ai_provider_response(p) for p in result.scalars().all()]
         except Exception as e:
@@ -161,7 +161,7 @@ class SettingsService:
         """Get only active AI providers."""
         try:
             result = await self.ai_provider_repository.session.execute(
-                select(AIProvider).where(AIProvider.is_active).where(UserProfile.id == user_id)  # noqa: E712
+                select(AIProvider).where(AIProvider.is_active).where(UserProfile.user_id == user_id)  # noqa: E712
             )
             return [self._to_ai_provider_response(p) for p in result.scalars().all()]
         except Exception as e:

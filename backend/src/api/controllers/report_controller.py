@@ -64,6 +64,6 @@ class ReportController(Controller):
     ) -> SuccessResponse:
         """Update a report."""
         user_id = request.user.id
-        update_data = DailyReportRequestUpdate(report_id=report_id, user_id=user_id)
+        update_data = DailyReportRequestUpdate(report_id=report_id)
         result = await report_service.update_report(update_data=update_data, user_id=user_id)
         return SuccessResponse(message="Report updated successfully", data=result)

@@ -53,6 +53,7 @@ class ReportService:
                     report_date=data.date,
                     content=report_content,
                     entries_count=len(unique_records),
+                    user_id=user_id,
                 )
             )
             await self.repo.session.commit()
@@ -118,7 +119,7 @@ class ReportService:
             reports = await self.repo.list(user_id=user_id)
 
             if not reports:
-                raise NotFoundError("Report", user_id)
+                raise NotFoundError("Report")
 
             response_list = []
             for report in reports:
