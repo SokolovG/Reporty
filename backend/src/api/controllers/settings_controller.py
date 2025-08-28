@@ -22,7 +22,7 @@ class SettingsController(Controller):
         settings_service: FromDishka[SettingsService],
     ) -> SuccessResponse:
         user_id = request.user.id
-        task_types = await settings_service.get_task_types(user_id)
+        task_types = await settings_service.get_task_types(user_id=user_id)
         return SuccessResponse(message="Task types retrieved successfully", data=task_types)
 
     @post("/task-types", dto=TaskTypeRequestDTO, return_dto=TaskTypeResponseDTO)
@@ -34,7 +34,7 @@ class SettingsController(Controller):
         settings_service: FromDishka[SettingsService],
     ) -> SuccessResponse:
         user_id = request.user.id
-        task_type = await settings_service.create_task_type(user_id, data)
+        task_type = await settings_service.create_task_type(user_id=user_id, data=data)
         return SuccessResponse(message="Task type created successfully", data=task_type)
 
     @patch(
@@ -50,7 +50,10 @@ class SettingsController(Controller):
         request: Request,
         settings_service: FromDishka[SettingsService],
     ) -> SuccessResponse:
-        task_type = await settings_service.update_task_type(task_type_id, data)
+        user_id = request.user.id
+        task_type = await settings_service.update_task_type(
+            task_type_id=task_type_id, data=data, user_id=user_id
+        )
         return SuccessResponse(message="Task type updated successfully", data=task_type)
 
     @delete("/task-types/{task_type_id:int}")
@@ -58,6 +61,8 @@ class SettingsController(Controller):
     async def delete_task_type(
         self,
         task_type_id: int,
+        request: Request,
         settings_service: FromDishka[SettingsService],
     ) -> None:
-        await settings_service.delete_task_type(task_type_id)
+        user_id = request.user.id
+        await settings_service.delete_task_type(task_type_id=task_type_id, user_id=user_id)

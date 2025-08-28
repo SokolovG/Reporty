@@ -137,7 +137,7 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def get_all_records(self, user_id) -> Sequence[DailyRecord]:
+    async def get_all_records(self, user_id: int) -> Sequence[DailyRecord]:
         query = (
             select(DailyRecord)
             .order_by(DailyRecord.created_at.desc())

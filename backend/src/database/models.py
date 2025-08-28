@@ -114,6 +114,9 @@ class ExternalTask(Base):
 
     __tablename__ = "external_tasks"
 
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"), nullable=False, comment="ID пользователя"
+    )
     external_id: Mapped[int | None] = mapped_column(
         Integer, nullable=True, comment="Task ID in external system"
     )
@@ -172,10 +175,8 @@ class Report(Base):
     """Generated a daily/weekly report."""
 
     __tablename__ = "reports"
-    
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"), nullable=False, comment="User ID"
-    )
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, comment="User ID")
     report_date: Mapped[datetime] = mapped_column(DateTime, nullable=False, comment="Report date")
 
     content: Mapped[str] = mapped_column(Text, nullable=False, comment="Generated report content")

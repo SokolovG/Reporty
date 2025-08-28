@@ -44,14 +44,18 @@ class RecordController(Controller):
     @get("/{record_id:int}", return_dto=SuccessResponseDTO)
     @inject
     async def get_record(
-        self, record_service: FromDishka[RecordService], record_id: int
+        self,
+        record_service: FromDishka[RecordService],
+        record_id: int,
+        request: Request,
     ) -> SuccessResponse:
         """
         Raises:
             NotFoundError
             InternalServerError
         """
-        result = await record_service.get_record(record_id)
+        user_id = request.user.id
+        result = await record_service.get_record(record_id=record_id, user_id=user_id)
         return SuccessResponse(message="Record retrieved successfully", data=result)
 
     @get(return_dto=SuccessResponseDTO)
@@ -82,6 +86,7 @@ class RecordController(Controller):
         self,
         record_service: FromDishka[RecordService],
         record_id: int,
+        request: Request,
         data: RecordStatusUpdateRequest,
     ) -> SuccessResponse:
         """
@@ -89,7 +94,8 @@ class RecordController(Controller):
             NotFoundError
             InternalServerError
         """
-        result = await record_service.update_status(record_id, data)
+        user_id = request.user.id
+        result = await record_service.update_status(record_id=record_id, data=data, user_id=user_id)
         return SuccessResponse(message="Record status updated successfully", data=result)
 
     @post(
@@ -102,6 +108,7 @@ class RecordController(Controller):
         self,
         data: AppendToRecordRequest,
         record_id: int,
+        request: Request,
         record_service: FromDishka[RecordService],
     ) -> SuccessResponse:
         """
@@ -109,7 +116,10 @@ class RecordController(Controller):
             NotFoundError
             InternalServerError
         """
-        result = await record_service.append_to_record(record_id, data)
+        user_id = request.user.id
+        result = await record_service.append_to_record(
+            record_id=record_id, data=data, user_id=user_id
+        )
         return SuccessResponse(message="Content appended to record successfully", data=result)
 
     @patch(
@@ -122,6 +132,7 @@ class RecordController(Controller):
         self,
         data: DailyRecordUpdateRequest,
         record_id: int,
+        request: Request,
         record_service: FromDishka[RecordService],
     ) -> SuccessResponse:
         """
@@ -129,20 +140,22 @@ class RecordController(Controller):
             NotFoundError
             InternalServerError
         """
-        result = await record_service.update_record(record_id, data)
+        user_id = request.user.id
+        result = await record_service.update_record(record_id=record_id, data=data, user_id=user_id)
         return SuccessResponse(message="Record updated successfully", data=result)
 
     @get("/{record_id:int}/with-task", return_dto=SuccessResponseDTO)
     @inject
     async def get_record_with_task(
-        self, record_service: FromDishka[RecordService], record_id: int
+        self, record_service: FromDishka[RecordService], record_id: int, request: Request
     ) -> SuccessResponse:
         """
         Raises:
             NotFoundError
             InternalServerError
         """
-        result = await record_service.get_record_with_task(record_id)
+        user_id = request.user.id
+        result = await record_service.get_record_with_task(record_id=record_id, user_id=user_id)
         return SuccessResponse(message="Record with task retrieved successfully", data=result)
 
     @post(
@@ -155,6 +168,7 @@ class RecordController(Controller):
         self,
         record_service: FromDishka[RecordService],
         record_id: int,
+        request: Request,
         data: LinkTaskRequest,
     ) -> SuccessResponse:
         """
@@ -162,7 +176,10 @@ class RecordController(Controller):
             NotFoundError
             InternalServerError
         """
-        result = await record_service.link_to_external_task(record_id, data.external_task_id)
+        user_id = request.user.id
+        result = await record_service.link_to_external_task(
+            record_id=record_id, external_task_id=data.external_task_id, user_id=user_id
+        )
         return SuccessResponse(message="Record linked to external task successfully", data=result)
 
     @delete(
@@ -172,27 +189,31 @@ class RecordController(Controller):
     )
     @inject
     async def unlink_external_task(
-        self, record_service: FromDishka[RecordService], record_id: int
+        self, record_service: FromDishka[RecordService], record_id: int, request: Request
     ) -> SuccessResponse:
         """
         Raises:
             NotFoundError
             InternalServerError
         """
-        result = await record_service.unlink_from_external_task(record_id)
+        user_id = request.user.id
+        result = await record_service.unlink_from_external_task(
+            record_id=record_id, user_id=user_id
+        )
         return SuccessResponse(message="External task unlinked successfully", data=result)
 
     @delete("/{record_id:int}")
     @inject
     async def delete_record(
-        self, record_service: FromDishka[RecordService], record_id: int
+        self, record_service: FromDishka[RecordService], record_id: int, request: Request
     ) -> None:
         """
         Raises:
             NotFoundError
             InternalServerError
         """
-        await record_service.delete_record(record_id)
+        user_id = request.user.id
+        await record_service.delete_record(record_id=record_id, user_id=user_id)
 
     @post("/{record_id:int}/process", return_dto=SuccessResponseDTO)
     @inject
@@ -205,5 +226,5 @@ class RecordController(Controller):
             InternalServerError
         """
         user_id = request.user.id
-        result = await record_service.process_with_ai(record_id, user_id)
+        result = await record_service.process_with_ai(record_id=record_id, user_id=user_id)
         return SuccessResponse(message="Record processed with AI successfully", data=result)

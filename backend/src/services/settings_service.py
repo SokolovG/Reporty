@@ -82,7 +82,7 @@ class SettingsService:
             raise InternalServerError(f"Failed to create task type: {str(e)}", {"user_id": user_id})
 
     async def update_task_type(
-        self, task_type_id: int, data: TaskTypeUpdateRequest
+        self, task_type_id: int, data: TaskTypeUpdateRequest, user_id: int
     ) -> TaskTypeResponse:
         """Update an existing task type."""
         try:
@@ -91,6 +91,7 @@ class SettingsService:
                 .options(selectinload(UserProfile.task_types))
                 .join(TaskType, UserProfile.id == TaskType.user_profile_id)
                 .where(TaskType.id == task_type_id)
+                .where(UserProfile.id == user_id)
             )
             user_profile = result.scalar_one_or_none()
 
@@ -117,7 +118,7 @@ class SettingsService:
                 f"Failed to update task type: {str(e)}", {"task_type_id": task_type_id}
             )
 
-    async def delete_task_type(self, task_type_id: int) -> None:
+    async def delete_task_type(self, task_type_id: int, user_id: int) -> None:
         """Delete a task type."""
         try:
             result = await self.user_profile_repository.session.execute(
@@ -125,6 +126,7 @@ class SettingsService:
                 .options(selectinload(UserProfile.task_types))
                 .join(TaskType, UserProfile.id == TaskType.user_profile_id)
                 .where(TaskType.id == task_type_id)
+                .where(UserProfile.id == user_id)
             )
             user_profile = result.scalar_one_or_none()
 
@@ -145,19 +147,21 @@ class SettingsService:
             )
 
     # AIProvider methods
-    async def get_ai_providers(self) -> list[AIProviderResponse]:
+    async def get_ai_providers(self, user_id: int) -> list[AIProviderResponse]:
         """Get all AI providers."""
         try:
-            result = await self.ai_provider_repository.session.execute(select(AIProvider))
+            result = await self.ai_provider_repository.session.execute(
+                select(AIProvider).where(UserProfile.id == user_id)
+            )
             return [self._to_ai_provider_response(p) for p in result.scalars().all()]
         except Exception as e:
             raise InternalServerError(f"Failed to get AI providers: {str(e)}")
 
-    async def get_active_ai_providers(self) -> list[AIProviderResponse]:
+    async def get_active_ai_providers(self, user_id: int) -> list[AIProviderResponse]:
         """Get only active AI providers."""
         try:
             result = await self.ai_provider_repository.session.execute(
-                select(AIProvider).where(AIProvider.is_active == True)  # noqa: E712
+                select(AIProvider).where(AIProvider.is_active).where(UserProfile.id == user_id)  # noqa: E712
             )
             return [self._to_ai_provider_response(p) for p in result.scalars().all()]
         except Exception as e:
@@ -287,8 +291,6 @@ class SettingsService:
             await self.external_system_repository.session.commit()
             return self._to_external_system_response(updated_system)
         except Exception as e:
-            if "not found" in str(e).lower():
-                raise NotFoundError("ExternalSystem", system_id)
             raise InternalServerError(
                 f"Failed to update external system: {str(e)}", {"system_id": system_id}
             )

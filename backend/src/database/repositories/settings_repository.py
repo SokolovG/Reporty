@@ -57,3 +57,7 @@ class UserProfileRepository(repository.SQLAlchemyAsyncRepository[UserProfile]): 
 
 class ExternalSystemRepository(repository.SQLAlchemyAsyncRepository[ExternalSystem]):  # type: ignore
     model_type: type[ExternalSystem] = ExternalSystem
+
+    async def get_eternal_system() -> ExternalSystem:
+        # NOT FOUND NAMDLE§
+        ...

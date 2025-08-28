@@ -25,10 +25,11 @@ class TaskService:
         self.external_task_repo = external_task_repo
         self.external_system_repo = external_system_repo
 
-    async def create_external_task(self, data: ExternalTaskCreateRequest) -> ExternalTaskResponse:
+    async def create_external_task(
+        self, data: ExternalTaskCreateRequest, user_id: int
+    ) -> ExternalTaskResponse:
         """Create a new external task."""
         try:
-            # Найти систему "manual"
             result = await self.external_system_repo.session.execute(
                 select(self.external_system_repo.model_type).where(
                     self.external_system_repo.model_type.name == "manual"
@@ -50,6 +51,7 @@ class TaskService:
                 status="OPEN",
                 url=data.url,
                 external_created_at=now,
+                user_id=user_id,
             )
 
             self.external_task_repo.session.add(task)
@@ -68,6 +70,7 @@ class TaskService:
                 external_updated_at=task.external_updated_at,
                 completed_at=task.completed_at,
                 last_sync=task.last_sync,
+                user_id=user_id,
             )
         except Exception as e:
             if isinstance(e, (NotFoundError,)):
@@ -75,14 +78,12 @@ class TaskService:
             raise InternalServerError(f"Failed to create task: {str(e)}", {"error": str(e)})
 
     async def update_external_task(
-        self, task_id: int, data: ExternalTaskUpdateRequest
+        self, task_id: int, data: ExternalTaskUpdateRequest, user_id: int
     ) -> ExternalTaskResponse:
         """Update an external task."""
         try:
-            task = await self.external_task_repo.get(task_id)
+            task = await self.external_task_repo.get_task(system_id=task_id, user_id=user_id)
         except Exception as e:
-            if "not found" in str(e).lower() or "No row was found" in str(e):
-                raise NotFoundError("External task", task_id)
             raise InternalServerError(f"Failed to get task: {str(e)}", {"task_id": task_id})
 
         try:
@@ -118,13 +119,11 @@ class TaskService:
                 f"Failed to update task: {str(e)}", {"task_id": task_id, "error": str(e)}
             )
 
-    async def delete_external_task(self, task_id: int) -> None:
+    async def delete_external_task(self, task_id: int, user_id: int) -> None:
         """Delete an external task."""
         try:
-            task = await self.external_task_repo.get(task_id)
+            task = await self.external_task_repo.get_task(system_id=task_id, user_id=user_id)
         except Exception as e:
-            if "not found" in str(e).lower() or "No row was found" in str(e):
-                raise NotFoundError("External task", task_id)
             raise InternalServerError(f"Failed to get task: {str(e)}", {"task_id": task_id})
 
         try:

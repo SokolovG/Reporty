@@ -138,6 +138,7 @@ class ExternalTaskResponse(msgspec.Struct):
     external_updated_at: datetime | None
     completed_at: datetime | None
     last_sync: datetime
+    user_id: int
 
 
 class ExternalTaskResponseDTO(BaseMsgspecDTO[ExternalTaskResponse]):
