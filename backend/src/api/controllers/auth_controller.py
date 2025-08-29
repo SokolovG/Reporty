@@ -5,12 +5,12 @@ from litestar.datastructures.cookie import Cookie
 
 from backend.src.api.dto import (
     ChangePasswordRequest,
-    RefreshTokenRequest,
     LoginRequest,
     RegisterRequest,
     SuccessResponseDTO,
 )
 from backend.src.api.responses.base_responses import SuccessResponse
+from backend.src.core.exceptions import AuthenticationError
 from backend.src.services import AuthService
 
 
@@ -37,7 +37,7 @@ class AuthController(Controller):
             status_code=200,
             cookies=[
                 Cookie(
-                    key="refresh_token",
+                    key="refreshToken",
                     value=token_info.refresh,
                     httponly=True,
                     secure=True,
@@ -45,7 +45,7 @@ class AuthController(Controller):
                     max_age=7 * 24 * 60 * 60,
                 ),
                 Cookie(
-                    key="access_token",
+                    key="accessToken",
                     value=token_info.access,
                     httponly=True,
                     secure=True,
@@ -66,13 +66,31 @@ class AuthController(Controller):
     @post("/refresh")
     @inject
     async def refresh_token(
-        self, service: FromDishka[AuthService], request: Request, data: RefreshTokenRequest
+        self, service: FromDishka[AuthService], request: Request, refresh_token: str
     ) -> SuccessResponse:
         """Refresh access token."""
-        new_token = await service.refresh(data)
-        return SuccessResponse(
-            message="Token refreshed successfully", data={"access_token": new_token}
+        refresh_token = request.cookies.get("refresh_token")
+        if not refresh_token:
+            raise AuthenticationError("No refresh token")
+
+        new_access_token = await service.refresh(refresh_token)
+        response = Response(
+            content=SuccessResponse(
+                message="Token refreshed", data={"access_token": new_access_token}
+            ),
+            status_code=200,
+            cookies=[
+                Cookie(
+                    key="access_token",
+                    value=new_access_token,
+                    httponly=True,
+                    secure=True,
+                    samesite="strict",
+                    max_age=15 * 60,  # 15 минут
+                )
+            ],
         )
+        return response
 
     @post("/change-password")
     @inject

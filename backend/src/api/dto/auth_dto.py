@@ -9,10 +9,6 @@ class ChangePasswordRequest(msgspec.Struct):
     new_password: str
 
 
-class RefreshTokenRequest(msgspec.Struct):
-    email: str
-
-
 class LogoutRequest(msgspec.Struct):
     email: str
 

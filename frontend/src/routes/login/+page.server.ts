@@ -18,7 +18,7 @@ export const actions: Actions = {
         const password = formData.get('password');
 
         if (!email || !password) {
-            return { error: 'email and password are required' };
+            return { error: 'Email and password are required' };
         }
 
         try {

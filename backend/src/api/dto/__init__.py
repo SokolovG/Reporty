@@ -1,6 +1,5 @@
 from backend.src.api.dto.auth_dto import (
     ChangePasswordRequest,
-    RefreshTokenRequest,
     LogoutRequest,
     LoginRequest,
     LoginRequestDTO,
@@ -95,7 +94,6 @@ __all__ = [
     "ExternalSystemUpdateRequestDTO",
     # Auth DTOs
     "ChangePasswordRequest",
-    "RefreshTokenRequest",
     "LogoutRequest",
     "LoginRequest",
     "LoginRequestDTO",

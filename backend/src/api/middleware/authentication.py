@@ -12,7 +12,6 @@ class JWTAuthenticationMiddleware(AbstractAuthenticationMiddleware):
         exclude = [
             "/api/v1/auth/register",
             "/api/v1/auth/login",
-            "/api/v1/auth/refresh",
             "/admin/*",
             "/docs",
             "/schema",
@@ -23,7 +22,7 @@ class JWTAuthenticationMiddleware(AbstractAuthenticationMiddleware):
         app = Litestar.from_scope(connection.scope)
         container = app.state.dishka_container
 
-        access_token = connection.cookies.get("access_token")
+        access_token = connection.cookies.get("accessToken")
         if not access_token:
             raise AuthenticationError("No access token")
 

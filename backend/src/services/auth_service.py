@@ -1,7 +1,6 @@
 from adaptix._internal.conversion.facade.func import get_converter
 
 from backend.src.api.dto import (
-    RefreshTokenRequest,
     ChangePasswordRequest,
     LoginRequest,
     RegisterRequest,
@@ -60,15 +59,14 @@ class AuthService:
         token_info = await self.jwt_service.login(user_id=user.id)
         return token_info
 
-    async def refresh(self, data: RefreshTokenRequest) -> str:
+    async def refresh(self, refresh_token: str) -> str:
         """Refresh access token."""
-        user = await self.repo.get_one_or_none(email=data.email)
-        if not user:
-            raise NotFoundError("User", details={"email": data.email})
+        payload = await self.jwt_service.verify_token(refresh_token)
+        if not payload or payload.get("type") != "refresh":
+            raise AuthenticationError("Invalid refresh token")
 
-        # TODO: Проверить refresh токен и создать новый access
-        new_access_token = await self.jwt_service.create_access_token(user.id)
-        return new_access_token
+        user_id = int(payload["sub"])
+        return await self.jwt_service.create_access_token(user_id)
 
     async def change_password(self, data: ChangePasswordRequest, user_id: int) -> None:
         """Change user password."""
