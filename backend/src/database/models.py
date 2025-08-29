@@ -245,6 +245,7 @@ class TaskType(Base):
     __tablename__ = "task_types"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     user_profile_id: Mapped[int] = mapped_column(ForeignKey("user_profiles.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     color: Mapped[str | None] = mapped_column(String(7), nullable=True)
