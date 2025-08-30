@@ -65,6 +65,8 @@ export const actions: Actions = {
         const recordId = formData.get('recordId');
         const newStatus = formData.get('newStatus');
 
+        console.log(newStatus)
+
         try {
             const response = await fetch(`/api/v1/records/${recordId}/status`, {
                 method: 'PATCH',
@@ -73,7 +75,6 @@ export const actions: Actions = {
                 },
                 body: JSON.stringify({ status: newStatus })
             });
-
             if (!response.ok) {
                 return { error: 'Failed to update status' };
             }
@@ -84,7 +85,8 @@ export const actions: Actions = {
             }
             return { error: 'Error during status update' };
         }
-        throw redirect(303, `/records/${recordId}`);
+
+        throw redirect(303, `/records/`);
     },
 
     extendRecord: async ({ request, fetch }) => {
@@ -157,7 +159,9 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
         }
 
         const record = await recordResponse.json();
-        return { record };
+        return {
+            record: record.data
+        }
 
     } catch (e) {
         console.log("❌ Error loading data:", e);

@@ -160,7 +160,7 @@
                             {#if record.status === 'OPEN'}
                                 <form method="POST" action="/records/{record.id}?/updateStatus" style="display: inline;">
                                     <input type="hidden" name="recordId" value={record.id} />
-                                    <input type="hidden" name="status" value="CLOSED" />
+                                    <input type="hidden" name="newStatus" value="CLOSED" />
                                     <button type="submit" class="text-green-600 hover:text-green-700 hover:underline">
                                         ✓ Complete
                                     </button>

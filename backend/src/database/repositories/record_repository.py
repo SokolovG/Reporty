@@ -37,7 +37,7 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
             .where(DailyRecord.user_id == user_id)
         )
 
-        record = query.one_or_none()
+        record = query.scalar_one_or_none()
         if not record:
             raise NotFoundError("Daily record", record_id)
         return record

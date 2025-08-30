@@ -32,19 +32,30 @@ class DailyRecordAdmin(ModelView, model=DailyRecord):
     name = "Daily Record"
     name_plural = "Daily Records"
     icon = "fa-solid fa-book"
+    form_include_pk = True
     column_list = [
         DailyRecord.id,
+        DailyRecord.user_id,
         DailyRecord.title,
         DailyRecord.status,
         DailyRecord.raw_input,
         DailyRecord.ai_processed,
         DailyRecord.final_description,
-        DailyRecord.created_at,
-        DailyRecord.processed_at,
         DailyRecord.is_processed,
         DailyRecord.is_approved,
         DailyRecord.external_url,
         "external_task.url",
+    ]
+
+    form_columns = [
+        DailyRecord.user_id,
+        DailyRecord.title,
+        DailyRecord.status,
+        DailyRecord.raw_input,
+        DailyRecord.ai_processed,
+        DailyRecord.final_description,
+        DailyRecord.is_processed,
+        DailyRecord.is_approved,
     ]
 
 

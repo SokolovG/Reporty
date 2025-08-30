@@ -16,7 +16,7 @@
       <div class="flex items-center space-x-6 text-sm text-gray-600">
         <span>© 2025 Reporty</span>
         <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
-          v1.0.0
+          BETA v1.0.0
         </span>
       </div>
     </div>

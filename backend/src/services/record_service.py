@@ -55,6 +55,7 @@ class RecordService:
         """Get a specific record by ID."""
         try:
             record = await self.repo.get_record(record_id=record_id, user_id=user_id)
+            print(record)
             return self._to_response(record)
         except Exception as e:
             raise InternalServerError(f"Failed to get record: {str(e)}", {"record_id": record_id})

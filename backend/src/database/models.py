@@ -18,6 +18,7 @@ from backend.src.database.base import Base, RecordStatus
 
 # TODO: USER_ID NULLABLE=FALSE!
 
+
 class DailyRecord(Base):
     """Daily developer record."""
 
@@ -42,9 +43,6 @@ class DailyRecord(Base):
         Text, nullable=True, comment="Final description for report"
     )
 
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.now, comment="Creation time"
-    )
     processed_at: Mapped[datetime | None] = mapped_column(
         DateTime, nullable=True, comment="AI processing time"
     )
@@ -207,7 +205,6 @@ class Report(Base):
 class AIProvider(Base):
     __tablename__ = "ai_providers"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
 
     base_prompt: Mapped[str | None] = mapped_column(

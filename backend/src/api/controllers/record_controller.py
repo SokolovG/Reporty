@@ -95,6 +95,8 @@ class RecordController(Controller):
             InternalServerError
         """
         user_id = request.user.id
+        print(f"Received data: {data}")  # <- добавь это
+        print(f"Status value: {data.status}")
         result = await record_service.update_status(record_id=record_id, data=data, user_id=user_id)
         return SuccessResponse(message="Record status updated successfully", data=result)
 
