@@ -108,7 +108,7 @@ class UserProfileAdmin(ModelView, model=UserProfile):
 class TaskTypeAdmin(ModelView, model=TaskType):
     name = "Task type"
     name_plural = "Task types"
-
+    form_include_pk = True
     column_list = [
         TaskType.id,
         TaskType.user_id,
@@ -118,7 +118,6 @@ class TaskTypeAdmin(ModelView, model=TaskType):
         TaskType.user_profile_id,
     ]
     form_columns = [
-        TaskType.id,
         TaskType.user_id,
         TaskType.title,
         TaskType.color,

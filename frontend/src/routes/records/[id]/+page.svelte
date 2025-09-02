@@ -129,9 +129,6 @@
                     <Button text="Reopen" variant="success"></Button>
                 {/if}
             </form>
-            <form method="POST" action="?/edit" style="display: inline;">
-                <Button text="Edit Record" variant="primary"></Button>
-            </form>
             {#if !record.isProcessed}
                 <Button text="Process with AI" variant="purple"></Button>
             {:else if !record.isApproved}
