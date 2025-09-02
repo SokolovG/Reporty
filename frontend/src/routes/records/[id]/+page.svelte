@@ -77,8 +77,8 @@
             </div>
 
             <div class="flex gap-3 justify-end pt-2">
-                <Button text="Cancel"></Button>
-                <Button text="Save Changes" variant="primary" />
+                <button type="button" class="text-white px-4 py-2 rounded-lg transition-colors bg-blue-600 hover:bg-blue-700" onclick={goBack}>Cancel</button>
+                <Button text="Save Changes" variant="primary"/>
             </div>
         </form>
     </div>

@@ -141,6 +141,25 @@ export const actions: Actions = {
     },
 
     approve: async ({request, fetch }) => {
+        const formData = await request.formData();
+        const recordId = formData.get('recordId');
+
+        try {
+            const response = await fetch(`/api/v1/records/${recordId}/approve`, {
+                method: 'POST',
+            });
+
+            if (!response.ok) {
+                return { error: 'Failed to approve record' };
+            }
+
+        } catch (error) {
+            if (error instanceof Response) {
+                throw error;
+            }
+            return { error: 'Error during record approving' };
+        }
+        throw redirect(303, '/records');
 
     },
 

@@ -237,3 +237,16 @@ class RecordService:
             raise InternalServerError(
                 f"Failed to delete record: {str(e)}", {"record_id": record_id}
             )
+
+    async def approve_record(self, record_id: int, user_id: int) -> DailyRecordResponse:
+        try:
+            record = await self.repo.get_record(record_id=record_id, user_id=user_id)
+            record.is_approved = True
+            updated_record = await self.repo.update(record)
+            await self.repo.session.commit()
+            return self._to_response(updated_record)
+
+        except Exception as e:
+            raise InternalServerError(
+                f"Failed to approve record: {str(e)}", {"record_id": record_id}
+            )

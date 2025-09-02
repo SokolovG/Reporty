@@ -83,6 +83,9 @@
                             <StatusBadge variant={record.isProcessed ? 'success' : 'warning'}>
                                 {record.isProcessed ? 'Processed' : 'Pending'}
                             </StatusBadge>
+                            {#if record.isApproved}
+                                <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700">Approved</span>
+                            {/if}
                         </div>
 
                         <div class="flex items-center gap-1">
@@ -173,7 +176,10 @@
                                     <button type="submit" class="text-blue-600 hover:underline">Process</button>
                                 </form>
                             {:else if !record.isApproved}
-                                <button class="text-green-600 hover:underline">Approve</button>
+                                    <form method="POST" action="/records/{record.id}?/approve" style="display: inline;">
+                                        <input type="hidden" name="recordId" value={record.id} />
+                                        <button class="text-green-600 hover:underline">Approve</button>
+                                    </form>
                             {/if}
                         </div>
                     </div>

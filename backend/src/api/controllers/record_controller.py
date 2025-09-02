@@ -230,3 +230,12 @@ class RecordController(Controller):
         user_id = request.user.id
         result = await record_service.process_with_ai(record_id=record_id, user_id=user_id)
         return SuccessResponse(message="Record processed with AI successfully", data=result)
+
+    @post("/{record_id: int}/approve", return_dto=SuccessResponseDTO)
+    @inject
+    async def approve_record(
+        self, record_service: FromDishka[RecordService], record_id: int, request: Request
+    ) -> SuccessResponse:
+        user_id = request.user.id
+        result = await record_service.approve_record(record_id=record_id, user_id=user_id)
+        return SuccessResponse(message="Record approved successfully", data=result)
