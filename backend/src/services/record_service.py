@@ -103,8 +103,8 @@ class RecordService:
 
             if data.title is not None:
                 record.title = data.title
-            if data.raw_input is not None:
-                record.raw_input = data.raw_input
+            if data.text is not None:
+                record.raw_input = data.text
             if data.external_task_id is not None:
                 record.external_task_id = data.external_task_id
 
@@ -113,6 +113,7 @@ class RecordService:
                 record.external_url = data.external_task_url
 
             updated_record = await self.repo.update(record)
+            print(f"{updated_record=}")
             await self.repo.session.commit()
 
             return self._to_response(updated_record)

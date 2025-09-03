@@ -143,6 +143,7 @@ class RecordController(Controller):
             InternalServerError
         """
         user_id = request.user.id
+        print(f"CONTROLLER - {data}")
         result = await record_service.update_record(record_id=record_id, data=data, user_id=user_id)
         return SuccessResponse(message="Record updated successfully", data=result)
 

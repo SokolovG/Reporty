@@ -36,6 +36,32 @@ export const actions: Actions = {
         }
     },
 
+    updateText: async ({ request, fetch }) => {
+        const formData = await request.formData();
+        const recordId = formData.get('recordId');
+        const rawInput = formData.get("rawInput")
+        try {
+            const response = await fetch(`/api/v1/records/${recordId}/`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text: rawInput })
+            });
+            if (!response.ok) {
+                return { error: 'Failed to update record' };
+            }
+
+        } catch (error) {
+            if (error instanceof Response) {
+                throw error;
+            }
+            return { error: 'Error during record update' };
+        }
+
+        throw redirect(303, `/records/`);
+    },
+
     delete: async ({ request, fetch }) => {
 
         const formData = await request.formData();

@@ -16,7 +16,7 @@ class DailyRecordRequest(msgspec.Struct):
 
 class DailyRecordUpdateRequest(msgspec.Struct):
     title: str | None = None
-    raw_input: str | None = None
+    text: str | None = None
     external_task_url: str | None = None
     external_task_id: int | None = None
 
