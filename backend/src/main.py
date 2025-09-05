@@ -21,7 +21,6 @@ from backend.src.core.admin import (
     ExternalTaskAdmin,
     ReportAdmin,
     UserAdmin,
-    UserProfileAdmin,
     AIProviderAdmin,
     TaskTypeAdmin,
 )
@@ -44,7 +43,6 @@ admin_plugin = SQLAdminPlugin(
         ExternalTaskAdmin,
         ReportAdmin,
         UserAdmin,
-        UserProfileAdmin,
         AIProviderAdmin,
         TaskTypeAdmin,
     ],

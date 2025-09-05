@@ -59,10 +59,6 @@ class UserProfileResponse(msgspec.Struct):
     position: str | None = None
 
 
-class UserProfileResponseDTO(BaseMsgspecDTO[UserProfileResponse]):
-    pass
-
-
 class ExternalSystemResponse(msgspec.Struct):
     id: int
     name: str

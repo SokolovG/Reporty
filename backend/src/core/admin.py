@@ -7,7 +7,6 @@ from backend.src.database.models import (
     ExternalTask,
     Report,
     User,
-    UserProfile,
     TaskType,
     AIProvider,
 )
@@ -88,20 +87,6 @@ class ExternalTaskAdmin(ModelView, model=ExternalTask):
         ExternalTask.last_sync,
         ExternalTask.system,
         ExternalTask.url,
-    ]
-
-
-class UserProfileAdmin(ModelView, model=UserProfile):
-    name = "Profile"
-    name_plural = "Profiles"
-    icon = "fa-solid fa-id-card"
-    column_list = [
-        UserProfile.id,
-        UserProfile.user_id,
-        UserProfile.display_name,
-        UserProfile.department,
-        UserProfile.position,
-        UserProfile.ai_auto_process,
     ]
 
 

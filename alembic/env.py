@@ -12,7 +12,6 @@ from backend.src.database.models import (
     DailyRecord,
     ExternalSystem,
     ExternalTask,
-    UserProfile,
     Report,
     User,
 )

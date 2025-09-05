@@ -7,11 +7,6 @@ from backend.src.database.repositories.record_repository import (
 from backend.src.database.repositories.report_repository import (
     ReportRepository,
 )
-from backend.src.database.repositories.settings_repository import (
-    AIProviderRepository,
-    UserProfileRepository,
-    ExternalSystemRepository,
-)
 from backend.src.database.repositories.user_repository import UserRepository
 
 __all__ = [
@@ -19,7 +14,6 @@ __all__ = [
     "DailyRecordRepository",
     "ReportRepository",
     "AIProviderRepository",
-    "UserProfileRepository",
     "ExternalSystemRepository",
     "UserRepository",
 ]

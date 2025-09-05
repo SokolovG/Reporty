@@ -12,7 +12,6 @@ from backend.src.database.repositories import (
     ExternalTaskRepository,
     UserRepository,
     AIProviderRepository,
-    UserProfileRepository,
 )
 from backend.src.services import (
     ReportService,
@@ -46,14 +45,9 @@ class MyProvider(Provider):
     def record_service(
         self,
         record_repo: DailyRecordRepository,
-        user_profile_repo: UserProfileRepository,
         crypto_service: CryptoService,
     ) -> RecordService:
-        return RecordService(record_repo, user_profile_repo, crypto_service)
-
-    @provide(scope=Scope.REQUEST)
-    def user_profile_repo(self, db_session: AsyncSession) -> UserProfileRepository:
-        return UserProfileRepository(session=db_session)
+        return RecordService(record_repo, crypto_service)
 
     @provide(scope=Scope.REQUEST)
     def ai_provider_repo(self, db_session: AsyncSession) -> AIProviderRepository:
@@ -68,12 +62,10 @@ class MyProvider(Provider):
         self,
         report_repo: ReportRepository,
         record_repo: DailyRecordRepository,
-        user_profile_repo: UserProfileRepository,
     ) -> ReportService:
         return ReportService(
             report_repo,
             record_repo,
-            user_profile_repo,
         )
 
     @provide(scope=Scope.REQUEST)
@@ -96,12 +88,10 @@ class MyProvider(Provider):
     def settings_service(
         self,
         ai_provider_repo: AIProviderRepository,
-        user_profile_repo: UserProfileRepository,
         external_system_repo: ExternalSystemRepository,
     ) -> SettingsService:
         return SettingsService(
             ai_provider_repo,
-            user_profile_repo,
             external_system_repo,
         )
 

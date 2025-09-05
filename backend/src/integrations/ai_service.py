@@ -1,15 +1,11 @@
 from backend.src.database.base import AIProviders
-from backend.src.database.repositories import UserProfileRepository
 from backend.src.services import CryptoService
 
 
 class AIService:
     """Service for working with AI API."""
 
-    def __init__(
-        self, user_profile_settings: UserProfileRepository, crypto_service: CryptoService
-    ) -> None:
-        self.user_profile_settings = user_profile_settings
+    def __init__(self, crypto_service: CryptoService) -> None:
         self.crypto_service = crypto_service
 
     async def process(self, raw_data: str, user_id: int) -> str:

@@ -14,9 +14,7 @@ from backend.src.api.dto import (
     TaskTypeUpdateRequest,
     TaskTypeResponse,
     AIProviderResponse,
-    UserProfileResponse,
     ExternalSystemResponse,
-    UserProfileUpdateRequest,
     AIProviderUpdateRequest,
     ExternalSystemUpdateRequest,
 )
@@ -190,27 +188,15 @@ class SettingsService:
             )
 
     # User Profile methods (now integrated into User)
-    async def get_user_profile(self, user_id: int) -> UserProfileResponse:
+    async def get_user_profile(self, user_id: int):
         """Get user profile with settings."""
         try:
             user = await self.user_repository.get_one(id=user_id)
 
-            # Convert User to UserProfileResponse format
-            return UserProfileResponse(
-                id=user.id,
-                user_id=user.id,
-                display_name=user.display_name,
-                department=user.department,
-                position=user.position,
-                ai_auto_process=user.ai_auto_process,
-                ai_provider_id=user.ai_provider_id,
-            )
         except Exception as e:
             raise InternalServerError(f"Failed to get user profile: {str(e)}", {"user_id": user_id})
 
-    async def update_user_profile(
-        self, user_id: int, data: UserProfileUpdateRequest
-    ) -> UserProfileResponse:
+    async def update_user_profile(self, user_id: int, data):
         """Update user profile settings."""
         try:
             user = await self.user_repository.update_profile(
@@ -222,15 +208,6 @@ class SettingsService:
                 ai_provider_id=data.ai_provider_id,
             )
 
-            return UserProfileResponse(
-                id=user.id,
-                user_id=user.id,
-                display_name=user.display_name,
-                department=user.department,
-                position=user.position,
-                ai_auto_process=user.ai_auto_process,
-                ai_provider_id=user.ai_provider_id,
-            )
         except Exception as e:
             raise InternalServerError(
                 f"Failed to update user profile: {str(e)}", {"user_id": user_id}
