@@ -5,10 +5,10 @@ from sqlalchemy.orm import selectinload
 from backend.src.core.exceptions import NotFoundError, InternalServerError
 from backend.src.database.repositories import (
     AIProviderRepository,
-    UserProfileRepository,
+    UserRepository,
     ExternalSystemRepository,
 )
-from backend.src.database.models import TaskType, AIProvider, UserProfile, ExternalSystem
+from backend.src.database.models import TaskType, AIProvider, User, ExternalSystem
 from backend.src.api.dto import (
     TaskTypeRequest,
     TaskTypeUpdateRequest,
@@ -26,55 +26,50 @@ class SettingsService:
     def __init__(
         self,
         ai_provider_repository: AIProviderRepository,
-        user_profile_repository: UserProfileRepository,
+        user_repository: UserRepository,
         external_system_repository: ExternalSystemRepository,
     ) -> None:
         self.ai_provider_repository = ai_provider_repository
-        self.user_profile_repository = user_profile_repository
+        self.user_repository = user_repository
         self.external_system_repository = external_system_repository
         self._to_task_type_response = get_converter(TaskType, TaskTypeResponse)
         self._to_ai_provider_response = get_converter(AIProvider, AIProviderResponse)
-        self._to_user_profile_response = get_converter(UserProfile, UserProfileResponse)
         self._to_external_system_response = get_converter(ExternalSystem, ExternalSystemResponse)
 
     # TaskType methods
     async def get_task_types(self, user_id: int) -> list[TaskTypeResponse]:
         """Get all task types for a user."""
         try:
-            result = await self.user_profile_repository.session.execute(
-                select(UserProfile)
-                .options(selectinload(UserProfile.task_types))
-                .where(UserProfile.user_id == user_id)
+            result = await self.user_repository.session.execute(
+                select(User).options(selectinload(User.task_types)).where(User.id == user_id)
             )
-            user_profile = result.scalar_one_or_none()
+            user = result.scalar_one_or_none()
 
-            if not user_profile:
+            if not user:
                 return []
 
-            return [self._to_task_type_response(task_type) for task_type in user_profile.task_types]
+            return [self._to_task_type_response(task_type) for task_type in user.task_types]
         except Exception as e:
             raise InternalServerError(f"Failed to get task types: {str(e)}", {"user_id": user_id})
 
     async def create_task_type(self, user_id: int, data: TaskTypeRequest) -> TaskTypeResponse:
         """Create a new task type for a user."""
         try:
-            result = await self.user_profile_repository.session.execute(
-                select(UserProfile)
-                .options(selectinload(UserProfile.task_types))
-                .where(UserProfile.user_id == user_id)
+            result = await self.user_repository.session.execute(
+                select(User).options(selectinload(User.task_types)).where(User.id == user_id)
             )
-            user_profile = result.scalar_one_or_none()
+            user = result.scalar_one_or_none()
 
-            if not user_profile:
-                raise NotFoundError("UserProfile", details={"user_id": user_id})
+            if not user:
+                raise NotFoundError("User", details={"user_id": user_id})
 
             task_type = TaskType(
-                user_profile_id=user_profile.id,
+                user_id=user.id,
                 title=data.title,
                 color=data.color,
             )
-            user_profile.task_types.append(task_type)
-            await self.user_profile_repository.session.commit()
+            user.task_types.append(task_type)
+            await self.user_repository.session.commit()
             return self._to_task_type_response(task_type)
         except NotFoundError:
             raise
@@ -86,19 +81,19 @@ class SettingsService:
     ) -> TaskTypeResponse:
         """Update an existing task type."""
         try:
-            result = await self.user_profile_repository.session.execute(
-                select(UserProfile)
-                .options(selectinload(UserProfile.task_types))
-                .join(TaskType, UserProfile.id == TaskType.user_profile_id)
+            result = await self.user_repository.session.execute(
+                select(User)
+                .options(selectinload(User.task_types))
+                .join(TaskType, User.id == TaskType.user_id)
                 .where(TaskType.id == task_type_id)
-                .where(UserProfile.user_id == user_id)
+                .where(User.id == user_id)
             )
-            user_profile = result.scalar_one_or_none()
+            user = result.scalar_one_or_none()
 
-            if not user_profile:
+            if not user:
                 raise NotFoundError("TaskType", task_type_id)
 
-            task_type = next((tt for tt in user_profile.task_types if tt.id == task_type_id), None)
+            task_type = next((tt for tt in user.task_types if tt.id == task_type_id), None)
             if not task_type:
                 raise NotFoundError("TaskType", task_type_id)
 
@@ -109,7 +104,7 @@ class SettingsService:
             if data.is_active is not None:
                 task_type.is_active = data.is_active
 
-            await self.user_profile_repository.session.commit()
+            await self.user_repository.session.commit()
             return self._to_task_type_response(task_type)
         except NotFoundError:
             raise
@@ -121,24 +116,24 @@ class SettingsService:
     async def delete_task_type(self, task_type_id: int, user_id: int) -> None:
         """Delete a task type."""
         try:
-            result = await self.user_profile_repository.session.execute(
-                select(UserProfile)
-                .options(selectinload(UserProfile.task_types))
-                .join(TaskType, UserProfile.id == TaskType.user_profile_id)
+            result = await self.user_repository.session.execute(
+                select(User)
+                .options(selectinload(User.task_types))
+                .join(TaskType, User.id == TaskType.user_id)
                 .where(TaskType.id == task_type_id)
-                .where(UserProfile.user_id == user_id)
+                .where(User.id == user_id)
             )
-            user_profile = result.scalar_one_or_none()
+            user = result.scalar_one_or_none()
 
-            if not user_profile:
+            if not user:
                 raise NotFoundError("TaskType", task_type_id)
 
-            task_type = next((tt for tt in user_profile.task_types if tt.id == task_type_id), None)
+            task_type = next((tt for tt in user.task_types if tt.id == task_type_id), None)
             if not task_type:
                 raise NotFoundError("TaskType", task_type_id)
 
-            user_profile.task_types.remove(task_type)
-            await self.user_profile_repository.session.commit()
+            user.task_types.remove(task_type)
+            await self.user_repository.session.commit()
         except NotFoundError:
             raise
         except Exception as e:
@@ -194,23 +189,22 @@ class SettingsService:
                 f"Failed to update AI provider: {str(e)}", {"ai_provider_id": ai_provider_id}
             )
 
-    # UserProfile methods
+    # User Profile methods (now integrated into User)
     async def get_user_profile(self, user_id: int) -> UserProfileResponse:
         """Get user profile with settings."""
         try:
-            result = await self.user_profile_repository.session.execute(
-                select(UserProfile)
-                .options(selectinload(UserProfile.task_types))
-                .where(UserProfile.user_id == user_id)
+            user = await self.user_repository.get_one(id=user_id)
+
+            # Convert User to UserProfileResponse format
+            return UserProfileResponse(
+                id=user.id,
+                user_id=user.id,
+                display_name=user.display_name,
+                department=user.department,
+                position=user.position,
+                ai_auto_process=user.ai_auto_process,
+                ai_provider_id=user.ai_provider_id,
             )
-            profile = result.scalar_one_or_none()
-
-            if not profile:
-                raise NotFoundError("UserProfile", details={"user_id": user_id})
-
-            return self._to_user_profile_response(profile)
-        except NotFoundError:
-            raise
         except Exception as e:
             raise InternalServerError(f"Failed to get user profile: {str(e)}", {"user_id": user_id})
 
@@ -219,32 +213,24 @@ class SettingsService:
     ) -> UserProfileResponse:
         """Update user profile settings."""
         try:
-            result = await self.user_profile_repository.session.execute(
-                select(UserProfile)
-                .options(selectinload(UserProfile.task_types))
-                .where(UserProfile.user_id == user_id)
+            user = await self.user_repository.update_profile(
+                user_id=user_id,
+                display_name=data.display_name,
+                department=data.department,
+                position=data.position,
+                ai_auto_process=data.ai_auto_process,
+                ai_provider_id=data.ai_provider_id,
             )
-            profile = result.scalar_one_or_none()
 
-            if not profile:
-                raise NotFoundError("UserProfile", details={"user_id": user_id})
-
-            if data.display_name is not None:
-                profile.display_name = data.display_name
-            if data.department is not None:
-                profile.department = data.department
-            if data.position is not None:
-                profile.position = data.position
-            if data.ai_auto_process is not None:
-                profile.ai_auto_process = data.ai_auto_process
-            if data.ai_provider_id is not None:
-                profile.ai_provider_id = data.ai_provider_id
-
-            updated_profile = await self.user_profile_repository.update(profile)
-            await self.user_profile_repository.session.commit()
-            return self._to_user_profile_response(updated_profile)
-        except NotFoundError:
-            raise
+            return UserProfileResponse(
+                id=user.id,
+                user_id=user.id,
+                display_name=user.display_name,
+                department=user.department,
+                position=user.position,
+                ai_auto_process=user.ai_auto_process,
+                ai_provider_id=user.ai_provider_id,
+            )
         except Exception as e:
             raise InternalServerError(
                 f"Failed to update user profile: {str(e)}", {"user_id": user_id}

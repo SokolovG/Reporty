@@ -237,41 +237,32 @@ class User(Base):
     is_active: Mapped[bool] = mapped_column(Boolean, default=False)
     is_verify: Mapped[bool] = mapped_column(Boolean, default=False)
 
+    display_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    department: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    position: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    ai_auto_process: Mapped[bool] = mapped_column(default=False)
+    ai_provider_id: Mapped[int] = mapped_column(ForeignKey("ai_providers.id"), nullable=True)
+
+    # Relationships
+    ai_provider: Mapped["AIProvider"] = relationship("AIProvider")
+    task_types: Mapped[list["TaskType"]] = relationship(
+        "TaskType", back_populates="user", cascade="all, delete-orphan"
+    )
+
 
 class TaskType(Base):
     __tablename__ = "task_types"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    user_profile_id: Mapped[int] = mapped_column(ForeignKey("user_profiles.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     color: Mapped[str | None] = mapped_column(String(7), nullable=True)
     is_active: Mapped[bool] = mapped_column(default=True)
 
-    user_profile: Mapped["UserProfile"] = relationship("UserProfile", back_populates="task_types")
+    user: Mapped["User"] = relationship("User", back_populates="task_types")
 
     # Indexes for performance
     __table_args__ = (
-        UniqueConstraint("user_profile_id", "title", name="uk_user_profile_task_type"),
-        Index("ix_task_types_user_profile_active", "user_profile_id", "is_active"),
+        UniqueConstraint("user_id", "title", name="uk_user_task_type"),
+        Index("ix_task_types_user_active", "user_id", "is_active"),
     )
-
-
-class UserProfile(Base):
-    __tablename__ = "user_profiles"
-
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), unique=True)
-
-    display_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    department: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    position: Mapped[str | None] = mapped_column(String(100), nullable=True)
-
-    ai_auto_process: Mapped[bool] = mapped_column(default=False)
-    ai_provider_id: Mapped[int] = mapped_column(ForeignKey("ai_providers.id"), nullable=False)
-
-    ai_provider: Mapped["AIProvider"] = relationship("AIProvider")
-    task_types: Mapped[list["TaskType"]] = relationship(
-        "TaskType", back_populates="user_profile", cascade="all, delete-orphan"
-    )
-
-    user: Mapped["User"] = relationship("User")

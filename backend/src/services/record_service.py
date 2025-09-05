@@ -14,7 +14,7 @@ from backend.src.api.dto.record_dto import (
 from backend.src.database.models import DailyRecord
 from backend.src.database.repositories import (
     DailyRecordRepository,
-    UserProfileRepository,
+    UserRepository,
 )
 from backend.src.integrations.ai_service import AIService
 from backend.src.services import CryptoService
@@ -24,21 +24,21 @@ class RecordService:
     def __init__(
         self,
         record_repo: DailyRecordRepository,
-        user_profile_settings: UserProfileRepository,
+        user_repository: UserRepository,
         crypto_service: CryptoService,
     ) -> None:
         self.repo = record_repo
-        self.user_profile_settings = user_profile_settings
+        self.user_repository = user_repository
         self._to_response = get_converter(DailyRecord, DailyRecordResponse)
-        self.ai_service = AIService(self.user_profile_settings, crypto_service)
+        self.ai_service = AIService(self.user_repository, crypto_service)
 
     async def create_record(self, data: DailyRecordRequest, user_id: int) -> DailyRecordResponse:
         """Create a new daily record."""
         try:
             saved_record = await self.repo.create_record(data, user_id)
-            settings = await self.user_profile_settings.get_by_user_id(user_id)
+            user = await self.user_repository.get_one(id=user_id)
 
-            if settings.ai_auto_process:
+            if user.ai_auto_process:
                 ai_processed = await self.ai_service.process(data.raw_input, user_id)
                 saved_record.ai_processed = ai_processed
                 updated_record = await self.repo.update(saved_record)

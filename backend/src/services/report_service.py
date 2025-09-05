@@ -12,7 +12,7 @@ from backend.src.database.models import Report
 from backend.src.database.repositories import (
     ReportRepository,
     DailyRecordRepository,
-    UserProfileRepository,
+    UserRepository,
 )
 
 logger = getLogger(__name__)
@@ -23,11 +23,11 @@ class ReportService:
         self,
         report_repo: ReportRepository,
         record_repo: DailyRecordRepository,
-        user_profile_settings: UserProfileRepository,
+        user_repository: UserRepository,
     ) -> None:
         self.repo = report_repo
         self.record_repo = record_repo
-        self.user_profile_settings = user_profile_settings
+        self.user_repository = user_repository
 
     async def create_report(self, data: DailyReportRequest, user_id: int) -> DailyReportResponse:
         """Create a new daily report."""

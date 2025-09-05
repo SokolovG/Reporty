@@ -113,6 +113,7 @@ class TaskService:
                 external_updated_at=task.external_updated_at,
                 completed_at=task.completed_at,
                 last_sync=task.last_sync,
+                user_id=user_id,
             )
         except Exception as e:
             raise InternalServerError(
