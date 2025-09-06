@@ -25,19 +25,11 @@ class UserReadSchema(Struct):
     user_id: int
     is_active: bool
     is_verified: bool
+    ai_provider_id: int | None = None
     display_name: str | None = None
     department: str | None = None
     position: str | None = None
     ai_auto_process: bool = False
-    ai_provider_id: int
-
-
-class UserProfileUpdateSchema(Struct):
-    display_name: str | None = None
-    department: str | None = None
-    position: str | None = None
-    ai_auto_process: bool | None = None
-    ai_provider_id: int | None = None
 
 
 class UserRegistrationDTO(BaseMsgspecDTO[UserRegistrationSchema]):
@@ -50,7 +42,3 @@ class UserReadDTO(SQLAlchemyDTO[User]):
 
 class UserUpdateDTO(SQLAlchemyDTO[User]):
     config = SQLAlchemyDTOConfig(exclude={"password_hash"}, partial=True, rename_strategy="camel")
-
-
-class UserProfileUpdateDTO(BaseMsgspecDTO[UserProfileUpdateSchema]):
-    """User profile update DTO."""

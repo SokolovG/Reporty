@@ -1,3 +1,4 @@
+from sqlalchemy import select
 from adaptix._internal.conversion.facade.func import get_converter
 
 from backend.src.api.dto import (
@@ -9,9 +10,10 @@ from backend.src.api.dto.auth_dto import UserResponse, TokenInfo
 from backend.src.core.exceptions import (
     AuthenticationError,
     ConflictError,
+    InternalServerError,
     NotFoundError,
 )
-from backend.src.database.models import User
+from backend.src.database.models import AIProvider, User
 from backend.src.database.repositories import UserRepository
 from backend.src.services.jwt_service import JWTService
 from backend.src.services.notification_service import NotificationService
@@ -37,9 +39,19 @@ class AuthService:
                 "User already exists", {"email": data.email, "reason": "email_taken"}
             )
 
+        result = await self.repo.session.execute(
+            select(AIProvider).where(AIProvider.is_active).limit(1)
+        )
+        default_ai_provider = result.scalar_one_or_none()
+
+        if not default_ai_provider:
+            raise InternalServerError("No active AI provider found")
+
         hashed_password = self.jwt_service.hash_password(data.password)
         user = await self.repo.create_user(
-            email=data.email, name=data.name, password_hash=hashed_password
+            email=data.email,
+            name=data.name,
+            password_hash=hashed_password,
         )
         await self.notification_service.send_register_notification()
         return self._to_response(user)

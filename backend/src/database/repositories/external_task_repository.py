@@ -14,7 +14,7 @@ class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTask])
 
     async def get_by_external_id(
         self, system_id: int, external_id: int, user_id: int
-    ) -> ExternalTask:
+    ) -> ExternalTask | None:
         """Get a task by external system and external ID."""
         result = await self.session.execute(
             select(ExternalTask)
@@ -45,7 +45,7 @@ class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTask])
             .where(ExternalTask.user_id == user_id)
         )
 
-        task = query.one_or_none()
+        task = query.scalar_one_or_none()
         if not task:
             raise NotFoundError("External task", system_id)
         return task

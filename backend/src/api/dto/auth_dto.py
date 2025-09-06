@@ -41,6 +41,12 @@ class UserResponse(msgspec.Struct):
     is_active: bool
     is_verify: bool
 
+    display_name: str | None = None
+    department: str | None = None
+    position: str | None = None
+    ai_auto_process: bool = False
+    ai_provider_id: int | None = None
+
 
 class TokenInfo(msgspec.Struct):
     """Token information for authentication."""
@@ -48,6 +54,16 @@ class TokenInfo(msgspec.Struct):
     access: str
     refresh: str
     token_type: str
+
+
+class UserUpdateRequest(msgspec.Struct):
+    """Request to update user information."""
+
+    display_name: str | None = None
+    department: str | None = None
+    position: str | None = None
+    ai_auto_process: bool | None = None
+    ai_provider_id: int | None = None
 
 
 class SuccessResponseDTO(BaseMsgspecDTO[SuccessResponse]):

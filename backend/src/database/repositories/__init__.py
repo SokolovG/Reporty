@@ -8,6 +8,9 @@ from backend.src.database.repositories.report_repository import (
     ReportRepository,
 )
 from backend.src.database.repositories.user_repository import UserRepository
+from backend.src.database.repositories.ai_repository import AIProviderRepository
+from backend.src.database.repositories.external_system_repository import ExternalSystemRepository
+
 
 __all__ = [
     "ExternalTaskRepository",

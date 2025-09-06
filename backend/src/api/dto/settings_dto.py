@@ -49,16 +49,6 @@ class AIProviderResponseDTO(BaseMsgspecDTO[AIProviderResponse]):
     pass
 
 
-class UserProfileResponse(msgspec.Struct):
-    id: int
-    user_id: int
-    ai_auto_process: bool
-    ai_provider_id: int
-    display_name: str | None = None
-    department: str | None = None
-    position: str | None = None
-
-
 class ExternalSystemResponse(msgspec.Struct):
     id: int
     name: str
@@ -69,18 +59,6 @@ class ExternalSystemResponse(msgspec.Struct):
 
 class ExternalSystemResponseDTO(BaseMsgspecDTO[ExternalSystemResponse]):
     pass
-
-
-class UserProfileUpdateRequest(msgspec.Struct):
-    display_name: str | None = None
-    department: str | None = None
-    position: str | None = None
-    ai_auto_process: bool | None = None
-    ai_provider_id: int | None = None
-
-
-class UserProfileUpdateRequestDTO(BaseMsgspecDTO[UserProfileUpdateRequest]):
-    config = DTOConfig(partial=True, rename_strategy="camel")
 
 
 class AIProviderUpdateRequest(msgspec.Struct):

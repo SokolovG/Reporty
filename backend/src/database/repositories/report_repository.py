@@ -44,7 +44,7 @@ class ReportRepository(repository.SQLAlchemyAsyncRepository[Report]):  # type: i
             select(Report).where(Report.id == report_id).where(Report.user_id == user_id)
         )
 
-        record = query.one_or_none()
+        record = query.scalar_one_or_none()
         if not record:
             raise NotFoundError("Report", report_id)
         return record
