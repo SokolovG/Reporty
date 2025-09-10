@@ -100,14 +100,12 @@ class TaskTypeAdmin(ModelView, model=TaskType):
         TaskType.title,
         TaskType.color,
         TaskType.is_active,
-        TaskType.user_profile_id,
     ]
     form_columns = [
         TaskType.user_id,
         TaskType.title,
         TaskType.color,
         TaskType.is_active,
-        TaskType.user_profile_id,
     ]
 
 

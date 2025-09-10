@@ -45,9 +45,9 @@ class MyProvider(Provider):
     def record_service(
         self,
         record_repo: DailyRecordRepository,
-        crypto_service: CryptoService,
+        user_repo: UserRepository,
     ) -> RecordService:
-        return RecordService(record_repo, crypto_service)
+        return RecordService(record_repo=record_repo, user_repository=user_repo)
 
     @provide(scope=Scope.REQUEST)
     def ai_provider_repo(self, db_session: AsyncSession) -> AIProviderRepository:
@@ -62,11 +62,9 @@ class MyProvider(Provider):
         self,
         report_repo: ReportRepository,
         record_repo: DailyRecordRepository,
+        user_repo: UserRepository,
     ) -> ReportService:
-        return ReportService(
-            report_repo,
-            record_repo,
-        )
+        return ReportService(report_repo, record_repo, user_repository=user_repo)
 
     @provide(scope=Scope.REQUEST)
     def external_task_repo(self, db_session: AsyncSession) -> ExternalTaskRepository:
@@ -89,10 +87,12 @@ class MyProvider(Provider):
         self,
         ai_provider_repo: AIProviderRepository,
         external_system_repo: ExternalSystemRepository,
+        user_repo: UserRepository,
     ) -> SettingsService:
         return SettingsService(
-            ai_provider_repo,
-            external_system_repo,
+            ai_provider_repository=ai_provider_repo,
+            external_system_repository=external_system_repo,
+            user_repository=user_repo,
         )
 
     @provide(scope=Scope.REQUEST)

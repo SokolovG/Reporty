@@ -16,8 +16,6 @@ from backend.src.database.repositories import (
     DailyRecordRepository,
     UserRepository,
 )
-from backend.src.integrations.ai_service import AIService
-from backend.src.services import CryptoService
 
 
 class RecordService:
@@ -25,12 +23,10 @@ class RecordService:
         self,
         record_repo: DailyRecordRepository,
         user_repository: UserRepository,
-        crypto_service: CryptoService,
     ) -> None:
         self.repo = record_repo
         self.user_repository = user_repository
         self._to_response = get_converter(DailyRecord, DailyRecordResponse)
-        self.ai_service = AIService(crypto_service)
 
     async def create_record(self, data: DailyRecordRequest, user_id: int) -> DailyRecordResponse:
         """Create a new daily record."""
