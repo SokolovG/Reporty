@@ -1,0 +1,84 @@
+import msgspec
+from litestar.dto import DTOConfig
+
+from backend.src.api.dto.base import BaseMsgspecDTO
+
+
+class TaskTypeRequest(msgspec.Struct):
+    id: int
+    title: str
+    color: str | None = None
+
+
+class TaskTypeUpdateRequest(msgspec.Struct):
+    id: int
+    title: str | None = None
+    color: str | None = None
+    is_active: bool | None = None
+
+
+class TaskTypeResponse(msgspec.Struct):
+    id: int
+    title: str
+    is_active: bool
+    color: str | None = None
+
+
+class TaskTypeRequestDTO(BaseMsgspecDTO[TaskTypeRequest]):
+    pass
+
+
+class TaskTypeUpdateRequestDTO(BaseMsgspecDTO[TaskTypeUpdateRequest]):
+    config = DTOConfig(partial=True, rename_strategy="camel")
+
+
+class TaskTypeResponseDTO(BaseMsgspecDTO[TaskTypeResponse]):
+    pass
+
+
+class AIProviderResponse(msgspec.Struct):
+    id: int
+    name: str
+    requires_api_key: bool
+    is_active: bool
+    base_prompt: str | None = None
+    model_name: str | None = None
+
+
+class AIProviderResponseDTO(BaseMsgspecDTO[AIProviderResponse]):
+    pass
+
+
+class ExternalSystemResponse(msgspec.Struct):
+    id: int
+    name: str
+    display_name: str
+    api_config: dict
+    is_active: bool
+
+
+class ExternalSystemResponseDTO(BaseMsgspecDTO[ExternalSystemResponse]):
+    pass
+
+
+class AIProviderUpdateRequest(msgspec.Struct):
+    name: str | None = None
+    base_prompt: str | None = None
+    model_name: str | None = None
+    requires_api_key: bool | None = None
+    is_active: bool | None = None
+
+
+class AIProviderUpdateRequestDTO(BaseMsgspecDTO[AIProviderUpdateRequest]):
+    config = DTOConfig(partial=True, rename_strategy="camel")
+
+
+class ExternalSystemUpdateRequest(msgspec.Struct):
+    name: str | None = None
+    display_name: str | None = None
+    api_config: dict | None = None
+    is_active: bool | None = None
+
+
+class ExternalSystemUpdateRequestDTO(BaseMsgspecDTO[ExternalSystemUpdateRequest]):
+    config = DTOConfig(partial=True, rename_strategy="camel")

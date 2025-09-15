@@ -1,8 +1,26 @@
+from backend.src.api.dto.auth_dto import (
+    ChangePasswordRequest,
+    LogoutRequest,
+    LoginRequest,
+    LoginRequestDTO,
+    RegisterRequestDTO,
+    RegisterRequest,
+    TokenInfo,
+    UserResponse,
+    UserUpdateRequest,
+    SuccessResponseDTO,
+)
 from backend.src.api.dto.record_dto import (
     DailyRecordRequest,
     DailyRecordRequestDTO,
     DailyRecordResponse,
     DailyRecordResponseDTO,
+    DailyRecordUpdateRequestDTO,
+    DailyRecordUpdateRequest,
+    AppendToRecordRequestDTO,
+    AppendToRecordRequest,
+    RecordStatusUpdateRequestDTO,
+    RecordStatusUpdateRequest,
 )
 from backend.src.api.dto.report_dto import (
     DailyReportRequest,
@@ -11,19 +29,71 @@ from backend.src.api.dto.report_dto import (
     DailyReportResponse,
     DailyReportResponseDTO,
 )
+from backend.src.api.dto.settings_dto import (
+    TaskTypeResponse,
+    TaskTypeRequest,
+    TaskTypeRequestDTO,
+    TaskTypeResponseDTO,
+    TaskTypeUpdateRequest,
+    TaskTypeUpdateRequestDTO,
+    AIProviderResponseDTO,
+    AIProviderResponse,
+    AIProviderUpdateRequest,
+    AIProviderUpdateRequestDTO,
+    ExternalSystemResponse,
+    ExternalSystemResponseDTO,
+    ExternalSystemUpdateRequest,
+    ExternalSystemUpdateRequestDTO,
+)
 from backend.src.api.dto.user_dto import UserReadDTO, UserRegistrationDTO, UserUpdateDTO
 
+
 __all__ = [
+    # Report DTOs
     "DailyReportRequest",
     "DailyReportResponse",
+    "DailyReportRequestDTO",
+    "DailyReportResponseDTO",
+    "DailyReportRequestUpdate",
+    # Record DTOs
     "DailyRecordRequestDTO",
     "DailyRecordResponseDTO",
     "DailyRecordRequest",
     "DailyRecordResponse",
-    "DailyReportRequestDTO",
-    "DailyReportResponseDTO",
+    "DailyRecordUpdateRequestDTO",
+    "DailyRecordUpdateRequest",
+    "AppendToRecordRequestDTO",
+    "AppendToRecordRequest",
+    "RecordStatusUpdateRequestDTO",
+    "RecordStatusUpdateRequest",
+    # User DTOs
     "UserReadDTO",
     "UserRegistrationDTO",
     "UserUpdateDTO",
-    "DailyReportRequestUpdate",
+    # Settings DTOs
+    "TaskTypeRequest",
+    "TaskTypeResponse",
+    "TaskTypeRequestDTO",
+    "TaskTypeResponseDTO",
+    "TaskTypeUpdateRequest",
+    "TaskTypeUpdateRequestDTO",
+    "AIProviderResponseDTO",
+    "AIProviderResponse",
+    "AIProviderUpdateRequest",
+    "AIProviderUpdateRequestDTO",
+    "ExternalSystemResponse",
+    "ExternalSystemResponseDTO",
+    "ExternalSystemUpdateRequest",
+    "ExternalSystemUpdateRequestDTO",
+    # Auth DTOs
+    "ChangePasswordRequest",
+    "LogoutRequest",
+    "LoginRequest",
+    "LoginRequestDTO",
+    "RegisterRequest",
+    "RegisterRequestDTO",
+    "TokenInfo",
+    "UserResponse",
+    "UserUpdateRequest",
+    "SuccessResponseDTO",
 ]

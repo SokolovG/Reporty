@@ -1,12 +1,13 @@
 FROM python:3.12-slim
 
-WORKDIR /src
-
-COPY pyproject.toml uv.lock ./
+WORKDIR /app
 
 RUN pip install uv
 
+COPY pyproject.toml uv.lock ./
+
 ENV UV_PROJECT_ENVIRONMENT=/tmp/.venv
+
 RUN uv sync --frozen
 
 COPY . .

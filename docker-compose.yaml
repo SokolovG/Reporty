@@ -14,26 +14,37 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
   backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "8000:8080"
+      - "8080:8080"
     volumes:
-      - .:/src
+      - .:/app
+      - ./.certs:/app/backend/.certs
     environment:
-      - PYTHONPATH=/src
+      - PYTHONPATH=/app
       - DB_HOST=db
       - DB_PORT=5432
       - DB_USER=${DB_USER:-postgres}
       - DB_PASSWORD=${DB_PASSWORD:-postgres}
       - DB_NAME=${DB_NAME:-reporty}
     env_file:
-      - .env
+      - backend/.env.${MODE:-local}
     depends_on:
       db:
         condition: service_healthy
+
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #   - "80:80"
+  #   depends_on:
+  #     - backend
 
 volumes:
   postgres_data:

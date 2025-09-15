@@ -1,10 +1,13 @@
 import os
 from dataclasses import field
+from pathlib import Path
 
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 
 load_dotenv()
+
+BASE_DIR = Path(__file__).parent.parent.parent
 
 
 class Settings(BaseSettings):
@@ -14,9 +17,11 @@ class Settings(BaseSettings):
     db_name: str = os.getenv("DB_NAME", "reporty")
     db_user: str = os.getenv("DB_USER", "postgres")
     db_password: str = os.getenv("DB_PASSWORD", "password")
-
     debug: bool = os.getenv("DEBUG", "False").lower() == "true"
     secret_key: str = os.getenv("SECRET_KEY", "")
+    public_key: Path = BASE_DIR / ".certs" / "jwt-public.pem"
+    private_key: Path = BASE_DIR / ".certs" / "jwt-private.pem"
+    algorithm: str = "RS256"
 
     ai_api_key: str | None = os.getenv("AI_API_KEY", None)
 
@@ -79,6 +84,11 @@ class Settings(BaseSettings):
     def get_system_config(self, system_name: str) -> dict:
         """Get configuration for a specific system."""
         return self.external_systems_config.get(system_name, {})  # type: ignore
+
+    class Config:
+        mode = os.getenv("MODE", "local")
+        env_file = f"backend/.env.{mode}"
+        env_file_encoding = "utf-8"
 
 
 settings = Settings()

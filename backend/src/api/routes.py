@@ -4,8 +4,12 @@ from backend.src.api.controllers import (
     RecordController,
     ReportController,
     TaskController,
+    SettingsController,
+    AuthController,
 )
 
-report_router = Router(path="v1/report", route_handlers=[ReportController])
-task_router = Router(path="v1/task", route_handlers=[TaskController])
-record_router = Router(path="v1/record", route_handlers=[RecordController])
+report_router = Router(path="api/v1/reports", route_handlers=[ReportController])
+task_router = Router(path="api/v1/tasks", route_handlers=[TaskController])
+record_router = Router(path="api/v1/records", route_handlers=[RecordController])
+settings_router = Router(path="api/v1/settings", route_handlers=[SettingsController])
+auth_router = Router(path="api/v1/auth", route_handlers=[AuthController])

@@ -1,6 +1,3 @@
-from backend.src.database.repositories.external_system_repository import (
-    ExternalSystemRepository,
-)
 from backend.src.database.repositories.external_task_repository import (
     ExternalTaskRepository,
 )
@@ -8,12 +5,18 @@ from backend.src.database.repositories.record_repository import (
     DailyRecordRepository,
 )
 from backend.src.database.repositories.report_repository import (
-    DailyReportRepository,
+    ReportRepository,
 )
+from backend.src.database.repositories.user_repository import UserRepository
+from backend.src.database.repositories.ai_repository import AIProviderRepository
+from backend.src.database.repositories.external_system_repository import ExternalSystemRepository
+
 
 __all__ = [
-    "ExternalSystemRepository",
     "ExternalTaskRepository",
     "DailyRecordRepository",
-    "DailyReportRepository",
+    "ReportRepository",
+    "AIProviderRepository",
+    "ExternalSystemRepository",
+    "UserRepository",
 ]
