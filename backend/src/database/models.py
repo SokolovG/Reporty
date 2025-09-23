@@ -231,9 +231,7 @@ class User(Base):
     email: Mapped[str] = mapped_column(
         String(50), unique=True, nullable=True, comment="Email for authentication"
     )
-    password_hash: Mapped[str] = mapped_column(
-        String, unique=True, nullable=False, comment="Password hash"
-    )
+    password_hash: Mapped[str] = mapped_column(String, nullable=False, comment="Password hash")
     is_active: Mapped[bool] = mapped_column(Boolean, default=False)
     is_verify: Mapped[bool] = mapped_column(Boolean, default=False)
 

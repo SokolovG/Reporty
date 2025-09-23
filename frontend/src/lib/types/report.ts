@@ -1,6 +1,7 @@
 export interface Report {
-    id: string
-    report_date: string
-    content: string
-    entries_count: number
+    id: number;
+    reportDate: string;
+    content: string;
+    entriesCount: number;
+    generatedAt: string;
 }
