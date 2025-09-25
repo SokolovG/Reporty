@@ -1,5 +1,6 @@
+import type { User } from '$lib/types/user';
 import type { LayoutServerLoad } from './$types';
-import { redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { jwtVerify, importSPKI } from 'jose';
 
 const PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
@@ -20,19 +21,24 @@ async function getPublicKey() {
 export const load: LayoutServerLoad = async ({ url, fetch, cookies }) => {
   const publicPaths = ['/login', '/register'];
   const isPublicPath = publicPaths.some(path => url.pathname.startsWith(path));
-  const accessToken = cookies.get("accessToken")
 
-  async function tokenRefresh() {
+  const accessToken = cookies.get("accessToken");
+  async function tokenRefresh(): Promise<boolean> {
     try {
       const refreshResponse = await fetch('/api/v1/auth/refresh', {
         method: 'POST',
         credentials: 'include'
       });
-      return refreshResponse.ok;
-      } catch {
-        return false;
+
+      if (refreshResponse.ok) {
+        return true;
       }
+      return false;
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      return false;
     }
+  }
 
   if (!accessToken) {
     if (!isPublicPath) {
@@ -45,7 +51,6 @@ export const load: LayoutServerLoad = async ({ url, fetch, cookies }) => {
     const publicKey = await getPublicKey();
     const { payload } = await jwtVerify(accessToken, publicKey);
 
-
     if (payload.exp && payload.exp < Date.now() / 1000) {
       const refreshed = await tokenRefresh();
       if (!refreshed) {
@@ -56,19 +61,35 @@ export const load: LayoutServerLoad = async ({ url, fetch, cookies }) => {
       }
     }
 
-  const newAccessToken = cookies.get("accessToken");
-  if (newAccessToken) {
-    const { payload } = await jwtVerify(newAccessToken, publicKey)
-    return {user: {id: payload.id}}
-  }
+    const userResponse = await fetch("/api/v1/auth/me", {
+      method: 'GET',
+      credentials: 'include'
+    });
+    if (!userResponse.ok) {
+      throw error(401, 'Failed to fetch user data');
+    }
 
-  return {
-      user: {
-        id: payload.sub,
-      }
+    const userData = await userResponse.json();
+    if (!userData.success) {
+      throw error(401, 'Failed to fetch user data');
+    }
+
+    const user: User = {
+      id: userData.data.id,
+      username: userData.data.name,
+      email: userData.data.email,
+      display_name: userData.data.display_name,
+      department: userData.data.department,
+      position: userData.data.position,
+      ai_auto_process: userData.data.ai_auto_process,
+      ai_provider_id: userData.data.ai_provider_id,
+      is_active: userData.data.is_active,
+      is_verify: userData.data.is_verify,
     };
+    return { user };
 
-    } catch (error) {
+  } catch (err) {
+    console.error('Auth error:', err);
     if (!isPublicPath) {
       throw redirect(302, '/login?error=invalid_token');
     }

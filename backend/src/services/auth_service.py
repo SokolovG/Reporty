@@ -1,3 +1,4 @@
+from logging import getLogger
 from sqlalchemy import select
 from adaptix._internal.conversion.facade.func import get_converter
 
@@ -17,6 +18,8 @@ from backend.src.database.models import AIProvider, User
 from backend.src.database.repositories import UserRepository
 from backend.src.services.jwt_service import JWTService
 from backend.src.services.notification_service import NotificationService
+
+logger = getLogger(__name__)
 
 
 class AuthService:
@@ -102,7 +105,7 @@ class AuthService:
 
         return self._to_response(user)
 
-    async def forgot_password(self) -> None:
+    async def reset_password(self) -> None:
         """Reset user password."""
         # TODO: Implement password reset
         pass

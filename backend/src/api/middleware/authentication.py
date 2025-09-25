@@ -1,3 +1,4 @@
+from logging import getLogger
 from litestar.middleware import AbstractAuthenticationMiddleware, AuthenticationResult
 from litestar.connection import ASGIConnection
 from litestar import Litestar
@@ -5,6 +6,8 @@ from litestar.types import ASGIApp
 from backend.src.core.exceptions import AuthenticationError
 from backend.src.services import JWTService
 from backend.src.database.repositories import UserRepository
+
+logger = getLogger(__name__)
 
 
 class JWTAuthenticationMiddleware(AbstractAuthenticationMiddleware):

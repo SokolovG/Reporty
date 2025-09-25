@@ -17,7 +17,7 @@ def get_sqlalchemy_config() -> SQLAlchemyAsyncConfig:
         connection_string=settings.async_database_url,
         create_all=False,
         metadata=Base.metadata,
-        engine_config=EngineConfig(echo=True),
+        engine_config=EngineConfig(echo=False),
         before_send_handler="autocommit",
         session_config=AsyncSessionConfig(expire_on_commit=False),
     )

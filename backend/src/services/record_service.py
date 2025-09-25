@@ -27,6 +27,7 @@ class RecordService:
         self.repo = record_repo
         self.user_repository = user_repository
         self._to_response = get_converter(DailyRecord, DailyRecordResponse)
+        self.ai_service = ""
 
     async def create_record(self, data: DailyRecordRequest, user_id: int) -> DailyRecordResponse:
         """Create a new daily record."""
@@ -35,7 +36,8 @@ class RecordService:
             user = await self.user_repository.get_one(id=user_id)
 
             if user.ai_auto_process:
-                ai_processed = await self.ai_service.process(data.raw_input, user_id)
+                # ai_processed = await self.ai_service.process(data.raw_input, user_id)
+                ai_processed = ""
                 saved_record.ai_processed = ai_processed
                 updated_record = await self.repo.update(saved_record)
                 await self.repo.session.commit()
@@ -191,7 +193,8 @@ class RecordService:
         """Process record with AI."""
         try:
             record = await self.repo.get_record(record_id=record_id, user_id=user_id)
-            ai_processed = await self.ai_service.process(record.raw_input, user_id)
+            # ai_processed = await self.ai_service.process(record.raw_input, user_id)
+            ai_processed = ""
             record.ai_processed = ai_processed
             record.processed_at = datetime.now()
             record.is_processed = True
