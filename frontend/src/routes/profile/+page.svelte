@@ -2,8 +2,7 @@
     import { getContext, setContext } from 'svelte';
     import { Button } from "$lib";
     const userContext = getContext("user")
-    let user = { ...userContext };
-
+    let user = { ...userContext }
 
     let taskTypes = [
         { title: "Development", color: "#3B82F6" },
