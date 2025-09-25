@@ -13,7 +13,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
     } catch (error) {
         // If it's a redirect, re-throw it
         if (error instanceof Response) {
-            console.log(error)
+            console.error(error)
             throw error;
         }
         return { reports: [] };

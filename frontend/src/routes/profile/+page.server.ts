@@ -7,17 +7,19 @@ export const load: PageServerLoad = async ({fetch}) => {
             credentials: 'include'
         });
         if (!taskTypesResponse.ok) {
-                return { error: 'Error during getting task types' };
+            return { error: 'Error during getting task types' };
             }
 
 
-        const taskTypesData = taskTypesResponse.json();
+        const taskTypesData = await taskTypesResponse.json();
+        console.log("YA")
+        console.log(taskTypesData)
         if (!taskTypesData.success) {
             return { error: 'Error during getting task types' };
         }
 
         return {
-            tasks: taskTypesData.data
+            taskTypes: taskTypesData.data
         }
 
     } catch (error) {

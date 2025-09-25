@@ -91,8 +91,6 @@ export const actions: Actions = {
         const recordId = formData.get('recordId');
         const newStatus = formData.get('newStatus');
 
-        console.log(newStatus)
-
         try {
             const response = await fetch(`/api/v1/records/${recordId}/status`, {
                 method: 'PATCH',

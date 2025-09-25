@@ -3,13 +3,16 @@
     import { Button } from "$lib";
     const userContext = getContext("user")
     let user = { ...userContext }
+    let { data }: { data: PageData } = $props();
+    let taskTypes = data.taskTypes;
+    let records = data.records;
 
-    let taskTypes = [
-        { title: "Development", color: "#3B82F6" },
-        { title: "Meeting", color: "#10B981" },
-        { title: "Research", color: "#8B5CF6" },
-        { title: "Bug Fix", color: "#EF4444" }
-    ];
+
+    console.log(taskTypes)
+
+    const totalTasks = records?.length || 0
+    const openTasks = records?.filter(task => task.is_active === true)?.length || 0
+    const closedTasks = records?.filter(task => task.is_active === false)?.length || 0
 
     let aiProviders = [
         { id: 1, name: "OpenAI GPT-4", is_active: true },
@@ -302,15 +305,15 @@
                         <div class="space-y-4">
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-600">Total Records</span>
-                                <span class="font-semibold text-gray-900">42</span>
+                                <span class="font-semibold text-gray-900">{totalTasks}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-600">Open</span>
-                                <span class="font-semibold text-yellow-600">4</span>
+                                <span class="font-semibold text-yellow-600">{openTasks}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-600">Closed</span>
-                                <span class="font-semibold text-grey-600">{taskTypes.length}</span>
+                                <span class="font-semibold text-grey-600">{closedTasks}</span>
                             </div>
                         </div>
                     </div>

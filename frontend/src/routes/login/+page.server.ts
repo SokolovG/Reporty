@@ -42,7 +42,7 @@ export const actions: Actions = {
 
 
         } catch (error) {
-            console.log(error)
+            console.error(error)
             return { error: 'Server connection error' };
         }
 
