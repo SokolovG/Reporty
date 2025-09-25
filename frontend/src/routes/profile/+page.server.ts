@@ -1,3 +1,4 @@
+import type { Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "../$types"
 
 export const load: PageServerLoad = async ({fetch}) => {
@@ -35,6 +36,32 @@ export const load: PageServerLoad = async ({fetch}) => {
                 throw error;
             }
             return { error: 'Error during getting task types' };
+    }
+
+}
+
+export const actions: Actions = {
+
+    addTaskType: async({ fetch }) => {
+
+    },
+    removeTaskType: async({ fetch }) => {
+
+    },
+    updateUserInfo: async ({ fetch }) => {
+
+    },
+
+    updateAISettings: async ({ fetch }) => {
+
+    },
+
+    logout: async ({ fetch }) => {
+
+    },
+
+    login: async ({ fetch }) => {
+
     }
 
 }
