@@ -2,24 +2,32 @@ import type { PageServerLoad } from "../$types"
 
 export const load: PageServerLoad = async ({fetch}) => {
     try {
-        const taskTypesResponse = await fetch("api/v1/settings/task-types", {
-            method: "GET",
-            credentials: 'include'
-        });
-        if (!taskTypesResponse.ok) {
-            return { error: 'Error during getting task types' };
-            }
+        const [recordsResponse, taskTypesResponse] = await Promise.all([
+            fetch('/api/v1/records'),
+            fetch('/api/v1/settings/task-types')
+        ]);
 
+        if (!recordsResponse.ok || !taskTypesResponse.ok) {
+            return { records: [], taskTypes: [] };
+        }
 
-        const taskTypesData = await taskTypesResponse.json();
-        console.log("YA")
-        console.log(taskTypesData)
-        if (!taskTypesData.success) {
+        const task_types_json = await taskTypesResponse.json();
+        const records_json = await recordsResponse.json();
+
+        if (!task_types_json.success) {
             return { error: 'Error during getting task types' };
         }
 
+        if (!records_json.success) {
+            return { error: 'Error during getting records' };
+        }
+
+        const taskTypes = task_types_json.data
+        const records = records_json.data
+
         return {
-            taskTypes: taskTypesData.data
+            taskTypes: taskTypes,
+            records: records
         }
 
     } catch (error) {

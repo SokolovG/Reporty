@@ -7,12 +7,11 @@
     let taskTypes = data.taskTypes;
     let records = data.records;
 
-
-    console.log(taskTypes)
+    console.log(records)
 
     const totalTasks = records?.length || 0
-    const openTasks = records?.filter(task => task.is_active === true)?.length || 0
-    const closedTasks = records?.filter(task => task.is_active === false)?.length || 0
+    const openTasks = records?.filter(task => task.status === "OPEN")?.length || 0
+    const closedTasks = records?.filter(task => task.status === "CLOSED")?.length || 0
 
     let aiProviders = [
         { id: 1, name: "OpenAI GPT-4", is_active: true },
