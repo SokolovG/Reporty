@@ -1,4 +1,4 @@
-import type { Actions } from "@sveltejs/kit";
+import { redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "../$types"
 
 export const load: PageServerLoad = async ({fetch}) => {
@@ -42,10 +42,104 @@ export const load: PageServerLoad = async ({fetch}) => {
 
 export const actions: Actions = {
 
-    addTaskType: async({ fetch }) => {
+    updateTaskType: async ({ request, fetch }) => {
+        const formData = await request.formData()
+        const title = formData.get("title")
+        const color = formData.get("color")
+        const isActive = formData.get("isActive")
+
+        const data = {
+            title: title.toString(),
+            color: color?.toString()
+            // isActive: isActive.
+        };
+        try {
+            const response = await fetch("/task-types", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                return { error: "Failed to update task type" }
+            }
+            const responseData = await response.json()
+            if (!responseData.status) {
+                return { error: "Failed to update task type" }
+            }
+
+        } catch (error) {
+            if (error instanceof Response) {
+                    throw error;
+                }
+            return { error: 'Error during task type updation' };
+        }
+        throw redirect(303, "/profile")
 
     },
-    removeTaskType: async({ fetch }) => {
+
+    addTaskType: async({ request, fetch }) => {
+        const formData = await request.formData()
+        const title = formData.get("title")
+        const color = formData.get("color")
+
+
+        const data = {
+            title: title.toString(),
+            color: color?.toString()
+        };
+
+        try {
+            const response = await fetch("/task-types", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                return { error: "Failed to create task type" }
+            }
+            const responseData = await response.json()
+            if (!responseData.status) {
+                return { error: "Failed to create task type" }
+            }
+
+        } catch (error) {
+            if (error instanceof Response) {
+                    throw error;
+                }
+            return { error: 'Error during task type creation' };
+        }
+        throw redirect(303, "/profile")
+
+    },
+    removeTaskType: async({ request, fetch }) => {
+        const formData = await request.formData()
+        const taskTypeId = formData.get("taskTypeId")
+
+        try {
+            const response = await fetch(`/task-types/${taskTypeId}`, {
+                method: "DELETE",
+            });
+            if (!response.ok) {
+                return { error: 'Failed to delete record' };
+            }
+            const responseData = await response.json()
+            if (!responseData.status) {
+                return { error: 'Failed to delete record' };
+            }
+
+        } catch (error) {
+            if (error instanceof Response) {
+                throw error;
+            }
+            return { error: 'Error during task type deletion' };
+        }
+        throw redirect(303, "/profile")
 
     },
     updateUserInfo: async ({ fetch }) => {
