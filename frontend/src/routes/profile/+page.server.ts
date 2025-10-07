@@ -54,7 +54,7 @@ export const actions: Actions = {
             // isActive: isActive.
         };
         try {
-            const response = await fetch("/task-types", {
+            const response = await fetch("/api/v1/settings/task-types", {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"
@@ -66,7 +66,7 @@ export const actions: Actions = {
                 return { error: "Failed to update task type" }
             }
             const responseData = await response.json()
-            if (!responseData.status) {
+            if (!responseData.success) {
                 return { error: "Failed to update task type" }
             }
 
@@ -92,7 +92,7 @@ export const actions: Actions = {
         };
 
         try {
-            const response = await fetch("/task-types", {
+            const response = await fetch("/api/v1/settings/task-types", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -104,7 +104,7 @@ export const actions: Actions = {
                 return { error: "Failed to create task type" }
             }
             const responseData = await response.json()
-            if (!responseData.status) {
+            if (!responseData.success) {
                 return { error: "Failed to create task type" }
             }
 
@@ -122,14 +122,14 @@ export const actions: Actions = {
         const taskTypeId = formData.get("taskTypeId")
 
         try {
-            const response = await fetch(`/task-types/${taskTypeId}`, {
+            const response = await fetch(`/api/v1/settings/task-types/${taskTypeId}`, {
                 method: "DELETE",
             });
             if (!response.ok) {
                 return { error: 'Failed to delete record' };
             }
             const responseData = await response.json()
-            if (!responseData.status) {
+            if (!responseData.success) {
                 return { error: 'Failed to delete record' };
             }
 
@@ -142,20 +142,84 @@ export const actions: Actions = {
         throw redirect(303, "/profile")
 
     },
-    updateUserInfo: async ({ fetch }) => {
+    updateUserInfo: async ({ request, fetch }) => {
+        const formData = await request.formData();
+        const display_name = formData.get("display_name");
+        const department = formData.get("department");
+        const position = formData.get("position");
 
+        const data = {
+            display_name: display_name?.toString() || null,
+            department: department?.toString() || null,
+            position: position?.toString() || null,
+        };
+
+        try {
+            // TODO: сделать ручку- PATCH /api/v1/settings/user
+            const response = await fetch("/api/v1/settings/user", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                return { error: "Failed to update user info" };
+            }
+
+            const responseData = await response.json();
+            if (!responseData.success) {
+                return { error: "Failed to update user info" };
+            }
+
+        } catch (error) {
+            if (error instanceof Response) {
+                throw error;
+            }
+            return { error: 'Error during user info update' };
+        }
+
+        throw redirect(303, "/profile");
     },
 
-    updateAISettings: async ({ fetch }) => {
+    updateAISettings: async ({ request, fetch }) => {
+        const formData = await request.formData();
+        const ai_auto_process = formData.get("ai_auto_process") === "on";
+        const ai_provider_id = formData.get("ai_provider_id");
 
+        const data = {
+            ai_auto_process: ai_auto_process,
+            ai_provider_id: ai_provider_id ? parseInt(ai_provider_id.toString()) : null,
+        };
+
+        try {
+            // TODO: сделать ручку ендпоинт - PATCH /api/v1/settings/user
+            const response = await fetch("/api/v1/settings/user", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                return { error: "Failed to update AI settings" };
+            }
+
+            const responseData = await response.json();
+            if (!responseData.success) {
+                return { error: "Failed to update AI settings" };
+            }
+
+        } catch (error) {
+            if (error instanceof Response) {
+                throw error;
+            }
+            return { error: 'Error during AI settings update' };
+        }
+
+        throw redirect(303, "/profile");
     },
-
-    logout: async ({ fetch }) => {
-
-    },
-
-    login: async ({ fetch }) => {
-
-    }
 
 }

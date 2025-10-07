@@ -1,11 +1,20 @@
 <script lang="ts">
   import "../app.css";
-  import { Header, Footer } from "$lib";
+  import { Header, Footer, setUser } from "$lib";
+  import NotificationContainer from "$lib/components/ui/NotificationContainer.svelte";
   import type { LayoutData } from './$types';
-  import { setContext } from 'svelte';
+  import { setContext, onMount } from 'svelte';
 
   let { children, data }: { children: import('svelte').Snippet, data: LayoutData } = $props();
-  setContext("user", data.user)
+
+  setContext("user", data.user);
+
+  // Initialize user store
+  onMount(() => {
+    if (data.user) {
+      setUser(data.user);
+    }
+  });
 </script>
 
 <div class="app">
@@ -14,4 +23,5 @@
     {@render children()}
   </main>
   <Footer />
+  <NotificationContainer />
 </div>

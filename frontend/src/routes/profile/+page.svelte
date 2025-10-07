@@ -1,13 +1,13 @@
 <script lang="ts">
     import { getContext, setContext } from 'svelte';
     import { Button } from "$lib";
+    import { enhance } from '$app/forms';
+
     const userContext = getContext("user")
     let user = { ...userContext }
-    let { data }: { data: PageData } = $props();
+    let { data, form } = $props();
     let taskTypes = data.taskTypes;
     let records = data.records;
-
-    console.log(records)
 
     const totalTasks = records?.length || 0
     const openTasks = records?.filter(task => task.status === "OPEN")?.length || 0
@@ -115,11 +115,22 @@
                                 </div>
                             </div>
                         {:else}
-                            <form on:submit|preventDefault={saveProfile} class="space-y-4">
+                            <form
+                                method="POST"
+                                action="?/updateUserInfo"
+                                use:enhance={() => {
+                                    return async ({ update }) => {
+                                        await update();
+                                        isEditing = false;
+                                    };
+                                }}
+                                class="space-y-4"
+                            >
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Display Name</label>
                                         <input
+                                            name="display_name"
                                             bind:value={editForm.display_name}
                                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                             placeholder="Your display name"
@@ -137,6 +148,7 @@
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Department</label>
                                         <input
+                                            name="department"
                                             bind:value={editForm.department}
                                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                             placeholder="Your department"
@@ -145,6 +157,7 @@
                                     <div>
                                         <label class="block text-sm font-medium text-gray-700 mb-1">Position</label>
                                         <input
+                                            name="position"
                                             bind:value={editForm.position}
                                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                             placeholder="Your position"
@@ -178,7 +191,12 @@
                         </h2>
                     </div>
 
-                    <div class="p-6 space-y-4">
+                    <form
+                        method="POST"
+                        action="?/updateAISettings"
+                        use:enhance
+                        class="p-6 space-y-4"
+                    >
                         <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                             <div>
                                 <h3 class="font-medium text-gray-900">Auto-process with AI</h3>
@@ -187,6 +205,7 @@
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input
                                     type="checkbox"
+                                    name="ai_auto_process"
                                     bind:checked={user.ai_auto_process}
                                     class="sr-only peer"
                                 />
@@ -197,6 +216,7 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">AI Provider</label>
                             <select
+                                name="ai_provider_id"
                                 bind:value={user.ai_provider_id}
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                             >
@@ -206,7 +226,11 @@
                                 {/each}
                             </select>
                         </div>
-                    </div>
+
+                        <div class="pt-4">
+                            <Button text="Save AI Settings" variant="primary" />
+                        </div>
+                    </form>
                 </div>
             </div>
 
@@ -235,9 +259,21 @@
 
                     <div class="p-6">
                         {#if showAddTaskType}
-                            <form on:submit|preventDefault={addTaskType} class="mb-4 p-4 bg-gray-50 rounded-lg">
+                            <form
+                                method="POST"
+                                action="?/addTaskType"
+                                use:enhance={() => {
+                                    return async ({ update }) => {
+                                        await update();
+                                        showAddTaskType = false;
+                                        newTaskType = { title: "", color: "#3B82F6" };
+                                    };
+                                }}
+                                class="mb-4 p-4 bg-gray-50 rounded-lg"
+                            >
                                 <div class="space-y-3">
                                     <input
+                                        name="title"
                                         bind:value={newTaskType.title}
                                         placeholder="Task type name"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
@@ -246,6 +282,7 @@
                                     <div class="flex items-center gap-2">
                                         <input
                                             type="color"
+                                            name="color"
                                             bind:value={newTaskType.color}
                                             class="w-8 h-8 border border-gray-300 rounded cursor-pointer"
                                         />
@@ -275,14 +312,22 @@
                                         ></div>
                                         <span class="text-gray-900">{taskType.title}</span>
                                     </div>
-                                    <button
-                                        on:click={() => removeTaskType(index)}
-                                        class="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition-all"
+                                    <form
+                                        method="POST"
+                                        action="?/removeTaskType"
+                                        use:enhance
+                                        style="display: inline;"
                                     >
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                        </svg>
-                                    </button>
+                                        <input type="hidden" name="taskTypeId" value={taskType.id} />
+                                        <button
+                                            type="submit"
+                                            class="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition-all"
+                                        >
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </form>
                                 </div>
                             {/each}
                         </div>
