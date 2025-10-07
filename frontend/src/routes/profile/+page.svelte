@@ -4,9 +4,20 @@
     import { enhance } from '$app/forms';
 
     const userContext = getContext("user")
-    let user = { ...userContext }
+    let user = $state({ ...userContext })
+
+    console.log('userContext:', userContext)
+    console.log('user:', user)
+
+    $effect(() => {
+        console.log('isEditing changed to:', isEditing);
+    });
+
+    $effect(() => {
+        console.log('showAddTaskType changed to:', showAddTaskType);
+    });
     let { data, form } = $props();
-    let taskTypes = data.taskTypes;
+    let taskTypes = $state(data.taskTypes);
     let records = data.records;
 
     const totalTasks = records?.length || 0
@@ -19,13 +30,15 @@
         { id: 3, name: "Local LLM", is_active: false }
     ];
 
-    let isEditing = false;
-    let editForm = { ...user };
-    let newTaskType = { title: "", color: "#3B82F6" };
-    let showAddTaskType = false;
+    let isEditing = $state(false);
+    let editForm = $state({ ...user });
+    let newTaskType = $state({ title: "", color: "#3B82F6" });
+    let showAddTaskType = $state(false);
 
     function toggleEdit() {
+        console.log('toggleEdit clicked! Current isEditing:', isEditing);
         isEditing = !isEditing;
+        console.log('New isEditing:', isEditing);
         if (isEditing) {
             editForm = { ...user };
         }
@@ -247,7 +260,11 @@
                                 Task Types
                             </h2>
                             <button
-                                on:click={() => showAddTaskType = !showAddTaskType}
+                                on:click={() => {
+                                    console.log('Plus button clicked! Current showAddTaskType:', showAddTaskType);
+                                    showAddTaskType = !showAddTaskType;
+                                    console.log('New showAddTaskType:', showAddTaskType);
+                                }}
                                 class="text-white hover:text-green-200 transition-colors"
                             >
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
