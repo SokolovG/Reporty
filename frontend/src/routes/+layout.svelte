@@ -1,7 +1,6 @@
 <script lang="ts">
   import "../app.css";
   import { Header, Footer, setUser } from "$lib";
-  import NotificationContainer from "$lib/components/ui/NotificationContainer.svelte";
   import type { LayoutData } from './$types';
   import { setContext, onMount } from 'svelte';
 
@@ -23,5 +22,4 @@
     {@render children()}
   </main>
   <Footer />
-  <NotificationContainer />
 </div>
