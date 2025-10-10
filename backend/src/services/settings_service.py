@@ -149,6 +149,10 @@ class SettingsService:
             return [self._to_ai_provider_response(p) for p in result.scalars().all()]
         except Exception as e:
             raise InternalServerError(f"Failed to get AI providers: {str(e)}")
+        
+    async def update_ai_settings(self, user_id: int) -> AIProviderResponse:
+        """Update AI settings."""
+        
 
     async def get_active_ai_providers(self, user_id: int) -> list[AIProviderResponse]:
         """Get only active AI providers."""
@@ -167,8 +171,6 @@ class SettingsService:
         try:
             ai_provider = await self.ai_provider_repository.get(ai_provider_id)
 
-            if data.name is not None:
-                ai_provider.name = data.name
             if data.base_prompt is not None:
                 ai_provider.base_prompt = data.base_prompt
             if data.model_name is not None:

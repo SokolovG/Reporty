@@ -9,6 +9,7 @@ from backend.src.api.dto.auth_dto import (
     UserResponse,
     UserUpdateRequest,
     SuccessResponseDTO,
+    UserResponseDTO
 )
 from backend.src.api.dto.record_dto import (
     DailyRecordRequest,
@@ -44,6 +45,10 @@ from backend.src.api.dto.settings_dto import (
     ExternalSystemResponseDTO,
     ExternalSystemUpdateRequest,
     ExternalSystemUpdateRequestDTO,
+    AISettingsUpdateResponseDTO,
+    AISettingsUpdateRequest,
+    AISettingsUpdateRequestDTO,
+    AISettingsUpdateResponse
 )
 from backend.src.api.dto.user_dto import UserReadDTO, UserRegistrationDTO, UserUpdateDTO
 
@@ -96,4 +101,9 @@ __all__ = [
     "UserResponse",
     "UserUpdateRequest",
     "SuccessResponseDTO",
+    "AISettingsUpdateResponseDTO",
+    "AISettingsUpdateRequest",
+    "AISettingsUpdateRequestDTO",
+    "AISettingsUpdateResponse",
+    "UserResponseDTO",
 ]

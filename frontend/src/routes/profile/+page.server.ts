@@ -155,7 +155,6 @@ export const actions: Actions = {
         };
 
         try {
-            // TODO: сделать ручку- PATCH /api/v1/settings/user
             const response = await fetch("/api/v1/settings/user", {
                 method: "PATCH",
                 headers: {
@@ -194,7 +193,7 @@ export const actions: Actions = {
         };
 
         try {
-            // TODO: сделать ручку ендпоинт - PATCH /api/v1/settings/user
+            // TODO: сделать ручку ендпоинт - PATCH /api/v1/settings/ai_settings
             const response = await fetch("/api/v1/settings/user", {
                 method: "PATCH",
                 headers: {

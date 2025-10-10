@@ -64,6 +64,8 @@ class UserUpdateRequest(msgspec.Struct):
     position: str | None = None
     email: str | None = None
 
+class UserResponseDTO(BaseMsgspecDTO[UserResponse]):
+    pass
 
 class SuccessResponseDTO(BaseMsgspecDTO[SuccessResponse]):
     pass
