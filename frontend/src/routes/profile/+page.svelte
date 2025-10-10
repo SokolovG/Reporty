@@ -17,7 +17,6 @@
         console.log('showAddTaskType changed to:', showAddTaskType);
     });
     let { data, form } = $props();
-    let taskTypes = $state(data.taskTypes);
     let records = data.records;
 
     const totalTasks = records?.length || 0
@@ -52,14 +51,14 @@
 
     function addTaskType() {
         if (newTaskType.title.trim()) {
-            taskTypes = [...taskTypes, { ...newTaskType }];
+            data.taskTypes = [...data.taskTypes, { ...newTaskType }];
             newTaskType = { title: "", color: "#3B82F6" };
             showAddTaskType = false;
         }
     }
 
     function removeTaskType(index: number) {
-        taskTypes = taskTypes.filter((_, i) => i !== index);
+        data.taskTypes = data.taskTypes.filter((_, i) => i !== index);
     }
 </script>
 
@@ -320,7 +319,7 @@
                         {/if}
 
                         <div class="space-y-2">
-                            {#each taskTypes as taskType, index}
+                            {#each data.taskTypes as taskType, index}
                                 <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg group">
                                     <div class="flex items-center gap-3">
                                         <div

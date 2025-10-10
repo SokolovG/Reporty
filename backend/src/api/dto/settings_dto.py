@@ -5,7 +5,6 @@ from backend.src.api.dto.base import BaseMsgspecDTO
 
 
 class TaskTypeRequest(msgspec.Struct):
-    id: int
     title: str
     color: str | None = None
 
