@@ -205,8 +205,7 @@ class SettingsService:
                 display_name=data.display_name,
                 department=data.department,
                 position=data.position,
-                ai_auto_process=data.ai_auto_process,
-                ai_provider_id=data.ai_provider_id,
+                email=data.email,
             )
             return self._to_user_response(user)
         except Exception as e:

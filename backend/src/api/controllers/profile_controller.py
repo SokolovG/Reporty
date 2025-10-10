@@ -9,6 +9,7 @@ from backend.src.api.dto import (
     TaskTypeRequestDTO,
     TaskTypeUpdateRequestDTO,
 )
+from backend.src.api.dto.auth_dto import UserUpdateRequest
 from backend.src.services.settings_service import SettingsService
 from backend.src.api.responses.base_responses import SuccessResponse
 
@@ -66,3 +67,15 @@ class SettingsController(Controller):
     ) -> None:
         user_id = request.user.id
         await settings_service.delete_task_type(task_type_id=task_type_id, user_id=user_id)
+
+    @patch("/user")
+    @inject
+    async def update_user_info(
+        self,
+        data: UserUpdateRequest,
+        request: Request,
+        settings_service: FromDishka[SettingsService],
+    ) -> SuccessResponse:
+        user_id = request.user.id
+        updated_user = await settings_service.update_user(user_id=user_id, data=data)
+        return SuccessResponse(message="User updated successfully", data=updated_user)

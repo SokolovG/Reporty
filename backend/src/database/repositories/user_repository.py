@@ -36,8 +36,7 @@ class UserRepository(repository.SQLAlchemyAsyncRepository[User]):  # type: ignor
         display_name: str | None = None,
         department: str | None = None,
         position: str | None = None,
-        ai_auto_process: bool | None = None,
-        ai_provider_id: int | None = None,
+        email: str | None = None,
     ) -> User:
         """Update user profile information."""
         user = await self.get_one(id=user_id)
@@ -48,10 +47,8 @@ class UserRepository(repository.SQLAlchemyAsyncRepository[User]):  # type: ignor
             user.department = department
         if position is not None:
             user.position = position
-        if ai_auto_process is not None:
-            user.ai_auto_process = ai_auto_process
-        if ai_provider_id is not None:
-            user.ai_provider_id = ai_provider_id
+        if email is not None:
+            user.email = email
 
         await self.session.commit()
         return user

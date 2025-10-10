@@ -2,12 +2,16 @@
     import { getContext, setContext } from 'svelte';
     import { Button } from "$lib";
     import { enhance } from '$app/forms';
+    import { invalidateAll } from '$app/navigation';
 
     const userContext = getContext("user")
     let user = $state({ ...userContext })
 
     console.log('userContext:', userContext)
     console.log('user:', user)
+    $effect(() => {
+        user = { ...userContext }
+    })
 
     $effect(() => {
         console.log('isEditing changed to:', isEditing);
@@ -18,6 +22,10 @@
     });
     let { data, form } = $props();
     let records = data.records;
+
+    $effect(() => {
+        records = [...data.records]
+    })
 
     const totalTasks = records?.length || 0
     const openTasks = records?.filter(task => task.status === "OPEN")?.length || 0
@@ -43,23 +51,6 @@
         }
     }
 
-    function saveProfile() {
-        user = { ...editForm };
-        isEditing = false;
-        setContext("user", user);
-    }
-
-    function addTaskType() {
-        if (newTaskType.title.trim()) {
-            data.taskTypes = [...data.taskTypes, { ...newTaskType }];
-            newTaskType = { title: "", color: "#3B82F6" };
-            showAddTaskType = false;
-        }
-    }
-
-    function removeTaskType(index: number) {
-        data.taskTypes = data.taskTypes.filter((_, i) => i !== index);
-    }
 </script>
 
 <div class="bg-gradient-to-br from-blue-50 via-white to-indigo-50 min-h-screen">
@@ -130,12 +121,6 @@
                             <form
                                 method="POST"
                                 action="?/updateUserInfo"
-                                use:enhance={() => {
-                                    return async ({ update }) => {
-                                        await update();
-                                        isEditing = false;
-                                    };
-                                }}
                                 class="space-y-4"
                             >
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

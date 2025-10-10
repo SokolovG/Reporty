@@ -62,8 +62,7 @@ class UserUpdateRequest(msgspec.Struct):
     display_name: str | None = None
     department: str | None = None
     position: str | None = None
-    ai_auto_process: bool | None = None
-    ai_provider_id: int | None = None
+    email: str | None = None
 
 
 class SuccessResponseDTO(BaseMsgspecDTO[SuccessResponse]):
