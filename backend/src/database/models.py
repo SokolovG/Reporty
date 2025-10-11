@@ -73,6 +73,9 @@ class DailyRecord(Base):
             f" is_processed={self.is_processed})>"
         )
 
+    def __str__(self) -> str:
+        return self.title
+
 
 class ExternalSystem(Base):
     """External task management system (Bitrix, Jira, Asana, etc.)."""
@@ -107,6 +110,9 @@ class ExternalSystem(Base):
             f"<ExternalSystem(name='{self.name}', display_name='{self.display_name}',"
             f" active={self.is_active})>"
         )
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class ExternalTask(Base):
@@ -169,6 +175,9 @@ class ExternalTask(Base):
             f"system='{self.system.name if self.system else 'Unknown'}', "
             f"title='{self.title or ''}...', status='{self.status}')>"
         )
+
+    def __str__(self) -> str:
+        return self.title if self.title else f"External task {self.external_id}"
 
 
 class Report(Base):
@@ -252,6 +261,9 @@ class User(Base):
     task_types: Mapped[list["TaskType"]] = relationship(
         "TaskType", back_populates="user", cascade="all, delete-orphan"
     )
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class TaskType(Base):

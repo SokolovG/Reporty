@@ -19,7 +19,7 @@ class AuthController(Controller):
     @post("/register", return_dto=SuccessResponseDTO)
     @inject
     async def register(
-        self, service: FromDishka[AuthService], request: Request, data: RegisterRequest
+        self, service: FromDishka[AuthService], data: RegisterRequest
     ) -> SuccessResponse:
         """Register a new user."""
         user = await service.register(data)
@@ -61,10 +61,33 @@ class AuthController(Controller):
 
     @post("/logout")
     @inject
-    async def logout(self, response: Response) -> SuccessResponse:
+    async def logout(self) -> Response[SuccessResponse]:
         """Logout user by clearing refresh token cookie."""
-        response.delete_cookie(key="refreshToken")
-        return SuccessResponse(message="Successfully logged out")
+        success_response = SuccessResponse(message="Successfully logged out")
+
+        response = Response(
+            content=success_response,
+            status_code=200,
+            cookies=[
+                Cookie(
+                    key="refreshToken",
+                    value="",
+                    httponly=True,
+                    secure=True,
+                    samesite="strict",
+                    max_age=0,
+                ),
+                Cookie(
+                    key="accessToken",
+                    value="",
+                    httponly=True,
+                    secure=True,
+                    samesite="strict",
+                    max_age=0,
+                ),
+            ],
+        )
+        return response
 
     @post("/refresh")
     @inject
@@ -72,7 +95,7 @@ class AuthController(Controller):
         self, service: FromDishka[AuthService], request: Request
     ) -> Response[SuccessResponse]:
         """Refresh access token."""
-        refresh_token: str | None = request.cookies.get("refresh_token")
+        refresh_token: str | None = request.cookies.get("refreshToken")
         if not refresh_token:
             raise AuthenticationError("No refresh token")
 
@@ -84,12 +107,12 @@ class AuthController(Controller):
             status_code=200,
             cookies=[
                 Cookie(
-                    key="access_token",
+                    key="accessToken",
                     value=new_access_token,
                     httponly=True,
                     secure=True,
                     samesite="strict",
-                    max_age=15 * 60,  # 15 минут
+                    max_age=15 * 60,
                 )
             ],
         )

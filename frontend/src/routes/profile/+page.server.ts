@@ -16,7 +16,6 @@ export const load: PageServerLoad = async ({fetch}) => {
         const taskTypesJson = await taskTypesResponse.json();
         const recordsJson = await recordsResponse.json();
         const providersJson = await providersResponse.json();
-        console.log(providersJson)
 
         if (!taskTypesJson.success) {
             return { error: 'Error during getting task types' };
@@ -223,5 +222,27 @@ export const actions: Actions = {
 
         throw redirect(303, "/profile");
     },
+
+    logout: async ({ fetch }) => {
+        try {
+            const response = await fetch("/api/v1/auth/logout", {
+                method: "POST"
+            });
+            if (!response.ok) {
+                return { error: "Failed to logout" };
+            }
+            throw redirect(303, '/login');
+
+        } catch (error) {
+            if (error instanceof Response) {
+                throw error;
+            }
+            console.error('Logout error:', error);
+            return {
+                success: false,
+                error: 'Unexpected error during logout'
+            };
+        }
+    }
 
 }
