@@ -1,4 +1,5 @@
 from backend.src.api.dto.auth_dto import (
+    AccessTokenResponse,
     ChangePasswordRequest,
     LogoutRequest,
     LoginRequest,
@@ -106,4 +107,5 @@ __all__ = [
     "AISettingsUpdateRequestDTO",
     "AISettingsUpdateResponse",
     "UserResponseDTO",
+    "AccessTokenResponse",
 ]

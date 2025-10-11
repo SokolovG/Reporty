@@ -65,6 +65,10 @@ class UserUpdateRequest(msgspec.Struct):
     email: str | None = None
 
 
+class AccessTokenResponse(msgspec.Struct):
+    access_token: str
+
+
 class UserResponseDTO(BaseMsgspecDTO[UserResponse]):
     pass
 

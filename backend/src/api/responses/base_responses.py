@@ -1,11 +1,11 @@
-from typing import Any, Collection
+from typing import Any, Collection, Sequence
 import msgspec
 from litestar.dto import MsgspecDTO, DTOConfig
 
 
 class SuccessResponse(msgspec.Struct):
     success: bool = True
-    data: list | None = None
+    data: msgspec.Struct | Sequence[msgspec.Struct] | None = None
     message: str | None = None
 
 

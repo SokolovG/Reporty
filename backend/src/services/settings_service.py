@@ -151,11 +151,8 @@ class SettingsService:
         except Exception as e:
             raise InternalServerError(f"Failed to get AI providers: {str(e)}")
 
-    async def update_ai_settings(
-        self, user_id: int, data: AISettingsUpdateRequest
-    ) -> AIProviderResponse:
+    async def update_ai_settings(self, user_id: int, data: AISettingsUpdateRequest) -> UserResponse:
         """Update AI settings."""
-        print(data)
         try:
             user = await self.user_repository.get_one_or_none(id=user_id)
             if not user:
@@ -164,8 +161,6 @@ class SettingsService:
                 user.ai_provider_id = data.ai_provider_id
             if data.ai_auto_process is not None:
                 user.ai_auto_process = data.ai_auto_process
-            print(user.ai_auto_process)
-            print(user.ai_provider_id)
             await self.user_repository.session.commit()
             return self._to_user_response(user)
 

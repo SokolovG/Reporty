@@ -187,9 +187,6 @@
                     <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">
                         Share Report
                     </button>
-                    <button class="text-gray-600 hover:text-gray-700 text-sm font-medium">
-                        Print
-                    </button>
                 </div>
             </div>
         </div>

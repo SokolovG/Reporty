@@ -21,12 +21,7 @@
     const totalTasks = records?.length || 0
     const openTasks = records?.filter(task => task.status === "OPEN")?.length || 0
     const closedTasks = records?.filter(task => task.status === "CLOSED")?.length || 0
-
-    let aiProviders = [
-        { id: 1, name: "OpenAI GPT-4", is_active: true },
-        { id: 2, name: "Claude", is_active: true },
-        { id: 3, name: "Local LLM", is_active: false }
-    ];
+    const aiProviders = data.providers;
 
     let isEditing = $state(false);
     let editForm = $state({ ...user });

@@ -201,6 +201,9 @@ class Report(Base):
             f"entries_count={self.entries_count})>"
         )
 
+    def __str__(self) -> str:
+        return self.content[:10]
+
 
 class AIProvider(Base):
     __tablename__ = "ai_providers"
@@ -218,6 +221,9 @@ class AIProvider(Base):
     encrypted_api_key: Mapped[str] = mapped_column(String(500), nullable=True)
 
     __table_args__ = (Index("ix_ai_providers_active", "is_active"),)
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class User(Base):
@@ -264,3 +270,6 @@ class TaskType(Base):
         UniqueConstraint("user_id", "title", name="uk_user_task_type"),
         Index("ix_task_types_user_active", "user_id", "is_active"),
     )
+
+    def __str__(self) -> str:
+        return self.title

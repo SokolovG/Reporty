@@ -11,6 +11,7 @@ from backend.src.api.dto import (
 )
 from backend.src.api.dto.auth_dto import UserResponseDTO, UserUpdateRequest
 from backend.src.api.dto.settings_dto import (
+    AIProviderResponseDTO,
     AISettingsUpdateRequest,
     AISettingsUpdateRequestDTO,
     AISettingsUpdateResponseDTO,
@@ -93,7 +94,15 @@ class SettingsController(Controller):
         request: Request,
         settings_service: FromDishka[SettingsService],
     ) -> SuccessResponse:
-        print(f"CONTROLLER - {data}")
         user_id = request.user.id
         updates_ai_settings = await settings_service.update_ai_settings(user_id=user_id, data=data)
         return SuccessResponse(message="Ai settings updated successfully", data=updates_ai_settings)
+
+    @get("/ai_provider", return_dto=AIProviderResponseDTO)
+    @inject
+    async def get_ai_providers(
+        self, request: Request, settings_servide: FromDishka[SettingsService]
+    ) -> SuccessResponse:
+        user_id = request.user.id
+        providers = await settings_servide.get_ai_providers(user_id=user_id)
+        return SuccessResponse(message="AI providers retrieved successfully", data=providers)

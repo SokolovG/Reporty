@@ -3,33 +3,38 @@ import type { PageServerLoad } from "../$types"
 
 export const load: PageServerLoad = async ({fetch}) => {
     try {
-        const [recordsResponse, taskTypesResponse] = await Promise.all([
+        const [recordsResponse, taskTypesResponse, providersResponse] = await Promise.all([
             fetch('/api/v1/records'),
-            fetch('/api/v1/settings/task-types')
+            fetch('/api/v1/settings/task-types'),
+            fetch('api/v1/settings/ai_provider')
         ]);
 
-        if (!recordsResponse.ok || !taskTypesResponse.ok) {
+        if (!recordsResponse.ok || !taskTypesResponse.ok || !providersResponse) {
             return { records: [], taskTypes: [] };
         }
 
-        const task_types_json = await taskTypesResponse.json();
-        const records_json = await recordsResponse.json();
+        const taskTypesJson = await taskTypesResponse.json();
+        const recordsJson = await recordsResponse.json();
+        const providersJson = await providersResponse.json();
+        console.log(providersJson)
 
-        if (!task_types_json.success) {
+        if (!taskTypesJson.success) {
             return { error: 'Error during getting task types' };
         }
 
-        if (!records_json.success) {
+        if (!recordsJson.success) {
             return { error: 'Error during getting records' };
         }
 
-        const taskTypes = task_types_json.data
-        const records = records_json.data
+        const taskTypes = taskTypesJson.data
+        const records = recordsJson.data
+        const providers = providersJson.data
 
         return {
             taskTypes: taskTypes,
-            records: records
-        }
+            records: records,
+            providers: providers
+        };
 
     } catch (error) {
         if (error instanceof Response) {
@@ -191,7 +196,6 @@ export const actions: Actions = {
             ai_auto_process: ai_auto_process,
             ai_provider_id: ai_provider_id ? parseInt(ai_provider_id.toString()) : null,
         };
-        console.log('FRONTEND SENDING:', data)
         try {
             const response = await fetch("/api/v1/settings/ai_settings", {
                 method: "PATCH",

@@ -9,6 +9,7 @@ from backend.src.api.dto import (
     RegisterRequest,
     SuccessResponseDTO,
 )
+from backend.src.api.dto.auth_dto import AccessTokenResponse
 from backend.src.api.responses.base_responses import SuccessResponse
 from backend.src.core.exceptions import AuthenticationError
 from backend.src.services import AuthService
@@ -26,7 +27,9 @@ class AuthController(Controller):
 
     @post("/login")
     @inject
-    async def login(self, service: FromDishka[AuthService], data: LoginRequest) -> SuccessResponse:
+    async def login(
+        self, service: FromDishka[AuthService], data: LoginRequest
+    ) -> Response[SuccessResponse]:
         """Login user and return tokens."""
         token_info = await service.login(data)
 
@@ -60,23 +63,23 @@ class AuthController(Controller):
     @inject
     async def logout(self, response: Response) -> SuccessResponse:
         """Logout user by clearing refresh token cookie."""
-        response.delete_cookie(key="refresh_token")
+        response.delete_cookie(key="refreshToken")
         return SuccessResponse(message="Successfully logged out")
 
     @post("/refresh")
     @inject
     async def refresh_token(
-        self, service: FromDishka[AuthService], request: Request, refresh_token: str
-    ) -> SuccessResponse:
+        self, service: FromDishka[AuthService], request: Request
+    ) -> Response[SuccessResponse]:
         """Refresh access token."""
-        refresh_token = request.cookies.get("refresh_token")
+        refresh_token: str | None = request.cookies.get("refresh_token")
         if not refresh_token:
             raise AuthenticationError("No refresh token")
 
         new_access_token = await service.refresh(refresh_token)
         response = Response(
             content=SuccessResponse(
-                message="Token refreshed", data={"access_token": new_access_token}
+                message="Token refreshed", data=AccessTokenResponse(access_token=new_access_token)
             ),
             status_code=200,
             cookies=[
