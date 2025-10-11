@@ -10,7 +10,11 @@ from backend.src.api.dto import (
     TaskTypeUpdateRequestDTO,
 )
 from backend.src.api.dto.auth_dto import UserResponseDTO, UserUpdateRequest
-from backend.src.api.dto.settings_dto import AISettingsUpdateRequest, AISettingsUpdateRequestDTO, AISettingsUpdateResponseDTO
+from backend.src.api.dto.settings_dto import (
+    AISettingsUpdateRequest,
+    AISettingsUpdateRequestDTO,
+    AISettingsUpdateResponseDTO,
+)
 from backend.src.services.settings_service import SettingsService
 from backend.src.api.responses.base_responses import SuccessResponse
 
@@ -81,14 +85,15 @@ class SettingsController(Controller):
         updated_user = await settings_service.update_user(user_id=user_id, data=data)
         return SuccessResponse(message="User updated successfully", data=updated_user)
 
-    @patch("/ai_settings", dto=AISettingsUpdateRequestDTO,return_dto=AISettingsUpdateResponseDTO)
+    @patch("/ai_settings", dto=AISettingsUpdateRequestDTO, return_dto=AISettingsUpdateResponseDTO)
     @inject
     async def update_ai_settings(
         self,
         data: AISettingsUpdateRequest,
         request: Request,
-        settings_service: FromDishka[SettingsService]
-    ):
+        settings_service: FromDishka[SettingsService],
+    ) -> SuccessResponse:
+        print(f"CONTROLLER - {data}")
         user_id = request.user.id
         updates_ai_settings = await settings_service.update_ai_settings(user_id=user_id, data=data)
         return SuccessResponse(message="Ai settings updated successfully", data=updates_ai_settings)

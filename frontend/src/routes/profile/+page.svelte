@@ -7,19 +7,10 @@
     const userContext = getContext("user")
     let user = $state({ ...userContext })
 
-    console.log('userContext:', userContext)
-    console.log('user:', user)
     $effect(() => {
         user = { ...userContext }
     })
 
-    $effect(() => {
-        console.log('isEditing changed to:', isEditing);
-    });
-
-    $effect(() => {
-        console.log('showAddTaskType changed to:', showAddTaskType);
-    });
     let { data, form } = $props();
     let records = data.records;
 
@@ -43,9 +34,7 @@
     let showAddTaskType = $state(false);
 
     function toggleEdit() {
-        console.log('toggleEdit clicked! Current isEditing:', isEditing);
         isEditing = !isEditing;
-        console.log('New isEditing:', isEditing);
         if (isEditing) {
             editForm = { ...user };
         }
@@ -245,9 +234,7 @@
                             </h2>
                             <button
                                 on:click={() => {
-                                    console.log('Plus button clicked! Current showAddTaskType:', showAddTaskType);
                                     showAddTaskType = !showAddTaskType;
-                                    console.log('New showAddTaskType:', showAddTaskType);
                                 }}
                                 class="text-white hover:text-green-200 transition-colors"
                             >

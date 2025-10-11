@@ -207,7 +207,7 @@ export const load: PageServerLoad = async ({ params, fetch }) => {
         }
 
     } catch (e) {
-        console.log("❌ Error loading data:", e);
+        console.error("❌ Error loading data:", e);
         throw error(500, 'Failed to load record details');
     };
 };

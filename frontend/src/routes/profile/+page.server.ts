@@ -191,10 +191,9 @@ export const actions: Actions = {
             ai_auto_process: ai_auto_process,
             ai_provider_id: ai_provider_id ? parseInt(ai_provider_id.toString()) : null,
         };
-
+        console.log('FRONTEND SENDING:', data)
         try {
-            // TODO: сделать ручку ендпоинт - PATCH /api/v1/settings/ai_settings
-            const response = await fetch("/api/v1/settings/user", {
+            const response = await fetch("/api/v1/settings/ai_settings", {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"

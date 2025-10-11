@@ -2,6 +2,7 @@ from adaptix.conversion import get_converter
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
+from backend.src.api.dto.settings_dto import AISettingsUpdateRequest
 from backend.src.core.exceptions import NotFoundError, InternalServerError
 from backend.src.database.repositories import (
     AIProviderRepository,
@@ -149,10 +150,27 @@ class SettingsService:
             return [self._to_ai_provider_response(p) for p in result.scalars().all()]
         except Exception as e:
             raise InternalServerError(f"Failed to get AI providers: {str(e)}")
-        
-    async def update_ai_settings(self, user_id: int) -> AIProviderResponse:
+
+    async def update_ai_settings(
+        self, user_id: int, data: AISettingsUpdateRequest
+    ) -> AIProviderResponse:
         """Update AI settings."""
-        
+        print(data)
+        try:
+            user = await self.user_repository.get_one_or_none(id=user_id)
+            if not user:
+                raise NotFoundError("User", user_id)
+            if data.ai_provider_id:
+                user.ai_provider_id = data.ai_provider_id
+            if data.ai_auto_process is not None:
+                user.ai_auto_process = data.ai_auto_process
+            print(user.ai_auto_process)
+            print(user.ai_provider_id)
+            await self.user_repository.session.commit()
+            return self._to_user_response(user)
+
+        except Exception as e:
+            raise InternalServerError(f"Failed to update AI settings: {str(e)}")
 
     async def get_active_ai_providers(self, user_id: int) -> list[AIProviderResponse]:
         """Get only active AI providers."""

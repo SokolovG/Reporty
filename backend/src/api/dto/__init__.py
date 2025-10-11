@@ -9,7 +9,7 @@ from backend.src.api.dto.auth_dto import (
     UserResponse,
     UserUpdateRequest,
     SuccessResponseDTO,
-    UserResponseDTO
+    UserResponseDTO,
 )
 from backend.src.api.dto.record_dto import (
     DailyRecordRequest,
@@ -48,7 +48,7 @@ from backend.src.api.dto.settings_dto import (
     AISettingsUpdateResponseDTO,
     AISettingsUpdateRequest,
     AISettingsUpdateRequestDTO,
-    AISettingsUpdateResponse
+    AISettingsUpdateResponse,
 )
 from backend.src.api.dto.user_dto import UserReadDTO, UserRegistrationDTO, UserUpdateDTO
 
