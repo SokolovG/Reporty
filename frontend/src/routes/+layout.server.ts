@@ -21,15 +21,17 @@ async function getPublicKey() {
 export const load: LayoutServerLoad = async ({ url, fetch, cookies }) => {
   const publicPaths = ['/login', '/register'];
   const isPublicPath = publicPaths.some(path => url.pathname.startsWith(path));
-
   const accessToken = cookies.get("accessToken");
+  const refreshToken = cookies.get("refreshToken")
+
+
   async function tokenRefresh(): Promise<boolean> {
     try {
       const refreshResponse = await fetch('/api/v1/auth/refresh', {
         method: 'POST',
         credentials: 'include'
       });
-
+      console.log(await refreshResponse.json())
       if (refreshResponse.ok) {
         return true;
       }
@@ -40,43 +42,25 @@ export const load: LayoutServerLoad = async ({ url, fetch, cookies }) => {
     }
   }
 
-  if (!accessToken) {
-    if (!isPublicPath) {
-      throw redirect(302, '/login?error=no_token');
-    }
-    return { user: null };
-  }
-
-  try {
-    const publicKey = await getPublicKey();
-    const { payload } = await jwtVerify(accessToken, publicKey);
-
-    if (payload.exp && payload.exp < Date.now() / 1000) {
-      const refreshed = await tokenRefresh();
-      if (!refreshed) {
-        if (!isPublicPath) {
-          throw redirect(302, '/login?error=token_expired');
-        }
-        return { user: null };
-      }
-    }
-
+  async function fetchUser(): Promise<User> {
     const userResponse = await fetch("/api/v1/auth/me", {
       method: 'GET',
       credentials: 'include'
     });
+
     if (!userResponse.ok) {
       throw error(401, 'Failed to fetch user data');
     }
 
     const userData = await userResponse.json();
+
     if (!userData.success) {
       throw error(401, 'Failed to fetch user data');
     }
 
-    const user: User = {
+    return {
       id: userData.data.id,
-      username: userData.data.name,
+      name: userData.data.name,
       email: userData.data.email,
       display_name: userData.data.display_name,
       department: userData.data.department,
@@ -86,13 +70,46 @@ export const load: LayoutServerLoad = async ({ url, fetch, cookies }) => {
       is_active: userData.data.is_active,
       is_verify: userData.data.is_verify,
     };
+  }
+
+  if (!accessToken) {
+    if (refreshToken) {
+      const refreshed = await tokenRefresh();
+      if (refreshed) {
+        const user = await fetchUser();
+        return { user };
+      }
+
+    }
+    if (!isPublicPath) {
+      throw redirect(302, '/login?error=no_token');
+    }
+    return { user: null };
+  }
+
+  try {
+    const publicKey = await getPublicKey();
+    await jwtVerify(accessToken, publicKey);
+
+    const user = await fetchUser();
     return { user };
 
   } catch (err) {
     console.error('Auth error:', err);
+
+    if (err instanceof Error && err.name === 'JWTExpired') {
+      const refreshed = await tokenRefresh();
+
+      if (refreshed) {
+        const user = await fetchUser();
+        return { user };
+      }
+    }
+
     if (!isPublicPath) {
       throw redirect(302, '/login?error=invalid_token');
     }
     return { user: null };
   }
+
 };

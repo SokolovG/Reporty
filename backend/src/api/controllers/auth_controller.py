@@ -14,6 +14,10 @@ from backend.src.api.responses.base_responses import SuccessResponse
 from backend.src.core.exceptions import AuthenticationError
 from backend.src.services import AuthService
 
+from logging import getLogger
+
+logger = getLogger(__name__)
+
 
 class AuthController(Controller):
     @post("/register", return_dto=SuccessResponseDTO)

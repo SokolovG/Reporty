@@ -76,10 +76,7 @@ class AuthService:
 
     async def refresh(self, refresh_token: str) -> str:
         """Refresh access token."""
-        payload = await self.jwt_service.verify_token(refresh_token)
-        if not payload or payload.get("type") != "refresh":
-            raise AuthenticationError("Invalid refresh token")
-
+        payload = await self.jwt_service.verify_token(refresh_token, expected_type="refresh")
         user_id = int(payload["sub"])
         return await self.jwt_service.create_access_token(user_id)
 

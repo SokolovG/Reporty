@@ -4,6 +4,7 @@ import bcrypt
 import jwt
 
 from backend.src.api.dto import TokenInfo
+from backend.src.core.exceptions import AuthenticationError
 from backend.src.core.settings import settings
 
 
@@ -21,17 +22,20 @@ class JWTService:
         token: str = jwt.encode(payload=payload, key=pv_key, algorithm=settings.algorithm)
         return token
 
-    async def verify_token(self, token: str) -> dict | None:
+    async def verify_token(self, token: str, expected_type: str = "access") -> dict:
         try:
             with open(settings.public_key, "rb") as key_file:
                 public_key = key_file.read()
 
             payload: dict = jwt.decode(token, public_key, algorithms=[settings.algorithm])
+            token_type = payload.get("type")
+            if token_type != expected_type:
+                raise AuthenticationError(
+                    "Token type != access!", details={"token_type": token_type}
+                )
             return payload
-        except jwt.ExpiredSignatureError:
-            return None
-        except jwt.InvalidTokenError:
-            return None
+        except (jwt.ExpiredSignatureError, jwt.InvalidTokenError):
+            raise AuthenticationError("Expired Signature Error or Invalid Token Error")
 
     async def create_refresh_token(self, user_id: int) -> str:
         payload = {
