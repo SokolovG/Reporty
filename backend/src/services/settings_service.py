@@ -195,6 +195,9 @@ class SettingsService:
                 ai_provider.model_name = data.model_name
             if data.is_active is not None:
                 ai_provider.is_active = data.is_active
+            if data.api_key is not None:
+                # TODO: encrypt the key before saving it to the database
+                ...
 
             updated_ai_provider = await self.ai_provider_repository.update(ai_provider)
             await self.ai_provider_repository.session.commit()

@@ -105,6 +105,17 @@
                                     ></textarea>
                                 </div>
 
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Api Key</label>
+                                    <textarea
+                                        name="basePrompt"
+                                        bind:value={editingProvider.apiKey}
+                                        rows="4"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                        placeholder="Api key for provider..."
+                                    ></textarea>
+                                </div>
+
                                 <div class="flex items-center gap-4">
                                     <label class="flex items-center gap-2">
                                         <input

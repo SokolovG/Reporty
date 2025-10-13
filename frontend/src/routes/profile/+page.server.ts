@@ -223,11 +223,6 @@ export const actions: Actions = {
         throw redirect(303, "/profile");
     },
 
-    updateAIProviderSettings: async ({ request, fetch }) => {
-        // TODO: logic AI provider config and refactor backend!
-
-    },
-
     logout: async ({ fetch }) => {
         try {
             const response = await fetch("/api/v1/auth/logout", {
