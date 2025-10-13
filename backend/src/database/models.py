@@ -256,8 +256,7 @@ class User(Base):
     ai_auto_process: Mapped[bool] = mapped_column(default=False)
     ai_provider_id: Mapped[int] = mapped_column(ForeignKey("ai_providers.id"), nullable=True)
 
-    # Relationships
-    ai_provider: Mapped["AIProvider"] = relationship("AIProvider")
+    ai_provider: Mapped["AIProvider | None"] = relationship("AIProvider")
     task_types: Mapped[list["TaskType"]] = relationship(
         "TaskType", back_populates="user", cascade="all, delete-orphan"
     )

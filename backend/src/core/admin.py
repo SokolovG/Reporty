@@ -24,7 +24,33 @@ class UserAdmin(ModelView, model=User):
     name = "User"
     name_plural = "Users"
     icon = "fa-solid fa-user"
-    column_exclude_list = [User.password_hash]
+    form_include_pk = True
+    column_list = [
+        User.id,
+        User.name,
+        User.email,
+        User.display_name,
+        User.department,
+        User.position,
+        User.ai_auto_process,
+        User.ai_provider_id,
+        User.task_types,
+        User.is_active,
+        User.is_verify,
+    ]
+
+    form_columns = [
+        User.name,
+        User.email,
+        User.display_name,
+        User.department,
+        User.position,
+        User.ai_auto_process,
+        User.ai_provider_id,
+        User.task_types,
+        User.is_active,
+        User.is_verify,
+    ]
 
 
 class DailyRecordAdmin(ModelView, model=DailyRecord):

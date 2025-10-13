@@ -144,7 +144,6 @@ class ProfileController(Controller):
         self,
         ai_provider_id: int,
         data: AIProviderUpdateRequest,
-        request: Request,
         settings_service: FromDishka[SettingsService],
     ) -> SuccessResponse:
         """Update AI provider configuration (admin only)."""
