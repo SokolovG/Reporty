@@ -2,7 +2,10 @@ from adaptix.conversion import get_converter
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from backend.src.api.dto.settings_dto import AISettingsUpdateRequest
+from backend.src.api.dto.settings_dto import (
+    AIPreferencesUpdateRequest,
+    AIPreferencesResponse,
+)
 from backend.src.core.exceptions import NotFoundError, InternalServerError
 from backend.src.database.repositories import (
     AIProviderRepository,
@@ -36,8 +39,8 @@ class SettingsService:
         self._to_ai_provider_response = get_converter(AIProvider, AIProviderResponse)
         self._to_external_system_response = get_converter(ExternalSystem, ExternalSystemResponse)
         self._to_user_response = get_converter(User, UserResponse)
+        self._to_ai_preferences_response = get_converter(User, AIPreferencesResponse)
 
-    # TaskType methods
     async def get_task_types(self, user_id: int) -> list[TaskTypeResponse]:
         """Get all task types for a user."""
         try:
@@ -142,30 +145,31 @@ class SettingsService:
                 f"Failed to delete task type: {str(e)}", {"task_type_id": task_type_id}
             )
 
-    # AIProvider methods
-    async def get_ai_providers(self, user_id: int) -> list[AIProviderResponse]:
-        """Get all AI providers."""
+    async def get_all_ai_providers(self, user_id: int) -> list[AIProviderResponse]:
+        """Get all AI providers (for admin purposes)."""
         try:
             result = await self.ai_provider_repository.session.execute(select(AIProvider))
             return [self._to_ai_provider_response(p) for p in result.scalars().all()]
         except Exception as e:
-            raise InternalServerError(f"Failed to get AI providers: {str(e)}")
+            raise InternalServerError(f"Failed to get all AI providers: {str(e)}")
 
-    async def update_ai_settings(self, user_id: int, data: AISettingsUpdateRequest) -> UserResponse:
-        """Update AI settings."""
+    async def update_user_ai_preferences(
+        self, user_id: int, data: AIPreferencesUpdateRequest
+    ) -> AIPreferencesResponse:
+        """Update user's AI preferences (provider selection, auto-processing)."""
         try:
             user = await self.user_repository.get_one_or_none(id=user_id)
             if not user:
                 raise NotFoundError("User", user_id)
-            if data.ai_provider_id:
+            if data.ai_provider_id is not None:
                 user.ai_provider_id = data.ai_provider_id
             if data.ai_auto_process is not None:
                 user.ai_auto_process = data.ai_auto_process
             await self.user_repository.session.commit()
-            return self._to_user_response(user)
+            return self._to_ai_preferences_response(user)
 
         except Exception as e:
-            raise InternalServerError(f"Failed to update AI settings: {str(e)}")
+            raise InternalServerError(f"Failed to update AI preferences: {str(e)}")
 
     async def get_active_ai_providers(self, user_id: int) -> list[AIProviderResponse]:
         """Get only active AI providers."""
@@ -183,7 +187,8 @@ class SettingsService:
         """Update an AI provider."""
         try:
             ai_provider = await self.ai_provider_repository.get(ai_provider_id)
-
+            if data.name is not None:
+                ai_provider.name = data.name
             if data.base_prompt is not None:
                 ai_provider.base_prompt = data.base_prompt
             if data.model_name is not None:
@@ -226,7 +231,6 @@ class SettingsService:
         except Exception as e:
             raise InternalServerError(f"Failed to update user: {str(e)}", {"user_id": user_id})
 
-    # ExternalSystem methods
     async def get_external_systems(self) -> list[ExternalSystemResponse]:
         """Get all external systems."""
         try:

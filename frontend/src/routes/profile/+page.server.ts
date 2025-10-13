@@ -5,8 +5,8 @@ export const load: PageServerLoad = async ({fetch}) => {
     try {
         const [recordsResponse, taskTypesResponse, providersResponse] = await Promise.all([
             fetch('/api/v1/records'),
-            fetch('/api/v1/settings/task-types'),
-            fetch('api/v1/settings/ai_provider')
+            fetch('/api/v1/profile/task-types'),
+            fetch('/api/v1/profile/ai-preferences/providers')
         ]);
 
         if (!recordsResponse.ok || !taskTypesResponse.ok || !providersResponse) {
@@ -58,7 +58,7 @@ export const actions: Actions = {
             // isActive: isActive.
         };
         try {
-            const response = await fetch("/api/v1/settings/task-types", {
+            const response = await fetch("/api/v1/profile/task-types", {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"
@@ -96,7 +96,7 @@ export const actions: Actions = {
         };
 
         try {
-            const response = await fetch("/api/v1/settings/task-types", {
+            const response = await fetch("/api/v1/profile/task-types", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -126,7 +126,7 @@ export const actions: Actions = {
         const taskTypeId = formData.get("taskTypeId")
 
         try {
-            const response = await fetch(`/api/v1/settings/task-types/${taskTypeId}`, {
+            const response = await fetch(`/api/v1/profile/task-types/${taskTypeId}`, {
                 method: "DELETE",
             });
             if (!response.ok) {
@@ -159,7 +159,7 @@ export const actions: Actions = {
         };
 
         try {
-            const response = await fetch("/api/v1/settings/user", {
+            const response = await fetch("/api/v1/profile/user", {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"
@@ -196,7 +196,7 @@ export const actions: Actions = {
             ai_provider_id: ai_provider_id ? parseInt(ai_provider_id.toString()) : null,
         };
         try {
-            const response = await fetch("/api/v1/settings/ai_settings", {
+            const response = await fetch("/api/v1/profile/ai-preferences", {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"

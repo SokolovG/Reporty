@@ -74,7 +74,7 @@ class DailyRecord(Base):
         )
 
     def __str__(self) -> str:
-        return self.title
+        return str(self.title)
 
 
 class ExternalSystem(Base):
@@ -112,7 +112,7 @@ class ExternalSystem(Base):
         )
 
     def __str__(self) -> str:
-        return self.name
+        return str(self.name)
 
 
 class ExternalTask(Base):
@@ -211,7 +211,7 @@ class Report(Base):
         )
 
     def __str__(self) -> str:
-        return self.content[:10]
+        return str(self.content[:10])
 
 
 class AIProvider(Base):
@@ -232,7 +232,7 @@ class AIProvider(Base):
     __table_args__ = (Index("ix_ai_providers_active", "is_active"),)
 
     def __str__(self) -> str:
-        return self.name
+        return f"{self.name} {self.model_name}"
 
 
 class User(Base):
@@ -263,7 +263,7 @@ class User(Base):
     )
 
     def __str__(self) -> str:
-        return self.name
+        return str(self.name)
 
 
 class TaskType(Base):
@@ -284,4 +284,4 @@ class TaskType(Base):
     )
 
     def __str__(self) -> str:
-        return self.title
+        return str(self.title)

@@ -12,7 +12,7 @@ from backend.src.api.routes import (
     record_router,
     report_router,
     task_router,
-    settings_router,
+    profile_router,
     auth_router,
 )
 from backend.src.core.admin import (
@@ -63,7 +63,7 @@ def create_app() -> ASGIApp:
             report_router,
             task_router,
             record_router,
-            settings_router,
+            profile_router,
             auth_router,
         ],
         middleware=[ErrorHandlerMiddleware, DefineMiddleware(JWTAuthenticationMiddleware)],
