@@ -36,15 +36,13 @@ export const actions: Actions = {
         const name = formData.get("name");
         const basePrompt = formData.get("basePrompt");
         const modelName = formData.get("modelName");
-        const requiresApiKey = formData.get("requiresApiKey") === "on";
         const isActive = formData.get("isActive") === "on";
 
         const data = {
             name: name?.toString(),
-            base_prompt: basePrompt?.toString(),
-            model_name: modelName?.toString(),
-            requires_api_key: requiresApiKey,
-            is_active: isActive,
+            basePrompt: basePrompt?.toString(),
+            modelName: modelName?.toString(),
+            isActive: isActive,
         };
 
         try {

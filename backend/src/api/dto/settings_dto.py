@@ -91,7 +91,6 @@ class AIProviderUpdateRequest(msgspec.Struct):
     name: str | None = None
     base_prompt: str | None = None
     model_name: str | None = None
-    requires_api_key: bool | None = None
     is_active: bool | None = None
 
 

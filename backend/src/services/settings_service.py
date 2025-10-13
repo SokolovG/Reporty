@@ -193,8 +193,6 @@ class SettingsService:
                 ai_provider.base_prompt = data.base_prompt
             if data.model_name is not None:
                 ai_provider.model_name = data.model_name
-            if data.requires_api_key is not None:
-                ai_provider.requires_api_key = data.requires_api_key
             if data.is_active is not None:
                 ai_provider.is_active = data.is_active
 

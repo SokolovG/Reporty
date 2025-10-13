@@ -109,16 +109,6 @@
                                     <label class="flex items-center gap-2">
                                         <input
                                             type="checkbox"
-                                            name="requiresApiKey"
-                                            bind:checked={editingProvider.requires_api_key}
-                                            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                        />
-                                        <span class="text-sm text-gray-700">Requires API Key</span>
-                                    </label>
-
-                                    <label class="flex items-center gap-2">
-                                        <input
-                                            type="checkbox"
                                             name="isActive"
                                             bind:checked={editingProvider.is_active}
                                             class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
