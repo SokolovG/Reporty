@@ -3,6 +3,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from backend.src.api.dto.settings_dto import (
+    AIModelResponse,
     AIPreferencesUpdateRequest,
     AIPreferencesResponse,
 )
@@ -170,12 +171,26 @@ class SettingsService:
         """Get only active AI providers."""
         try:
             result = await self.ai_provider_repository.session.execute(
-                select(AIProvider).where(AIProvider.is_active)
+                select(AIProvider)
+                .where(AIProvider.is_active)
+                .options(selectinload(AIProvider.models))
             )
-            # models = await self.ai_models_repository.session.execute(
-            #     select(AIModel)
-            # )
-            return [self._to_ai_provider_response(p) for p in result.scalars().all()]
+            providers = result.scalars().all()
+            response_list = []
+            for provider in providers:
+                models_response = [AIModelResponse(id=m.id, name=m.name) for m in provider.models]
+                provider_response = AIProviderResponse(
+                    id=provider.id,
+                    name=provider.name,
+                    requires_api_key=provider.requires_api_key,
+                    is_active=provider.is_active,
+                    base_prompt=provider.base_prompt,
+                    models=models_response,
+                )
+                response_list.append(provider_response)
+            print(response_list)
+            return response_list
+
         except Exception as e:
             raise InternalServerError(f"Failed to get active AI providers: {str(e)}")
 
@@ -188,8 +203,7 @@ class SettingsService:
 
             if data.base_prompt is not None:
                 ai_provider.base_prompt = data.base_prompt
-            if data.model_name is not None:
-                ai_provider.model_name = data.model_name
+                # TODO: Add update model
             if data.api_key is not None and data.api_key.strip():
                 # TODO: Encrypt API key before saving
                 ai_provider.encrypted_api_key = data.api_key  # Will be encrypted later

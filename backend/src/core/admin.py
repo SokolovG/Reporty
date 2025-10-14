@@ -2,6 +2,7 @@ from markupsafe import Markup
 from sqladmin import ModelView
 
 from backend.src.database.models import (
+    AIModel,
     DailyRecord,
     ExternalSystem,
     ExternalTask,
@@ -143,8 +144,15 @@ class AIProviderAdmin(ModelView, model=AIProvider):
         AIProvider.id,
         AIProvider.name,
         AIProvider.base_prompt,
-        AIProvider.model_name,
         AIProvider.requires_api_key,
         AIProvider.encrypted_api_key,
         AIProvider.is_active,
+        AIProvider.models,
     ]
+
+
+class AIModelAdmin(ModelView, model=AIModel):
+    name = "AI model"
+    name_plural = "AI models"
+
+    column_list = [AIModel.id, AIModel.name, AIModel.ai_provider_id, AIModel.created_at]

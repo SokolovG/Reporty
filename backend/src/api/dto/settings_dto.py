@@ -42,14 +42,20 @@ class AIPreferencesResponse(msgspec.Struct):
     ai_provider_id: int | None = None
 
 
+class AIModelResponse(msgspec.Struct):
+    """Response for AI model."""
+
+    id: int
+    name: str
+
+
 class AIProviderResponse(msgspec.Struct):
     id: int
     name: str
     requires_api_key: bool
     is_active: bool
-    models: list[dict[str, Any]]
     base_prompt: str | None = None
-    model_name: str | None = None
+    models: list[AIModelResponse] = []
 
 
 class AISettingsUpdateResponse(msgspec.Struct):

@@ -16,6 +16,7 @@ from backend.src.api.routes import (
     auth_router,
 )
 from backend.src.core.admin import (
+    AIModelAdmin,
     DailyRecordAdmin,
     ExternalSystemAdmin,
     ExternalTaskAdmin,
@@ -45,6 +46,7 @@ admin_plugin = SQLAdminPlugin(
         UserAdmin,
         AIProviderAdmin,
         TaskTypeAdmin,
+        AIModelAdmin,
     ],
 )
 cors_config = CORSConfig(

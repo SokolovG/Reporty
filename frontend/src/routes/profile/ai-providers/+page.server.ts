@@ -1,9 +1,9 @@
 import { redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types"
 
-export const load: PageServerLoad = async ({fetch}) => {
+export const load: PageServerLoad = async ({ fetch, url  }) => {
     try {
-        const providersResponse = await fetch('/ai-preferences/providers');
+        const providersResponse = await fetch(`${url.origin}/api/v1/profile/ai-preferences/providers`);
 
         if (!providersResponse.ok) {
             return { providers: [] };
@@ -46,7 +46,7 @@ export const actions: Actions = {
         };
 
         try {
-            const response = await fetch(`/ai-preferences/providers/${providerId}`, {
+            const response = await fetch(`api/v1/profile/ai-preferences/providers/${providerId}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"

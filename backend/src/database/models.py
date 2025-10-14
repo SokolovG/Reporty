@@ -223,8 +223,6 @@ class AIProvider(Base):
         Text, nullable=True, comment="Basic system prompt."
     )
 
-    model_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
-
     requires_api_key: Mapped[bool] = mapped_column(default=True)
     is_active: Mapped[bool] = mapped_column(default=True)
     encrypted_api_key: Mapped[str] = mapped_column(String(500), nullable=True)
@@ -236,7 +234,7 @@ class AIProvider(Base):
     __table_args__ = (Index("ix_ai_providers_active", "is_active"),)
 
     def __str__(self) -> str:
-        return f"{self.name} {self.model_name}"
+        return str(self.name)
 
 
 class AIModel(Base):
