@@ -1,4 +1,3 @@
-from typing import Any
 import msgspec
 from litestar.dto import DTOConfig
 
@@ -79,7 +78,6 @@ class AIProviderUpdateRequest(msgspec.Struct):
     base_prompt: str | None = None
     model_name: str | None = None
     api_key: str | None = None
-    is_active: bool | None = None
 
 
 class AIProviderUpdateRequestDTO(BaseMsgspecDTO[AIProviderUpdateRequest]):

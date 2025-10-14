@@ -42,9 +42,9 @@
         {/if}
 
         <!-- Providers Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="columns-1 lg:columns-2 gap-6 space-y-6">
             {#each providers as provider}
-                <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden break-inside-avoid mb-6">
                     <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
                         <div class="flex items-center justify-between">
                             <h3 class="text-xl font-semibold text-white">{provider.name}</h3>
@@ -113,18 +113,6 @@
                                         ></textarea>
                                     </div>
                                 {/if}
-
-                                <div class="flex items-center gap-4">
-                                    <label class="flex items-center gap-2">
-                                        <input
-                                            type="checkbox"
-                                            name="isActive"
-                                            bind:checked={editingProvider.isActive}
-                                            class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                        />
-                                        <span class="text-sm text-gray-700">Active</span>
-                                    </label>
-                                </div>
 
                                 <div class="flex gap-3 pt-4">
                                     <Button text="Save Changes" variant="primary" />

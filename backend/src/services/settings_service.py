@@ -206,8 +206,6 @@ class SettingsService:
             if data.api_key is not None and data.api_key.strip():
                 # TODO: Encrypt API key before saving
                 ai_provider.encrypted_api_key = data.api_key  # Will be encrypted later
-            if data.is_active is not None:
-                ai_provider.is_active = data.is_active
             if data.api_key is not None:
                 # TODO: encrypt the key before saving it to the database
                 ...
