@@ -2,7 +2,6 @@ import msgspec
 from litestar.dto import DTOConfig
 
 from backend.src.api.dto.base import BaseMsgspecDTO
-from backend.src.api.responses.base_responses import SuccessResponse
 
 
 class ChangePasswordRequest(msgspec.Struct):
@@ -70,13 +69,5 @@ class AccessTokenResponse(msgspec.Struct):
     access_token: str
 
 
-class UserResponseDTO(BaseMsgspecDTO[UserResponse]):
-    pass
-
-
 class UserUpdateRequestDTO(BaseMsgspecDTO[UserUpdateRequest]):
     config = DTOConfig(partial=True, rename_strategy="camel")
-
-
-class SuccessResponseDTO(BaseMsgspecDTO[SuccessResponse]):
-    pass

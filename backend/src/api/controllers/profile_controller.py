@@ -2,28 +2,25 @@ from dishka import FromDishka
 from dishka.integrations.litestar import inject
 from litestar import Controller, get, post, patch, delete, Request
 
-from backend.src.api.dto.auth_dto import UserResponseDTO, UserUpdateRequest, UserUpdateRequestDTO
+from backend.src.api.dto.auth_dto import UserUpdateRequest, UserUpdateRequestDTO
 from backend.src.api.dto.settings_dto import (
     AIPreferencesUpdateRequest,
     AIPreferencesUpdateRequestDTO,
-    AIPreferencesResponseDTO,
-    AIProviderResponseDTO,
     AIProviderUpdateRequest,
     AIProviderUpdateRequestDTO,
     TaskTypeRequest,
     TaskTypeUpdateRequest,
-    TaskTypeResponseDTO,
     TaskTypeRequestDTO,
     TaskTypeUpdateRequestDTO,
 )
 from backend.src.services.settings_service import SettingsService
-from backend.src.api.responses.base_responses import SuccessResponse
+from backend.src.api.responses.base_responses import SuccessResponse, SuccessResponseDTO
 
 
 class ProfileController(Controller):
     """Controller for user profile management - everything related to user's personal settings."""
 
-    @patch("/user", dto=UserUpdateRequestDTO, return_dto=UserResponseDTO)
+    @patch("/user", dto=UserUpdateRequestDTO, return_dto=SuccessResponseDTO)
     @inject
     async def update_user_info(
         self,
@@ -36,9 +33,7 @@ class ProfileController(Controller):
         updated_user = await settings_service.update_user(user_id=user_id, data=data)
         return SuccessResponse(message="User updated successfully", data=updated_user)
 
-    @patch(
-        "/ai-preferences", dto=AIPreferencesUpdateRequestDTO, return_dto=AIPreferencesResponseDTO
-    )
+    @patch("/ai-preferences", dto=AIPreferencesUpdateRequestDTO, return_dto=SuccessResponseDTO)
     @inject
     async def update_ai_preferences(
         self,
@@ -55,7 +50,7 @@ class ProfileController(Controller):
             message="AI preferences updated successfully", data=updated_preferences
         )
 
-    @get("/ai-preferences/providers", return_dto=AIProviderResponseDTO)
+    @get("/ai-preferences/providers", return_dto=SuccessResponseDTO)
     @inject
     async def get_available_ai_providers(
         self, request: Request, settings_service: FromDishka[SettingsService]
@@ -67,7 +62,7 @@ class ProfileController(Controller):
             message="Available AI providers retrieved successfully", data=providers
         )
 
-    @get("/task-types", return_dto=TaskTypeResponseDTO)
+    @get("/task-types", return_dto=SuccessResponseDTO)
     @inject
     async def get_task_types(
         self,
@@ -79,7 +74,7 @@ class ProfileController(Controller):
         task_types = await settings_service.get_task_types(user_id=user_id)
         return SuccessResponse(message="Task types retrieved successfully", data=task_types)
 
-    @post("/task-types", dto=TaskTypeRequestDTO, return_dto=TaskTypeResponseDTO)
+    @post("/task-types", dto=TaskTypeRequestDTO, return_dto=SuccessResponseDTO)
     @inject
     async def create_task_type(
         self,
@@ -95,7 +90,7 @@ class ProfileController(Controller):
     @patch(
         "/task-types/{task_type_id:int}",
         dto=TaskTypeUpdateRequestDTO,
-        return_dto=TaskTypeResponseDTO,
+        return_dto=SuccessResponseDTO,
     )
     @inject
     async def update_task_type(
@@ -124,7 +119,7 @@ class ProfileController(Controller):
         user_id = request.user.id
         await settings_service.delete_task_type(task_type_id=task_type_id, user_id=user_id)
 
-    @get("/ai-providers", return_dto=AIProviderResponseDTO)
+    @get("/ai-providers", return_dto=SuccessResponseDTO)
     @inject
     async def get_all_ai_providers(
         self, request: Request, settings_service: FromDishka[SettingsService]
@@ -137,7 +132,7 @@ class ProfileController(Controller):
     @patch(
         "/ai-providers/{ai_provider_id:int}",
         dto=AIProviderUpdateRequestDTO,
-        return_dto=AIProviderResponseDTO,
+        return_dto=SuccessResponseDTO,
     )
     @inject
     async def update_ai_provider(

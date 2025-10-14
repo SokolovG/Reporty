@@ -8,14 +8,13 @@ from backend.src.api.dto import (
     DailyReportRequest,
     DailyReportRequestDTO,
     DailyReportRequestUpdate,
-    DailyReportResponseDTO,
 )
 from backend.src.services import ReportService
-from backend.src.api.responses.base_responses import SuccessResponse
+from backend.src.api.responses.base_responses import SuccessResponse, SuccessResponseDTO
 
 
 class ReportController(Controller):
-    @post(dto=DailyReportRequestDTO, return_dto=DailyReportResponseDTO)
+    @post(dto=DailyReportRequestDTO, return_dto=SuccessResponseDTO)
     @inject
     async def create_report(
         self, data: DailyReportRequest, report_service: FromDishka[ReportService], request: Request
@@ -25,7 +24,7 @@ class ReportController(Controller):
         result = await report_service.create_report(data=data, user_id=user_id)
         return SuccessResponse(message="Report created successfully", data=result)
 
-    @get("/{report_id:int}", return_dto=DailyReportResponseDTO)
+    @get("/{report_id:int}", return_dto=SuccessResponseDTO)
     @inject
     async def get_report(
         self, report_service: FromDishka[ReportService], report_id: int, request: Request
@@ -35,7 +34,7 @@ class ReportController(Controller):
         result = await report_service.get_report(report_id=report_id, user_id=user_id)
         return SuccessResponse(message="Report retrieved successfully", data=result)
 
-    @get(return_dto=DailyReportResponseDTO)
+    @get(return_dto=SuccessResponseDTO)
     @inject
     async def get_reports(
         self,
@@ -57,10 +56,13 @@ class ReportController(Controller):
         user_id = request.user.id
         await report_service.delete_report(report_id=report_id, user_id=user_id)
 
-    @patch("/{report_id:int}", return_dto=DailyReportResponseDTO)
+    @patch("/{report_id:int}", return_dto=SuccessResponseDTO)
     @inject
     async def update_report(
-        self, report_service: FromDishka[ReportService], request: Request, update_data: DailyReportRequestUpdate,
+        self,
+        report_service: FromDishka[ReportService],
+        request: Request,
+        update_data: DailyReportRequestUpdate,
     ) -> SuccessResponse:
         """Update a report."""
         user_id = request.user.id

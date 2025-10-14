@@ -31,10 +31,6 @@ class TaskTypeUpdateRequestDTO(BaseMsgspecDTO[TaskTypeUpdateRequest]):
     config = DTOConfig(partial=True, rename_strategy="camel")
 
 
-class TaskTypeResponseDTO(BaseMsgspecDTO[TaskTypeResponse]):
-    pass
-
-
 class AIPreferencesUpdateRequest(msgspec.Struct):
     ai_auto_process: bool | None = None
     ai_provider_id: int | None = None
@@ -63,28 +59,12 @@ class AIPreferencesUpdateRequestDTO(BaseMsgspecDTO[AIPreferencesUpdateRequest]):
     config = DTOConfig(partial=True)
 
 
-class AIPreferencesResponseDTO(BaseMsgspecDTO[AIPreferencesResponse]):
-    pass
-
-
-class AIProviderResponseDTO(BaseMsgspecDTO[AIProviderResponse]):
-    pass
-
-
-class AISettingsUpdateResponseDTO(BaseMsgspecDTO[AISettingsUpdateResponse]):
-    pass
-
-
 class ExternalSystemResponse(msgspec.Struct):
     id: int
     name: str
     display_name: str
     api_config: dict
     is_active: bool
-
-
-class ExternalSystemResponseDTO(BaseMsgspecDTO[ExternalSystemResponse]):
-    pass
 
 
 class AIProviderUpdateRequest(msgspec.Struct):

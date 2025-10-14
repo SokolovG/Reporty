@@ -28,9 +28,5 @@ class DailyReportRequestDTO(BaseMsgspecDTO[DailyReportRequest]):
     config = DTOConfig()
 
 
-class DailyReportResponseDTO(BaseMsgspecDTO[DailyReportResponse]):
-    config = DTOConfig()
-
-
 class DailyReportRequestUpdateDTO(BaseMsgspecDTO[DailyReportRequestUpdate]):
     config = DTOConfig(partial=True, exclude={"id"})

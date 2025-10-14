@@ -92,10 +92,6 @@ class AppendToRecordRequestDTO(BaseMsgspecDTO[AppendToRecordRequest]):
     pass
 
 
-class DailyRecordResponseDTO(BaseMsgspecDTO[DailyRecordResponse]):
-    pass
-
-
 class DailyRecordWithTaskResponseDTO(BaseMsgspecDTO[DailyRecordWithTaskResponse]):
     pass
 

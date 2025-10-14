@@ -5,7 +5,6 @@
 
     let { data, form } = $props();
     let providers = data.providers || [];
-    console.log(providers)
     let editingProvider = $state(null);
 
     function toggleEdit(provider: AIProvider) {

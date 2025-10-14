@@ -82,7 +82,7 @@ class AuthService:
 
     async def change_password(self, data: ChangePasswordRequest, user_id: int) -> None:
         """Change user password."""
-        user = await self.repo.get_one_or_none(id=user_id)  # ✅ Добавлен user_id
+        user = await self.repo.get_one_or_none(id=user_id)
         if not user:
             raise NotFoundError("User", user_id)
 

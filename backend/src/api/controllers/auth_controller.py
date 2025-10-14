@@ -7,11 +7,9 @@ from backend.src.api.dto import (
     ChangePasswordRequest,
     LoginRequest,
     RegisterRequest,
-    SuccessResponseDTO,
-    UserResponseDTO,
     AccessTokenResponse,
 )
-from backend.src.api.responses.base_responses import SuccessResponse
+from backend.src.api.responses.base_responses import SuccessResponse, SuccessResponseDTO
 from backend.src.core.exceptions import AuthenticationError
 from backend.src.services import AuthService
 
@@ -26,7 +24,7 @@ class AuthController(Controller):
         user = await service.register(data)
         return SuccessResponse(message="User registered successfully", data=user)
 
-    @post("/login")
+    @post("/login", return_dto=SuccessResponseDTO)
     @inject
     async def login(
         self, service: FromDishka[AuthService], data: LoginRequest
@@ -60,7 +58,7 @@ class AuthController(Controller):
         )
         return response
 
-    @post("/logout")
+    @post("/logout", return_dto=SuccessResponseDTO)
     @inject
     async def logout(self) -> Response[SuccessResponse]:
         """Logout user by clearing refresh token cookie."""
@@ -90,7 +88,7 @@ class AuthController(Controller):
         )
         return response
 
-    @post("/refresh")
+    @post("/refresh", return_dto=SuccessResponseDTO)
     @inject
     async def refresh_token(
         self, service: FromDishka[AuthService], request: Request
@@ -119,7 +117,7 @@ class AuthController(Controller):
         )
         return response
 
-    @post("/change-password")
+    @post("/change-password", return_dto=SuccessResponseDTO)
     @inject
     async def change_password(
         self, service: FromDishka[AuthService], request: Request, data: ChangePasswordRequest
@@ -129,7 +127,7 @@ class AuthController(Controller):
         await service.change_password(data, user_id)
         return SuccessResponse(message="Password changed successfully")
 
-    @get("/me", return_dto=UserResponseDTO)
+    @get("/me", return_dto=SuccessResponseDTO)
     @inject
     async def get_me(
         self,
@@ -139,4 +137,5 @@ class AuthController(Controller):
         """Get current user profile."""
         user_id = request.user.id
         user = await service.get_me(user_id)
+        print(f"USER = {user}")
         return SuccessResponse(message="User profile retrieved", data=user)
