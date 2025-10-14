@@ -8,15 +8,12 @@ from backend.src.api.dto import (
     LoginRequest,
     RegisterRequest,
     SuccessResponseDTO,
+    UserResponseDTO,
+    AccessTokenResponse,
 )
-from backend.src.api.dto.auth_dto import AccessTokenResponse
 from backend.src.api.responses.base_responses import SuccessResponse
 from backend.src.core.exceptions import AuthenticationError
 from backend.src.services import AuthService
-
-from logging import getLogger
-
-logger = getLogger(__name__)
 
 
 class AuthController(Controller):
@@ -132,7 +129,7 @@ class AuthController(Controller):
         await service.change_password(data, user_id)
         return SuccessResponse(message="Password changed successfully")
 
-    @get("/me")
+    @get("/me", return_dto=UserResponseDTO)
     @inject
     async def get_me(
         self,

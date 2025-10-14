@@ -11,6 +11,7 @@ from backend.src.api.dto.auth_dto import (
     UserUpdateRequest,
     SuccessResponseDTO,
     UserResponseDTO,
+    UserUpdateRequestDTO,
 )
 from backend.src.api.dto.record_dto import (
     DailyRecordRequest,
@@ -112,4 +113,5 @@ __all__ = [
     "AISettingsUpdateResponse",
     "UserResponseDTO",
     "AccessTokenResponse",
+    "UserUpdateRequestDTO",
 ]

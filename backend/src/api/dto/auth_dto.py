@@ -1,4 +1,5 @@
 import msgspec
+from litestar.dto import DTOConfig
 
 from backend.src.api.dto.base import BaseMsgspecDTO
 from backend.src.api.responses.base_responses import SuccessResponse
@@ -71,6 +72,10 @@ class AccessTokenResponse(msgspec.Struct):
 
 class UserResponseDTO(BaseMsgspecDTO[UserResponse]):
     pass
+
+
+class UserUpdateRequestDTO(BaseMsgspecDTO[UserUpdateRequest]):
+    config = DTOConfig(partial=True, rename_strategy="camel")
 
 
 class SuccessResponseDTO(BaseMsgspecDTO[SuccessResponse]):

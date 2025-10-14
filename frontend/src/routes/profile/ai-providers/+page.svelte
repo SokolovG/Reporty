@@ -5,6 +5,7 @@
 
     let { data, form } = $props();
     let providers = data.providers || [];
+    console.log(providers)
     let editingProvider = $state(null);
 
     function toggleEdit(provider: AIProvider) {
@@ -49,8 +50,8 @@
                         <div class="flex items-center justify-between">
                             <h3 class="text-xl font-semibold text-white">{provider.name}</h3>
                             <div class="flex items-center gap-2">
-                                <span class="px-2 py-1 text-xs rounded-full {provider.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
-                                    {provider.is_active ? 'Active' : 'Inactive'}
+                                <span class="px-2 py-1 text-xs rounded-full {provider.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">
+                                    {provider.isActive ? 'Active' : 'Inactive'}
                                 </span>
                                 <button
                                     aria-label="Edit ai providers"
@@ -127,7 +128,7 @@
                                         <input
                                             type="checkbox"
                                             name="isActive"
-                                            bind:checked={editingProvider.is_active}
+                                            bind:checked={editingProvider.isActive}
                                             class="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                                         />
                                         <span class="text-sm text-gray-700">Active</span>

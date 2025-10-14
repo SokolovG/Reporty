@@ -148,12 +148,12 @@ export const actions: Actions = {
     },
     updateUserInfo: async ({ request, fetch }) => {
         const formData = await request.formData();
-        const display_name = formData.get("display_name");
+        const displayName = formData.get("displayName");
         const department = formData.get("department");
         const position = formData.get("position");
 
         const data = {
-            display_name: display_name?.toString() || null,
+            displayName: displayName?.toString() || null,
             department: department?.toString() || null,
             position: position?.toString() || null,
         };
@@ -188,12 +188,12 @@ export const actions: Actions = {
 
     updateAISettings: async ({ request, fetch }) => {
         const formData = await request.formData();
-        const ai_auto_process = formData.get("ai_auto_process") === "on";
-        const ai_provider_id = formData.get("ai_provider_id");
+        const aiAutoProcess = formData.get("aiAutoProcess") === "on";
+        const aiProviderId = formData.get("aiProviderId");
 
         const data = {
-            ai_auto_process: ai_auto_process,
-            ai_provider_id: ai_provider_id ? parseInt(ai_provider_id.toString()) : null,
+            aiAutoProcess: aiAutoProcess,
+            aiProviderId: aiProviderId ? parseInt(aiProviderId.toString()) : null,
         };
         try {
             const response = await fetch("/api/v1/profile/ai-preferences", {

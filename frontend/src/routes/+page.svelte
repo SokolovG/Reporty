@@ -1,5 +1,6 @@
 <script>
   let { data } = $props();
+  const name = data.user?.displayName || data.user?.name || "Guest"
 </script>
 
 <div class="bg-gradient-to-br from-blue-50 via-white to-indigo-50">
@@ -10,7 +11,7 @@
         <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
           <span class="inline-block animate-pulse">👋</span>
           <span class="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Nice to see you, {data.user.username}!
+            Nice to see you, {name}!
           </span>
         </h1>
       </div>

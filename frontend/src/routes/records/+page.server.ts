@@ -43,17 +43,17 @@ export const load: PageServerLoad = async ({ fetch }) => {
     try {
         const [recordsResponse, taskTypesResponse] = await Promise.all([
             fetch('/api/v1/records'),
-            fetch('/api/v1/settings/task-types')
+            fetch('/api/v1/profile/task-types')
         ]);
 
         if (!recordsResponse.ok || !taskTypesResponse.ok) {
             return { records: [], taskTypes: [] };
         }
 
-        const records_json = await recordsResponse.json();
-        const records = records_json.data
-        const task_types_json = await taskTypesResponse.json();
-        const taskTypes = task_types_json.data
+        const recordsJson = await recordsResponse.json();
+        const records = recordsJson.data
+        const taskTypesJson = await taskTypesResponse.json();
+        const taskTypes = taskTypesJson.data
 
         return { records, taskTypes };
     } catch (error) {

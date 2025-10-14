@@ -2,7 +2,7 @@ from dishka import FromDishka
 from dishka.integrations.litestar import inject
 from litestar import Controller, get, post, patch, delete, Request
 
-from backend.src.api.dto.auth_dto import UserResponseDTO, UserUpdateRequest
+from backend.src.api.dto.auth_dto import UserResponseDTO, UserUpdateRequest, UserUpdateRequestDTO
 from backend.src.api.dto.settings_dto import (
     AIPreferencesUpdateRequest,
     AIPreferencesUpdateRequestDTO,
@@ -23,7 +23,7 @@ from backend.src.api.responses.base_responses import SuccessResponse
 class ProfileController(Controller):
     """Controller for user profile management - everything related to user's personal settings."""
 
-    @patch("/user", return_dto=UserResponseDTO)
+    @patch("/user", dto=UserUpdateRequestDTO, return_dto=UserResponseDTO)
     @inject
     async def update_user_info(
         self,

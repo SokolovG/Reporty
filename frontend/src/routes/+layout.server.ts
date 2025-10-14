@@ -53,6 +53,7 @@ export const load: LayoutServerLoad = async ({ url, fetch, cookies }) => {
     }
 
     const userData = await userResponse.json();
+    console.log(userData)
 
     if (!userData.success) {
       throw error(401, 'Failed to fetch user data');
@@ -62,13 +63,13 @@ export const load: LayoutServerLoad = async ({ url, fetch, cookies }) => {
       id: userData.data.id,
       name: userData.data.name,
       email: userData.data.email,
-      display_name: userData.data.display_name,
+      displayName: userData.data.displayName,
       department: userData.data.department,
       position: userData.data.position,
-      ai_auto_process: userData.data.ai_auto_process,
-      ai_provider_id: userData.data.ai_provider_id,
-      is_active: userData.data.is_active,
-      is_verify: userData.data.is_verify,
+      aiAutoProcess: userData.data.aiAutoProcess,
+      aiProviderId: userData.data.aiProviderId,
+      isActive: userData.data.isActive,
+      isVerify: userData.data.isActive,
     };
   }
 

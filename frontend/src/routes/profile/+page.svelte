@@ -99,14 +99,14 @@
                                         {user.name ? user.name.split(' ').map(n => n[0]).join('') : 'U'}
                                     </div>
                                     <div>
-                                        <h3 class="text-xl font-semibold text-gray-900">{user.display_name || user.name}</h3>
+                                        <h3 class="text-xl font-semibold text-gray-900">{user.displayName || user.name}</h3>
                                         <p class="text-gray-600">{user.email}</p>
                                         <div class="flex gap-2 mt-1">
                                             <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">
-                                                {user.is_active ? 'Active' : 'Inactive'}
+                                                {user.isActive ? 'Active' : 'Inactive'}
                                             </span>
                                             <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700">
-                                                {user.is_verify ? 'Verified' : 'Unverified'}
+                                                {user.isVerify ? 'Verified' : 'Unverified'}
                                             </span>
                                         </div>
                                     </div>
@@ -133,8 +133,8 @@
                                     <div>
                                         <div class="block text-sm font-medium text-gray-700 mb-1">Display Name</div>
                                         <input
-                                            name="display_name"
-                                            bind:value={editForm.display_name}
+                                            name="displayName"
+                                            bind:value={editForm.displayName}
                                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                             placeholder="Your display name"
                                         />
@@ -208,8 +208,8 @@
                             <label class="relative inline-flex items-center cursor-pointer">
                                 <input
                                     type="checkbox"
-                                    name="ai_auto_process"
-                                    bind:checked={user.ai_auto_process}
+                                    name="aiAutoProcess"
+                                    bind:checked={user.aiAutoProcess}
                                     class="sr-only peer"
                                 />
                                 <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -231,13 +231,13 @@
                                 </a>
                             </div>
                             <select
-                                name="ai_provider_id"
-                                bind:value={user.ai_provider_id}
+                                name="aiProviderId"
+                                bind:value={user.aiProviderId}
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                             >
                                 <option value={null}>Select AI Provider</option>
-                                {#each aiProviders.filter(p => p.is_active) as provider}
-                                    <option value={provider.id}>{provider.name} {provider.model_name ? `(${provider.model_name})` : ''}</option>
+                                {#each aiProviders.filter(p => p.isActive) as provider}
+                                    <option value={provider.id}>{provider.name} {provider.modelName ? `(${provider.modelMame})` : ''}</option>
                                 {/each}
                             </select>
                         </div>
