@@ -5,7 +5,7 @@
 
     let { data, form } = $props();
     let providers = data.providers || [];
-    let editingProvider = $state(null);
+    let editingProvider: AIProvider | null = $state(null);
 
     function toggleEdit(provider: AIProvider) {
         if (editingProvider && editingProvider.id == provider.id){
@@ -81,20 +81,10 @@
                                 <input type="hidden" name="providerId" value={provider.id} />
 
                                 <div>
-                                    <div class="block text-sm font-medium text-gray-700 mb-1">Name</div>
-                                    <input
-                                        name="name"
-                                        bind:value={editingProvider.name}
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                        required
-                                    />
-                                </div>
-
-                                <div>
                                     <div class="block text-sm font-medium text-gray-700 mb-1">Model Name</div>
                                     <input
                                         name="modelName"
-                                        bind:value={editingProvider.model_name}
+                                        bind:value={editingProvider.modelName}
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                         placeholder="e.g., gpt-4, claude-3"
                                     />
@@ -104,23 +94,24 @@
                                     <div class="block text-sm font-medium text-gray-700 mb-1">Base Prompt</div>
                                     <textarea
                                         name="basePrompt"
-                                        bind:value={editingProvider.base_prompt}
+                                        bind:value={editingProvider.basePrompt}
                                         rows="4"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                         placeholder="System prompt for this AI provider..."
                                     ></textarea>
                                 </div>
-
-                                <div>
-                                    <div class="block text-sm font-medium text-gray-700 mb-1">Api Key</div>
-                                    <textarea
-                                        name="basePrompt"
-                                        bind:value={editingProvider.apiKey}
-                                        rows="4"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                        placeholder="Api key for provider..."
-                                    ></textarea>
-                                </div>
+                                {#if editingProvider.requiresApiKey}
+                                    <div>
+                                        <div class="block text-sm font-medium text-gray-700 mb-1">Api Key</div>
+                                        <textarea
+                                            name="apiKey"
+                                            bind:value={editingProvider.apiKey}
+                                            rows="4"
+                                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                            placeholder="Api key for provider..."
+                                        ></textarea>
+                                    </div>
+                                {/if}
 
                                 <div class="flex items-center gap-4">
                                     <label class="flex items-center gap-2">
@@ -149,21 +140,21 @@
                             <div class="space-y-4">
                                 <div>
                                     <div class="text-sm font-medium text-gray-500">Model</div>
-                                    <p class="text-gray-900">{provider.model_name || 'Not specified'}</p>
+                                    <p class="text-gray-900">{provider.modelName || 'Not specified'}</p>
                                 </div>
 
                                 <div>
                                     <div class="text-sm font-medium text-gray-500">API Key Required</div>
-                                    <p class="text-gray-900">{provider.requires_api_key ? 'Yes' : 'No'}</p>
+                                    <p class="text-gray-900">{provider.requiresApiKey ? 'Yes' : 'No'}</p>
                                 </div>
 
-                                {#if provider.base_prompt}
+                                {#if provider.basePrompt}
                                     <div>
                                         <div class="text-sm font-medium text-gray-500">Base Prompt</div>
                                         <p class="text-gray-900 text-sm bg-gray-50 p-3 rounded-lg mt-1">
-                                            {provider.base_prompt.length > 200
-                                                ? provider.base_prompt.substring(0, 200) + '...'
-                                                : provider.base_prompt}
+                                            {provider.basePrompt.length > 200
+                                                ? provider.basePrompt.substring(0, 200) + '...'
+                                                : provider.basePrompt}
                                         </p>
                                     </div>
                                 {/if}

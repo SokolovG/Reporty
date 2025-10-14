@@ -33,14 +33,12 @@ export const actions: Actions = {
     updateProvider: async ({ request, fetch }) => {
         const formData = await request.formData();
         const providerId = formData.get("providerId");
-        const name = formData.get("name");
         const basePrompt = formData.get("basePrompt");
         const modelName = formData.get("modelName");
         const apiKey = formData.get("apiKey")
         const isActive = formData.get("isActive") === "on";
 
         const data = {
-            name: name?.toString(),
             basePrompt: basePrompt?.toString(),
             modelName: modelName?.toString(),
             isActive: isActive,

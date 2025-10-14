@@ -4,6 +4,7 @@ export interface AIProvider {
     isActive: boolean
     modelName?: string
     basePrompt?: string
+    apiKey?: string
     requiresApiKey?: boolean
 }
 
