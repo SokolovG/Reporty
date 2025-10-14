@@ -30,7 +30,7 @@ export const load: PageServerLoad = async ({ fetch, url  }) => {
 }
 
 export const actions: Actions = {
-    updateProvider: async ({ request, fetch }) => {
+    updateProvider: async ({ request, fetch, url }) => {
         const formData = await request.formData();
         const providerId = formData.get("providerId");
         const basePrompt = formData.get("basePrompt");
@@ -46,7 +46,7 @@ export const actions: Actions = {
         };
 
         try {
-            const response = await fetch(`api/v1/profile/ai-preferences/providers/${providerId}`, {
+            const response = await fetch(`${url.origin}/api/v1/profile/ai-preferences/providers/${providerId}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"
@@ -59,6 +59,7 @@ export const actions: Actions = {
             }
 
             const responseData = await response.json();
+            console.log(responseData)
             if (!responseData.success) {
                 return { error: "Failed to update AI provider" };
             }

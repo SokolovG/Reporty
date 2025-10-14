@@ -7,8 +7,6 @@
     let providers = data.providers || [];
     let editingProvider: AIProvider | null = $state(null);
 
-    const aiModelsData = [1, 2, 3]
-
     function toggleEdit(provider: AIProvider) {
         if (editingProvider && editingProvider.id == provider.id){
         editingProvider = null;
@@ -86,8 +84,10 @@
                                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                 >
                                     <option value={null}>Select model name</option>
-                                    {#each aiModelsData as  model}
-                                        <option value={provider.id}>{provider.name} {provider.modelName ? `(${provider.modelName})` : ''}</option>
+                                    {#each providers as provider}
+                                        {#each provider.models as model}
+                                            <option value={provider.id}>{model.name}</option>
+                                        {/each}
                                     {/each}
                                 </select>
 

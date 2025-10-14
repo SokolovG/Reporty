@@ -188,7 +188,6 @@ class SettingsService:
                     models=models_response,
                 )
                 response_list.append(provider_response)
-            print(response_list)
             return response_list
 
         except Exception as e:

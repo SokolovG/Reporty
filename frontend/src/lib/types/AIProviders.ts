@@ -1,16 +1,18 @@
+export interface AIModel {
+    id: number
+    name: string
+    providerId: number
+}
+
 export interface AIProvider {
     id: number
     name: string
     isActive: boolean
-    modelName?: string
     basePrompt?: string
     apiKey?: string
     requiresApiKey?: boolean
-}
+    modlels: []
 
-export interface AIPreferences {
-    aiAutoProcess: boolean
-    aiProviderId?: number | null
 }
 
 export interface AIPreferencesUpdateRequest {
