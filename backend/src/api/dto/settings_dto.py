@@ -68,7 +68,6 @@ class ExternalSystemResponse(msgspec.Struct):
 
 
 class AIProviderUpdateRequest(msgspec.Struct):
-    name: str | None = None
     base_prompt: str | None = None
     model_name: str | None = None
     api_key: str | None = None

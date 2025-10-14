@@ -31,7 +31,6 @@ export const load: LayoutServerLoad = async ({ url, fetch, cookies }) => {
         method: 'POST',
         credentials: 'include'
       });
-      console.log(await refreshResponse.json())
       if (refreshResponse.ok) {
         return true;
       }
@@ -53,7 +52,6 @@ export const load: LayoutServerLoad = async ({ url, fetch, cookies }) => {
     }
 
     const userData = await userResponse.json();
-    console.log(userData)
 
     if (!userData.success) {
       throw error(401, 'Failed to fetch user data');

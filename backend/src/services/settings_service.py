@@ -187,12 +187,14 @@ class SettingsService:
         """Update an AI provider."""
         try:
             ai_provider = await self.ai_provider_repository.get(ai_provider_id)
-            if data.name is not None:
-                ai_provider.name = data.name
+
             if data.base_prompt is not None:
                 ai_provider.base_prompt = data.base_prompt
             if data.model_name is not None:
                 ai_provider.model_name = data.model_name
+            if data.api_key is not None and data.api_key.strip():
+                # TODO: Encrypt API key before saving
+                ai_provider.encrypted_api_key = data.api_key  # Will be encrypted later
             if data.is_active is not None:
                 ai_provider.is_active = data.is_active
             if data.api_key is not None:

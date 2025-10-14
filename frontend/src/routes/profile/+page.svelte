@@ -237,7 +237,7 @@
                             >
                                 <option value={null}>Select AI Provider</option>
                                 {#each aiProviders.filter(p => p.isActive) as provider}
-                                    <option value={provider.id}>{provider.name} {provider.modelName ? `(${provider.modelMame})` : ''}</option>
+                                    <option value={provider.id}>{provider.name} {provider.modelName ? `(${provider.modelName})` : ''}</option>
                                 {/each}
                             </select>
                         </div>
