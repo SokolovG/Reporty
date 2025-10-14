@@ -24,19 +24,18 @@ class AuthController(Controller):
         user = await service.register(data)
         return SuccessResponse(message="User registered successfully", data=user)
 
-    @post("/login", return_dto=SuccessResponseDTO)
+    @post("/login")
     @inject
     async def login(
-        self, service: FromDishka[AuthService], data: LoginRequest
+        self, request: Request, service: FromDishka[AuthService], data: LoginRequest
     ) -> Response[SuccessResponse]:
         """Login user and return tokens."""
         token_info = await service.login(data)
 
         success_response = SuccessResponse(message="Login successful", data=token_info)
-
-        response = Response(
-            content=success_response,
-            status_code=200,
+        response = SuccessResponseDTO.create_response_with_cookies(
+            request=request,
+            success_response=success_response,
             cookies=[
                 Cookie(
                     key="refreshToken",
@@ -58,15 +57,14 @@ class AuthController(Controller):
         )
         return response
 
-    @post("/logout", return_dto=SuccessResponseDTO)
+    @post("/logout")
     @inject
-    async def logout(self) -> Response[SuccessResponse]:
+    async def logout(self, request: Request) -> Response[SuccessResponse]:
         """Logout user by clearing refresh token cookie."""
         success_response = SuccessResponse(message="Successfully logged out")
-
-        response = Response(
-            content=success_response,
-            status_code=200,
+        response = SuccessResponseDTO.create_response_with_cookies(
+            request=request,
+            success_response=success_response,
             cookies=[
                 Cookie(
                     key="refreshToken",
@@ -88,7 +86,7 @@ class AuthController(Controller):
         )
         return response
 
-    @post("/refresh", return_dto=SuccessResponseDTO)
+    @post("/refresh")
     @inject
     async def refresh_token(
         self, service: FromDishka[AuthService], request: Request
@@ -99,11 +97,12 @@ class AuthController(Controller):
             raise AuthenticationError("No refresh token")
 
         new_access_token = await service.refresh(refresh_token)
-        response = Response(
-            content=SuccessResponse(
-                message="Token refreshed", data=AccessTokenResponse(access_token=new_access_token)
-            ),
-            status_code=200,
+        success_response = SuccessResponse(
+            message="Token refreshed", data=AccessTokenResponse(access_token=new_access_token)
+        )
+        response = SuccessResponseDTO.create_response_with_cookies(
+            request=request,
+            success_response=success_response,
             cookies=[
                 Cookie(
                     key="accessToken",
@@ -137,5 +136,4 @@ class AuthController(Controller):
         """Get current user profile."""
         user_id = request.user.id
         user = await service.get_me(user_id)
-        print(f"USER = {user}")
         return SuccessResponse(message="User profile retrieved", data=user)

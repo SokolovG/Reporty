@@ -56,7 +56,7 @@ class AISettingsUpdateResponse(msgspec.Struct):
 
 
 class AIPreferencesUpdateRequestDTO(BaseMsgspecDTO[AIPreferencesUpdateRequest]):
-    config = DTOConfig(partial=True)
+    config = DTOConfig(partial=True, rename_strategy="camel")
 
 
 class ExternalSystemResponse(msgspec.Struct):
