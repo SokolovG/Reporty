@@ -12,6 +12,7 @@ from backend.src.database.repositories import (
     ExternalTaskRepository,
     UserRepository,
     AIProviderRepository,
+    AIModelRepository,
 )
 from backend.src.services import (
     ReportService,
@@ -54,6 +55,10 @@ class MyProvider(Provider):
         return AIProviderRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
+    def ai_model_repo(self, db_session: AsyncSession) -> AIModelRepository:
+        return AIModelRepository(session=db_session)
+
+    @provide(scope=Scope.REQUEST)
     def external_system_repo(self, db_session: AsyncSession) -> ExternalSystemRepository:
         return ExternalSystemRepository(session=db_session)
 
@@ -87,10 +92,12 @@ class MyProvider(Provider):
         self,
         ai_provider_repo: AIProviderRepository,
         external_system_repo: ExternalSystemRepository,
+        ai_model_repo: AIModelRepository,
         user_repo: UserRepository,
     ) -> SettingsService:
         return SettingsService(
             ai_provider_repository=ai_provider_repo,
+            ai_models_repository=ai_model_repo,
             external_system_repository=external_system_repo,
             user_repository=user_repo,
         )

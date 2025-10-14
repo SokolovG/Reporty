@@ -119,18 +119,8 @@ class ProfileController(Controller):
         user_id = request.user.id
         await settings_service.delete_task_type(task_type_id=task_type_id, user_id=user_id)
 
-    @get("/ai-providers", return_dto=SuccessResponseDTO)
-    @inject
-    async def get_all_ai_providers(
-        self, request: Request, settings_service: FromDishka[SettingsService]
-    ) -> SuccessResponse:
-        """Get all AI providers (admin function)."""
-        user_id = request.user.id
-        providers = await settings_service.get_all_ai_providers(user_id=user_id)
-        return SuccessResponse(message="All AI providers retrieved successfully", data=providers)
-
     @patch(
-        "/ai-providers/{ai_provider_id:int}",
+        "/ai-preferences/providers/{ai_provider_id:int}",
         dto=AIProviderUpdateRequestDTO,
         return_dto=SuccessResponseDTO,
     )

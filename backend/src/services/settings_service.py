@@ -11,6 +11,7 @@ from backend.src.database.repositories import (
     AIProviderRepository,
     UserRepository,
     ExternalSystemRepository,
+    AIModelRepository,
 )
 from backend.src.database.models import TaskType, AIProvider, User, ExternalSystem
 from backend.src.api.dto import (
@@ -29,10 +30,12 @@ class SettingsService:
     def __init__(
         self,
         ai_provider_repository: AIProviderRepository,
+        ai_models_repository: AIModelRepository,
         user_repository: UserRepository,
         external_system_repository: ExternalSystemRepository,
     ) -> None:
         self.ai_provider_repository = ai_provider_repository
+        self.ai_models_repository = ai_models_repository
         self.user_repository = user_repository
         self.external_system_repository = external_system_repository
         self._to_task_type_response = get_converter(TaskType, TaskTypeResponse)
@@ -145,14 +148,6 @@ class SettingsService:
                 f"Failed to delete task type: {str(e)}", {"task_type_id": task_type_id}
             )
 
-    async def get_all_ai_providers(self, user_id: int) -> list[AIProviderResponse]:
-        """Get all AI providers (for admin purposes)."""
-        try:
-            result = await self.ai_provider_repository.session.execute(select(AIProvider))
-            return [self._to_ai_provider_response(p) for p in result.scalars().all()]
-        except Exception as e:
-            raise InternalServerError(f"Failed to get all AI providers: {str(e)}")
-
     async def update_user_ai_preferences(
         self, user_id: int, data: AIPreferencesUpdateRequest
     ) -> AIPreferencesResponse:
@@ -177,6 +172,9 @@ class SettingsService:
             result = await self.ai_provider_repository.session.execute(
                 select(AIProvider).where(AIProvider.is_active)
             )
+            # models = await self.ai_models_repository.session.execute(
+            #     select(AIModel)
+            # )
             return [self._to_ai_provider_response(p) for p in result.scalars().all()]
         except Exception as e:
             raise InternalServerError(f"Failed to get active AI providers: {str(e)}")

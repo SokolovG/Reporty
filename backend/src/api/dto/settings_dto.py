@@ -1,3 +1,4 @@
+from typing import Any
 import msgspec
 from litestar.dto import DTOConfig
 
@@ -46,6 +47,7 @@ class AIProviderResponse(msgspec.Struct):
     name: str
     requires_api_key: bool
     is_active: bool
+    models: list[dict[str, Any]]
     base_prompt: str | None = None
     model_name: str | None = None
 

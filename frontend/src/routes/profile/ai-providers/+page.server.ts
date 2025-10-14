@@ -3,7 +3,7 @@ import type { PageServerLoad } from "./$types"
 
 export const load: PageServerLoad = async ({fetch}) => {
     try {
-        const providersResponse = await fetch('/api/v1/profile/ai-providers');
+        const providersResponse = await fetch('/ai-preferences/providers');
 
         if (!providersResponse.ok) {
             return { providers: [] };
@@ -46,7 +46,7 @@ export const actions: Actions = {
         };
 
         try {
-            const response = await fetch(`/api/v1/profile/ai-providers/${providerId}`, {
+            const response = await fetch(`/ai-preferences/providers/${providerId}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"
