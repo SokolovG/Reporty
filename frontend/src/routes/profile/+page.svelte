@@ -1,8 +1,7 @@
 <script lang="ts">
-    import { getContext, setContext } from 'svelte';
+    import { getContext } from 'svelte';
     import { Button } from "$lib";
     import { enhance } from '$app/forms';
-    import { invalidateAll } from '$app/navigation';
 
     const userContext = getContext("user")
     let user = $state({ ...userContext })
@@ -81,7 +80,8 @@
                                 Personal Information
                             </h2>
                             <button
-                                on:click={toggleEdit}
+                                aria-label="Edit personal info"
+                                onclick={toggleEdit}
                                 class="text-white hover:text-blue-200 transition-colors"
                             >
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,11 +114,11 @@
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-100">
                                     <div>
-                                        <label class="text-sm font-medium text-gray-500">Department</label>
+                                        <div class="text-sm font-medium text-gray-500">Department</div>
                                         <p class="text-gray-900">{user.department || 'Not specified'}</p>
                                     </div>
                                     <div>
-                                        <label class="text-sm font-medium text-gray-500">Position</label>
+                                        <div class="text-sm font-medium text-gray-500">Position</div>
                                         <p class="text-gray-900">{user.position || 'Not specified'}</p>
                                     </div>
                                 </div>
@@ -131,7 +131,7 @@
                             >
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Display Name</label>
+                                        <div class="block text-sm font-medium text-gray-700 mb-1">Display Name</div>
                                         <input
                                             name="display_name"
                                             bind:value={editForm.display_name}
@@ -140,7 +140,7 @@
                                         />
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                        <div class="block text-sm font-medium text-gray-700 mb-1">Email</div>
                                         <input
                                             bind:value={editForm.email}
                                             type="email"
@@ -149,7 +149,7 @@
                                         />
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Department</label>
+                                        <div class="block text-sm font-medium text-gray-700 mb-1">Department</div>
                                         <input
                                             name="department"
                                             bind:value={editForm.department}
@@ -158,7 +158,7 @@
                                         />
                                     </div>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">Position</label>
+                                        <div class="block text-sm font-medium text-gray-700 mb-1">Position</div>
                                         <input
                                             name="position"
                                             bind:value={editForm.position}
@@ -172,7 +172,7 @@
                                     <Button text="Save Changes" variant="primary" />
                                     <button
                                         type="button"
-                                        on:click={toggleEdit}
+                                        onclick={toggleEdit}
                                         class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
                                     >
                                         Cancel
@@ -218,7 +218,7 @@
 
                         <div>
                             <div class="flex items-center justify-between mb-2">
-                                <label class="block text-sm font-medium text-gray-700">AI Provider</label>
+                                <div class="block text-sm font-medium text-gray-700">AI Provider</div>
                                 <a
                                     href="/profile/ai-providers"
                                     class="text-xs text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1"
@@ -262,7 +262,8 @@
                                 Task Types
                             </h2>
                             <button
-                                on:click={() => {
+                                aria-label="`Add task type"
+                                onclick={() => {
                                     showAddTaskType = !showAddTaskType;
                                 }}
                                 class="text-white hover:text-green-200 transition-colors"
@@ -309,7 +310,7 @@
                                         <Button text="Add" variant="success" />
                                         <button
                                             type="button"
-                                            on:click={() => showAddTaskType = false}
+                                            onclick={() => showAddTaskType = false}
                                             class="px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
                                         >
                                             Cancel
@@ -337,6 +338,7 @@
                                     >
                                         <input type="hidden" name="taskTypeId" value={taskType.id} />
                                         <button
+                                        aria-label="Remove task type"
                                             type="submit"
                                             class="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition-all"
                                         >

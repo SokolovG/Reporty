@@ -1,13 +1,18 @@
 <script lang="ts">
     import { Button } from "$lib";
     import { enhance } from '$app/forms';
+    import type { AIProvider } from "$lib/types/AIProviders.js";
 
     let { data, form } = $props();
     let providers = data.providers || [];
     let editingProvider = $state(null);
 
-    function startEdit(provider) {
-        editingProvider = { ...provider };
+    function toggleEdit(provider: AIProvider) {
+        if (editingProvider && editingProvider.id == provider.id){
+        editingProvider = null;
+        } else {
+            editingProvider = { ...provider };
+        }
     }
 
     function cancelEdit() {
@@ -20,7 +25,7 @@
         <!-- Header -->
         <div class="mb-8">
             <div class="flex items-center gap-4 mb-4">
-                <a href="/profile" class="text-blue-600 hover:text-blue-800 transition-colors">
+                <a href="/profile" class="text-blue-600 hover:text-blue-800 transition-colors" aria-label="Edit ai providers">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
@@ -48,7 +53,8 @@
                                     {provider.is_active ? 'Active' : 'Inactive'}
                                 </span>
                                 <button
-                                    on:click={() => startEdit(provider)}
+                                    aria-label="Edit ai providers"
+                                    onclick={() => toggleEdit(provider)}
                                     class="text-white hover:text-purple-200 transition-colors"
                                 >
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,7 +81,7 @@
                                 <input type="hidden" name="providerId" value={provider.id} />
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                                    <div class="block text-sm font-medium text-gray-700 mb-1">Name</div>
                                     <input
                                         name="name"
                                         bind:value={editingProvider.name}
@@ -85,7 +91,7 @@
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Model Name</label>
+                                    <div class="block text-sm font-medium text-gray-700 mb-1">Model Name</div>
                                     <input
                                         name="modelName"
                                         bind:value={editingProvider.model_name}
@@ -95,7 +101,7 @@
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Base Prompt</label>
+                                    <div class="block text-sm font-medium text-gray-700 mb-1">Base Prompt</div>
                                     <textarea
                                         name="basePrompt"
                                         bind:value={editingProvider.base_prompt}
@@ -106,7 +112,7 @@
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Api Key</label>
+                                    <div class="block text-sm font-medium text-gray-700 mb-1">Api Key</div>
                                     <textarea
                                         name="basePrompt"
                                         bind:value={editingProvider.apiKey}
@@ -132,7 +138,7 @@
                                     <Button text="Save Changes" variant="primary" />
                                     <button
                                         type="button"
-                                        on:click={cancelEdit}
+                                        onclick={cancelEdit}
                                         class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
                                     >
                                         Cancel
@@ -142,18 +148,18 @@
                         {:else}
                             <div class="space-y-4">
                                 <div>
-                                    <label class="text-sm font-medium text-gray-500">Model</label>
+                                    <div class="text-sm font-medium text-gray-500">Model</div>
                                     <p class="text-gray-900">{provider.model_name || 'Not specified'}</p>
                                 </div>
 
                                 <div>
-                                    <label class="text-sm font-medium text-gray-500">API Key Required</label>
+                                    <div class="text-sm font-medium text-gray-500">API Key Required</div>
                                     <p class="text-gray-900">{provider.requires_api_key ? 'Yes' : 'No'}</p>
                                 </div>
 
                                 {#if provider.base_prompt}
                                     <div>
-                                        <label class="text-sm font-medium text-gray-500">Base Prompt</label>
+                                        <div class="text-sm font-medium text-gray-500">Base Prompt</div>
                                         <p class="text-gray-900 text-sm bg-gray-50 p-3 rounded-lg mt-1">
                                             {provider.base_prompt.length > 200
                                                 ? provider.base_prompt.substring(0, 200) + '...'
