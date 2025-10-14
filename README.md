@@ -8,7 +8,7 @@ Reporty solves the problem of creating daily reports for developers. Instead of 
 
 - Quickly record brief notes about completed work throughout the day
 - Automatically transform technical entries into professional business descriptions
-- Link work to external task management systems (Bitrix24, Jira, Asana)
+- Link work to external task management systems (Jira, Asana)
 - Generate comprehensive daily/weekly reports for management
 
 ## 📋 Example Transformation
@@ -24,7 +24,7 @@ Reporty solves the problem of creating daily reports for developers. Instead of 
 - **Backend:** Litestar + SQLAlchemy + PostgreSQL
 - **Frontend:** Svelte (learning in progress)
 - **AI Processing:** Any of public LLM with API KEY / local llm
-- **External Integrations:** Bitrix24, Jira, Asana support
+- **External Integrations:** Jira, Asana support
 
 ## 🛠️ Tech Stack
 

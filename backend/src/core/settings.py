@@ -29,11 +29,6 @@ class Settings(BaseSettings):
 
     external_systems_config: dict = field(
         default_factory=lambda: {
-            "bitrix": {
-                "enabled": os.getenv("BITRIX_ENABLED", "False").lower() == "true",
-                "webhook_url": os.getenv("BITRIX_WEBHOOK_URL"),
-                "user_id": os.getenv("BITRIX_USER_ID"),
-            },
             "jira": {
                 "enabled": os.getenv("JIRA_ENABLED", "False").lower() == "true",
                 "base_url": os.getenv("JIRA_BASE_URL"),
@@ -72,8 +67,6 @@ class Settings(BaseSettings):
         if not config.get("enabled", False):
             return False
 
-        if system_name == "bitrix":
-            return all([config.get("webhook_url"), config.get("user_id")])
         elif system_name == "jira":
             return all([config.get("base_url"), config.get("email"), config.get("api_token")])
         elif system_name == "asana":

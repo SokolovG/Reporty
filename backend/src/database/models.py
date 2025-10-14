@@ -78,7 +78,7 @@ class DailyRecord(Base):
 
 
 class ExternalSystem(Base):
-    """External task management system (Bitrix, Jira, Asana, etc.)."""
+    """External task management system (Jira, Asana, etc.)."""
 
     __tablename__ = "external_systems"
 
@@ -86,12 +86,12 @@ class ExternalSystem(Base):
         String(50),
         unique=True,
         nullable=False,
-        comment="System identifier (bitrix, jira, asana)",
+        comment="System identifier (jira, asana)",
     )
     display_name: Mapped[str] = mapped_column(
         String(100),
         nullable=False,
-        comment="Human-readable name (Bitrix24, Jira Cloud)",
+        comment="Human-readable name (Jira Cloud)",
     )
     api_config: Mapped[dict] = mapped_column(
         JSON, nullable=False, comment="API connection settings"
@@ -245,7 +245,14 @@ class AIModel(Base):
     __tablename__ = "ai_models"
 
     ai_provider_id: Mapped[int] = mapped_column(ForeignKey("ai_providers.id"))
-    name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+
+    provider: Mapped["AIProvider"] = relationship("AIProvider", back_populates="models")
+
+    __table_args__ = (UniqueConstraint("ai_provider_id", "name", name="uk_provider_model"),)
+
+    def __str__(self) -> str:
+        return str(self.name[:10])
 
 
 class User(Base):
