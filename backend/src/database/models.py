@@ -229,10 +229,23 @@ class AIProvider(Base):
     is_active: Mapped[bool] = mapped_column(default=True)
     encrypted_api_key: Mapped[str] = mapped_column(String(500), nullable=True)
 
+    models: Mapped[list["AIModel"]] = relationship(
+        "AIModel", back_populates="provider", cascade="all, delete-orphan"
+    )
+
     __table_args__ = (Index("ix_ai_providers_active", "is_active"),)
 
     def __str__(self) -> str:
         return f"{self.name} {self.model_name}"
+
+
+class AIModel(Base):
+    """AI model"""
+
+    __tablename__ = "ai_models"
+
+    ai_provider_id: Mapped[int] = mapped_column(ForeignKey("ai_providers.id"))
+    name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
 
 
 class User(Base):
@@ -255,11 +268,13 @@ class User(Base):
     position: Mapped[str | None] = mapped_column(String(100), nullable=True)
     ai_auto_process: Mapped[bool] = mapped_column(default=False)
     ai_provider_id: Mapped[int] = mapped_column(ForeignKey("ai_providers.id"), nullable=True)
+    ai_model_id: Mapped[int | None] = mapped_column(ForeignKey("ai_models.id"))
 
     ai_provider: Mapped["AIProvider | None"] = relationship("AIProvider")
     task_types: Mapped[list["TaskType"]] = relationship(
         "TaskType", back_populates="user", cascade="all, delete-orphan"
     )
+    ai_model: Mapped["AIModel | None"] = relationship("AIModel")
 
     def __str__(self) -> str:
         return str(self.name)
