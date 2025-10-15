@@ -46,6 +46,7 @@ class UserResponse(msgspec.Struct):
     position: str | None = None
     ai_auto_process: bool = False
     ai_provider_id: int | None = None
+    ai_model_id: int | None = None
 
 
 class TokenInfo(msgspec.Struct):

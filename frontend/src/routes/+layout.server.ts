@@ -68,6 +68,7 @@ export const load: LayoutServerLoad = async ({ url, fetch, cookies }) => {
       aiProviderId: userData.data.aiProviderId,
       isActive: userData.data.isActive,
       isVerify: userData.data.isActive,
+      aiModelId: userData.data.aiModelId
     };
   }
 

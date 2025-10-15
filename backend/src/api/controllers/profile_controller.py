@@ -128,11 +128,14 @@ class ProfileController(Controller):
     async def update_ai_provider(
         self,
         ai_provider_id: int,
+        request: Request,
         data: AIProviderUpdateRequest,
         settings_service: FromDishka[SettingsService],
     ) -> SuccessResponse:
         """Update AI provider configuration (admin only)."""
+        user_id = request.user.id
+        print(data)
         updated_provider = await settings_service.update_ai_provider(
-            ai_provider_id=ai_provider_id, data=data
+            ai_provider_id=ai_provider_id, data=data, user_id=user_id
         )
         return SuccessResponse(message="AI provider updated successfully", data=updated_provider)

@@ -37,6 +37,7 @@ class UserAdmin(ModelView, model=User):
         User.ai_provider_id,
         User.task_types,
         User.is_active,
+        User.ai_model_id,
         User.is_verify,
     ]
 
@@ -48,6 +49,7 @@ class UserAdmin(ModelView, model=User):
         User.position,
         User.ai_auto_process,
         User.ai_provider_id,
+        User.ai_model_id,
         User.task_types,
         User.is_active,
         User.is_verify,

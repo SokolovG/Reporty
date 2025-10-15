@@ -194,29 +194,47 @@ class SettingsService:
             raise InternalServerError(f"Failed to get active AI providers: {str(e)}")
 
     async def update_ai_provider(
-        self, ai_provider_id: int, data: AIProviderUpdateRequest
+        self, ai_provider_id: int, data: AIProviderUpdateRequest, user_id: int
     ) -> AIProviderResponse:
         """Update an AI provider."""
         try:
-            ai_provider = await self.ai_provider_repository.get(ai_provider_id)
+            result = await self.ai_provider_repository.session.execute(
+                select(AIProvider)
+                .options(selectinload(AIProvider.models))
+                .where(AIProvider.id == ai_provider_id)
+            )
+            ai_provider = result.scalar_one_or_none()
+            user = await self.user_repository.get_one_or_none(id=user_id)
+
+            if not user:
+                raise NotFoundError("User", user_id)
+
+            if not ai_provider:
+                raise NotFoundError("AIProvider", ai_provider_id)
 
             if data.base_prompt is not None:
                 ai_provider.base_prompt = data.base_prompt
-                # TODO: Add update model
+            if data.ai_model_id:
+                user.ai_model_id = data.ai_model_id
             if data.api_key is not None and data.api_key.strip():
                 # TODO: Encrypt API key before saving
                 ai_provider.encrypted_api_key = data.api_key  # Will be encrypted later
-            if data.api_key is not None:
-                # TODO: encrypt the key before saving it to the database
-                ...
 
-            updated_ai_provider = await self.ai_provider_repository.update(ai_provider)
             await self.ai_provider_repository.session.commit()
-            return self._to_ai_provider_response(updated_ai_provider)
 
+            models_response = [AIModelResponse(id=m.id, name=m.name) for m in ai_provider.models]
+            return AIProviderResponse(
+                id=ai_provider.id,
+                name=ai_provider.name,
+                requires_api_key=ai_provider.requires_api_key,
+                is_active=ai_provider.is_active,
+                base_prompt=ai_provider.base_prompt,
+                models=models_response,
+            )
+
+        except NotFoundError:
+            raise
         except Exception as e:
-            if "not found" in str(e).lower():
-                raise NotFoundError("AIProvider", ai_provider_id)
             raise InternalServerError(
                 f"Failed to update AI provider: {str(e)}", {"ai_provider_id": ai_provider_id}
             )

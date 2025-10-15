@@ -2,22 +2,45 @@
     import { Button } from "$lib";
     import { enhance } from '$app/forms';
     import type { AIProvider } from "$lib/types/AIProviders.js";
+    import { getContext } from "svelte";
 
     let { data, form } = $props();
     let providers = data.providers || [];
     let editingProvider: AIProvider | null = $state(null);
+    let selectedModelId: number | null = $state(null);
+
+    const userContext = getContext("user")
+    let user = $state({ ...userContext })
+
+    $effect(() => {
+        user = { ...userContext }
+    })
 
     function toggleEdit(provider: AIProvider) {
-        if (editingProvider && editingProvider.id == provider.id){
-        editingProvider = null;
+        if (editingProvider && editingProvider.id == provider.id){
+            editingProvider = null;
+            selectedModelId = null;
         } else {
             editingProvider = { ...provider };
+            selectedModelId = provider.selectedModelId || null;
         }
     }
 
     function cancelEdit() {
         editingProvider = null;
+        selectedModelId = null;
     }
+
+    function handleModelChange(event: Event) {
+        const target = event.target as HTMLSelectElement;
+        const selectedOption = target.selectedOptions[0];
+        if (selectedOption && selectedOption.dataset.modelId) {
+            selectedModelId = Number(selectedOption.dataset.modelId);
+        } else {
+            selectedModelId = null;
+        }
+    }
+    console.log(providers[0])
 </script>
 
 <div class="bg-gradient-to-br from-blue-50 via-white to-indigo-50 min-h-screen">
@@ -80,16 +103,25 @@
                             >
                                 <input type="hidden" name="providerId" value={provider.id} />
 
-                                <select
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                >
-                                    <option value={null}>Select model name</option>
-                                    {#each providers as provider}
-                                        {#each provider.models as model}
-                                            <option value={provider.id}>{model.name}</option>
+                                <div>
+                                    <div class="block text-sm font-medium text-gray-700 mb-1">Model Name</div>
+                                    <select
+                                        onchange={handleModelChange}
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    >
+                                        <option value="">Select model name</option>
+                                        {#each editingProvider.models as model}
+                                            <option
+                                                value={model.name}
+                                                data-model-id={model.id}
+                                                selected={user.aiModelId === model.id}
+                                            >
+                                                {model.name}
+                                            </option>
                                         {/each}
-                                    {/each}
-                                </select>
+                                    </select>
+                                    <input type="hidden" name="aiModelId" bind:value={selectedModelId} />
+                                </div>
 
                                 <div>
                                     <div class="block text-sm font-medium text-gray-700 mb-1">Base Prompt</div>
@@ -129,7 +161,7 @@
                             <div class="space-y-4">
                                 <div>
                                     <div class="text-sm font-medium text-gray-500">Model</div>
-                                    <p class="text-gray-900">{provider.modelName || 'Not specified'}</p>
+                                    <p class="text-gray-900">{provider.models.find(model => model.id == user.aiModelId)?.name || 'Not specified'}</p>
                                 </div>
 
                                 <div>
@@ -158,7 +190,7 @@
             <div class="text-center py-12">
                 <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                </svg>
+</svg>
                 <h3 class="text-lg font-medium text-gray-900 mb-2">No AI Providers</h3>
                 <p class="text-gray-600">No AI providers are configured in the system.</p>
             </div>

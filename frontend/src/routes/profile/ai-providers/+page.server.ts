@@ -34,14 +34,18 @@ export const actions: Actions = {
         const formData = await request.formData();
         const providerId = formData.get("providerId");
         const basePrompt = formData.get("basePrompt");
-        const modelName = formData.get("modelName");
-        const apiKey = formData.get("apiKey")
+        const aiModelId = formData.get("aiModelId");
+        const apiKey = formData.get("apiKey");
 
-        const data = {
+        const data: any = {
             basePrompt: basePrompt?.toString(),
-            modelName: modelName?.toString(),
             apiKey: apiKey?.toString(),
         };
+
+        if (aiModelId) {
+            data.aiModelId = Number(aiModelId);
+        }
+        console.log(data)
 
         try {
             const response = await fetch(`${url.origin}/api/v1/profile/ai-preferences/providers/${providerId}`, {
@@ -57,7 +61,6 @@ export const actions: Actions = {
             }
 
             const responseData = await response.json();
-            console.log(responseData)
             if (!responseData.success) {
                 return { error: "Failed to update AI provider" };
             }

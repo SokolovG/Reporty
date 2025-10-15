@@ -11,8 +11,9 @@ export interface AIProvider {
     basePrompt?: string
     apiKey?: string
     requiresApiKey?: boolean
-    modlels: []
-
+    models: AIModel[]
+    modelName?: string
+    selectedModelId?: number
 }
 
 export interface AIPreferencesUpdateRequest {
