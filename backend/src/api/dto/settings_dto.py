@@ -34,6 +34,7 @@ class TaskTypeUpdateRequestDTO(BaseMsgspecDTO[TaskTypeUpdateRequest]):
 class AIPreferencesUpdateRequest(msgspec.Struct):
     ai_auto_process: bool | None = None
     ai_provider_id: int | None = None
+    custom_prompt: str | None = None
 
 
 class AIPreferencesResponse(msgspec.Struct):

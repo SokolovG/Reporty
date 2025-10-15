@@ -161,6 +161,8 @@ class SettingsService:
                 user.ai_provider_id = data.ai_provider_id
             if data.ai_auto_process is not None:
                 user.ai_auto_process = data.ai_auto_process
+            if data.custom_prompt is not None:
+                user.custom_prompt = data.custom_prompt
             await self.user_repository.session.commit()
             return self._to_ai_preferences_response(user)
 

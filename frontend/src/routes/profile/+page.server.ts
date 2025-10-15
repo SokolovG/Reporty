@@ -190,10 +190,12 @@ export const actions: Actions = {
         const formData = await request.formData();
         const aiAutoProcess = formData.get("aiAutoProcess") === "on";
         const aiProviderId = formData.get("aiProviderId");
+        const customPrompt = formData.get("customPrompt")
 
         const data = {
             aiAutoProcess: aiAutoProcess,
             aiProviderId: aiProviderId ? parseInt(aiProviderId.toString()) : null,
+            customPrompt: customPrompt?.toString()
         };
         try {
             const response = await fetch("/api/v1/profile/ai-preferences", {

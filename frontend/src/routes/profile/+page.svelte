@@ -242,6 +242,20 @@
                             </select>
                         </div>
 
+                        <div>
+                            <div class="block text-sm font-medium text-gray-700 mb-2">Custom AI Prompt</div>
+                            <textarea
+                                name="customPrompt"
+                                bind:value={user.customPrompt}
+                                rows="4"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
+                                placeholder="Enter your personal AI prompt instructions here. This will be used in addition to the system prompt when processing your records."
+                            ></textarea>
+                            <p class="text-xs text-gray-500 mt-1">
+                                This prompt will be combined with the system prompt to personalize AI responses for your records.
+                            </p>
+                        </div>
+
                         <div class="pt-4">
                             <Button text="Save AI Settings" variant="primary" />
                         </div>

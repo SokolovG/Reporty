@@ -9,5 +9,6 @@ export interface User {
     aiProviderId?: number | null
     isActive: boolean
     isVerify: boolean
-    aiModelId: number
+    aiModelId: number | null
+    customPrompt: string | null
 }

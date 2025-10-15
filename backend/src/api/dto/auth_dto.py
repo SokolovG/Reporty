@@ -47,6 +47,7 @@ class UserResponse(msgspec.Struct):
     ai_auto_process: bool = False
     ai_provider_id: int | None = None
     ai_model_id: int | None = None
+    custom_prompt: str | None = None
 
 
 class TokenInfo(msgspec.Struct):
