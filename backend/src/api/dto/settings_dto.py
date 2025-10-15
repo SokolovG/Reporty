@@ -53,7 +53,6 @@ class AIProviderResponse(msgspec.Struct):
     name: str
     requires_api_key: bool
     is_active: bool
-    base_prompt: str | None = None
     models: list[AIModelResponse] = []
 
 
@@ -75,7 +74,6 @@ class ExternalSystemResponse(msgspec.Struct):
 
 
 class AIProviderUpdateRequest(msgspec.Struct):
-    base_prompt: str | None = None
     api_key: str | None = None
     ai_model_id: int | None = None
 

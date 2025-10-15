@@ -184,7 +184,6 @@ class SettingsService:
                     name=provider.name,
                     requires_api_key=provider.requires_api_key,
                     is_active=provider.is_active,
-                    base_prompt=provider.base_prompt,
                     models=models_response,
                 )
                 response_list.append(provider_response)
@@ -212,8 +211,6 @@ class SettingsService:
             if not ai_provider:
                 raise NotFoundError("AIProvider", ai_provider_id)
 
-            if data.base_prompt is not None:
-                ai_provider.base_prompt = data.base_prompt
             if data.ai_model_id:
                 user.ai_model_id = data.ai_model_id
             if data.api_key is not None and data.api_key.strip():
@@ -228,7 +225,6 @@ class SettingsService:
                 name=ai_provider.name,
                 requires_api_key=ai_provider.requires_api_key,
                 is_active=ai_provider.is_active,
-                base_prompt=ai_provider.base_prompt,
                 models=models_response,
             )
 

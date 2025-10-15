@@ -8,7 +8,6 @@ export interface AIProvider {
     id: number
     name: string
     isActive: boolean
-    basePrompt?: string
     apiKey?: string
     requiresApiKey?: boolean
     models: AIModel[]

@@ -280,6 +280,7 @@ class User(Base):
         "TaskType", back_populates="user", cascade="all, delete-orphan"
     )
     ai_model: Mapped["AIModel | None"] = relationship("AIModel")
+    custom_prompt: Mapped[str] = mapped_column(String, nullable=True, comment="Custom base prompt")
 
     def __str__(self) -> str:
         return str(self.name)

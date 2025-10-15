@@ -38,6 +38,7 @@ class UserAdmin(ModelView, model=User):
         User.task_types,
         User.is_active,
         User.ai_model_id,
+        User.custom_prompt,
         User.is_verify,
     ]
 
@@ -50,6 +51,7 @@ class UserAdmin(ModelView, model=User):
         User.ai_auto_process,
         User.ai_provider_id,
         User.ai_model_id,
+        User.custom_prompt,
         User.task_types,
         User.is_active,
         User.is_verify,

@@ -134,16 +134,6 @@
                                     <input type="hidden" name="aiModelId" bind:value={selectedModelId} />
                                 </div>
 
-                                <div>
-                                    <div class="block text-sm font-medium text-gray-700 mb-1">{"Base Prompt" + (editingProvider.basePrompt ? "" : "")}</div>
-                                    <textarea
-                                        name="basePrompt"
-                                        bind:value={editingProvider.basePrompt}
-                                        rows="4"
-                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                        placeholder="System prompt for this AI provider..."
-                                    ></textarea>
-                                </div>
                                 {#if editingProvider.requiresApiKey}
                                     <div>
                                         <div class="block text-sm font-medium text-gray-700 mb-1">Api Key</div>
@@ -180,16 +170,6 @@
                                     <p class="text-gray-900">{provider.requiresApiKey ? 'Yes' : 'No'}</p>
                                 </div>
 
-                                {#if provider.basePrompt}
-                                    <div>
-                                        <div class="text-sm font-medium text-gray-500">Base Prompt</div>
-                                        <p class="text-gray-900 text-sm bg-gray-50 p-3 rounded-lg mt-1">
-                                            {provider.basePrompt.length > 200
-                                                ? provider.basePrompt.substring(0, 200) + '...'
-                                                : provider.basePrompt}
-                                        </p>
-                                    </div>
-                                {/if}
                             </div>
                         {/if}
                     </div>

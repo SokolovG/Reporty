@@ -33,12 +33,10 @@ export const actions: Actions = {
     updateProvider: async ({ request, fetch, url }) => {
         const formData = await request.formData();
         const providerId = formData.get("providerId");
-        const basePrompt = formData.get("basePrompt");
         const aiModelId = formData.get("aiModelId");
         const apiKey = formData.get("apiKey");
 
         const data: any = {
-            basePrompt: basePrompt?.toString(),
             apiKey: apiKey?.toString(),
         };
 
