@@ -124,7 +124,7 @@
                                 </div>
 
                                 <div>
-                                    <div class="block text-sm font-medium text-gray-700 mb-1">Base Prompt</div>
+                                    <div class="block text-sm font-medium text-gray-700 mb-1">{"Base Prompt" + (editingProvider.basePrompt ? "" : "")}</div>
                                     <textarea
                                         name="basePrompt"
                                         bind:value={editingProvider.basePrompt}
