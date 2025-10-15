@@ -23,7 +23,9 @@
     const aiProviders = data.providers;
 
     let isEditing = $state(false);
+    let isEditingAI = $state(false);
     let editForm = $state({ ...user });
+    let aiEditForm = $state({ ...user });
     let newTaskType = $state({ title: "", color: "#3B82F6" });
     let showAddTaskType = $state(false);
 
@@ -31,6 +33,13 @@
         isEditing = !isEditing;
         if (isEditing) {
             editForm = { ...user };
+        }
+    }
+
+    function toggleAIEdit() {
+        isEditingAI = !isEditingAI;
+        if (isEditingAI) {
+            aiEditForm = { ...user };
         }
     }
 
@@ -186,80 +195,133 @@
                 <!-- AI Settings Card -->
                 <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
                     <div class="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
-                        <h2 class="text-xl font-semibold text-white flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                            </svg>
-                            AI Settings
-                        </h2>
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-xl font-semibold text-white flex items-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                </svg>
+                                AI Settings
+                            </h2>
+                            <button
+                                aria-label="Edit AI settings"
+                                onclick={toggleAIEdit}
+                                class="text-white hover:text-purple-200 transition-colors"
+                            >
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
 
-                    <form
-                        method="POST"
-                        action="?/updateAISettings"
-                        use:enhance
-                        class="p-6 space-y-4"
-                    >
-                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                            <div>
-                                <h3 class="font-medium text-gray-900">Auto-process with AI</h3>
-                                <p class="text-sm text-gray-600">Automatically process new records with AI</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    name="aiAutoProcess"
-                                    bind:checked={user.aiAutoProcess}
-                                    class="sr-only peer"
-                                />
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                            </label>
-                        </div>
+                    <div class="p-6">
+                        {#if !isEditingAI}
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <h3 class="font-medium text-gray-900">Auto-process with AI</h3>
+                                        <p class="text-sm text-gray-600">Automatically process new records with AI</p>
+                                    </div>
+                                    <span class="px-2 py-1 text-xs rounded-full {user.aiAutoProcess ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}">
+                                        {user.aiAutoProcess ? 'Enabled' : 'Disabled'}
+                                    </span>
+                                </div>
 
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <div class="block text-sm font-medium text-gray-700">AI Provider</div>
-                                <a
-                                    href="/profile/ai-providers"
-                                    class="text-xs text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1"
-                                >
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                    Manage Providers
-                                </a>
+                                <div>
+                                    <div class="text-sm font-medium text-gray-500">AI Provider</div>
+                                    <p class="text-gray-900">
+                                        {aiProviders.find(p => p.id === user.aiProviderId)?.name || 'Not selected'}
+                                    </p>
+                                </div>
+
+                                <div>
+                                    <div class="text-sm font-medium text-gray-500">Custom AI Prompt</div>
+                                    <p class="text-gray-900 text-sm bg-gray-50 p-3 rounded-lg mt-1">
+                                        {user.customPrompt || 'No custom prompt set'}
+                                    </p>
+                                </div>
                             </div>
-                            <select
-                                name="aiProviderId"
-                                bind:value={user.aiProviderId}
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                        {:else}
+                            <form
+                                method="POST"
+                                action="?/updateAISettings"
+                                use:enhance={() => {
+                                    return async ({ update }) => {
+                                        await update();
+                                        isEditingAI = false;
+                                    };
+                                }}
+                                class="space-y-4"
                             >
-                                <option value={null}>Select AI Provider</option>
-                                {#each aiProviders.filter(p => p.isActive) as provider}
-                                    <option value={provider.id}>{provider.name} {provider.modelName ? `(${provider.modelName})` : ''}</option>
-                                {/each}
-                            </select>
-                        </div>
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div>
+                                        <h3 class="font-medium text-gray-900">Auto-process with AI</h3>
+                                        <p class="text-sm text-gray-600">Automatically process new records with AI</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            name="aiAutoProcess"
+                                            bind:checked={aiEditForm.aiAutoProcess}
+                                            class="sr-only peer"
+                                        />
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                    </label>
+                                </div>
 
-                        <div>
-                            <div class="block text-sm font-medium text-gray-700 mb-2">Custom AI Prompt</div>
-                            <textarea
-                                name="customPrompt"
-                                bind:value={user.customPrompt}
-                                rows="4"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
-                                placeholder="Enter your personal AI prompt instructions here. This will be used in addition to the system prompt when processing your records."
-                            ></textarea>
-                            <p class="text-xs text-gray-500 mt-1">
-                                This prompt will be combined with the system prompt to personalize AI responses for your records.
-                            </p>
-                        </div>
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <div class="block text-sm font-medium text-gray-700">AI Provider</div>
+                                        <a
+                                            href="/profile/ai-providers"
+                                            class="text-xs text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1"
+                                        >
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                            </svg>
+                                            Manage Providers
+                                        </a>
+                                    </div>
+                                    <select
+                                        name="aiProviderId"
+                                        bind:value={aiEditForm.aiProviderId}
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    >
+                                        <option value={null}>Select AI Provider</option>
+                                        {#each aiProviders.filter(p => p.isActive) as provider}
+                                            <option value={provider.id}>{provider.name} {provider.modelName ? `(${provider.modelName})` : ''}</option>
+                                        {/each}
+                                    </select>
+                                </div>
 
-                        <div class="pt-4">
-                            <Button text="Save AI Settings" variant="primary" />
-                        </div>
-                    </form>
+                                <div>
+                                    <div class="block text-sm font-medium text-gray-700 mb-2">Custom AI Prompt</div>
+                                    <textarea
+                                        name="customPrompt"
+                                        bind:value={aiEditForm.customPrompt}
+                                        rows="4"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
+                                        placeholder="Enter your personal AI prompt instructions here. This will be used in addition to the system prompt when processing your records."
+                                    ></textarea>
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        This prompt will be combined with the system prompt to personalize AI responses for your records.
+                                    </p>
+                                </div>
+
+                                <div class="flex gap-3 pt-4">
+                                    <Button text="Save AI Settings" variant="primary" />
+                                    <button
+                                        type="button"
+                                        onclick={toggleAIEdit}
+                                        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        {/if}
+                    </div>
                 </div>
             </div>
 
