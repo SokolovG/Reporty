@@ -134,7 +134,6 @@ class ProfileController(Controller):
     ) -> SuccessResponse:
         """Update AI provider configuration (admin only)."""
         user_id = request.user.id
-        print(data)
         updated_provider = await settings_service.update_ai_provider(
             ai_provider_id=ai_provider_id, data=data, user_id=user_id
         )

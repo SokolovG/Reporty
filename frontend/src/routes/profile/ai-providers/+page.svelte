@@ -16,6 +16,13 @@
         user = { ...userContext }
     })
 
+    function validateForm () {
+        if (editingProvider?.requiresApiKey && !editingProvider.apiKey?.trim()) {
+            return "API key is required for this provider";
+        }
+        return null;
+    }
+
     function toggleEdit(provider: AIProvider) {
         if (editingProvider && editingProvider.id == provider.id){
             editingProvider = null;
@@ -40,7 +47,6 @@
             selectedModelId = null;
         }
     }
-    console.log(providers[0])
 </script>
 
 <div class="bg-gradient-to-br from-blue-50 via-white to-indigo-50 min-h-screen">
@@ -55,7 +61,7 @@
                 </a>
                 <h1 class="text-3xl font-bold text-gray-900">AI Providers Management</h1>
             </div>
-            <p class="text-gray-600">Configure and manage AI providers (Admin only)</p>
+            <p class="text-gray-600">Configure and manage AI providers</p>
         </div>
 
         {#if form?.error}
@@ -95,6 +101,11 @@
                                 action="?/updateProvider"
                                 use:enhance={() => {
                                     return async ({ update }) => {
+                                        const error = validateForm()
+                                        if (error) {
+                                            alert (error);
+                                            return;
+                                        }
                                         await update();
                                         editingProvider = null;
                                     };

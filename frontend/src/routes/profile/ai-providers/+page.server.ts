@@ -45,7 +45,6 @@ export const actions: Actions = {
         if (aiModelId) {
             data.aiModelId = Number(aiModelId);
         }
-        console.log(data)
 
         try {
             const response = await fetch(`${url.origin}/api/v1/profile/ai-preferences/providers/${providerId}`, {
