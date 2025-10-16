@@ -8,7 +8,6 @@ from backend.src.api.dto.base import BaseMsgspecDTO
 
 class DailyReportRequest(msgspec.Struct):
     date: datetime = datetime.today()
-    custom_fields: dict[str, str] = {}
 
 
 class DailyReportRequestUpdate(msgspec.Struct):

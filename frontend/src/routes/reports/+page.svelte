@@ -10,10 +10,13 @@
     let isGenerating = $state(false);
 
     function formatDate(dateString: string): string {
-        return new Date(dateString).toLocaleDateString('ru-RU', {
-            year: 'numeric',
+        return new Date(dateString).toLocaleDateString('en-EN', {
+            weekday: 'long',
             month: 'long',
-            day: 'numeric'
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+
         });
     }
 
@@ -31,7 +34,7 @@
         </div>
 
         <!-- Generate Report Button -->
-        <form method="POST" action="?/generate" use:enhance={() => {
+        <form method="POST" action="?/create" use:enhance={() => {
             isGenerating = true;
             return async ({ update }) => {
                 await update();

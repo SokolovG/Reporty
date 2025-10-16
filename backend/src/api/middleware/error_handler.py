@@ -42,7 +42,7 @@ class ErrorHandlerMiddleware(AbstractMiddleware):
             response_body = msgspec.json.encode(msgspec.to_builtins(error_response))
 
             await send(
-                {
+                {  # type: ignore
                     "type": "http.response.start",
                     "status": status_code,
                     "headers": [[b"content-type", b"application/json"]],
@@ -50,7 +50,7 @@ class ErrorHandlerMiddleware(AbstractMiddleware):
             )
 
             await send(
-                {
+                {  # type: ignore
                     "type": "http.response.body",
                     "body": response_body,
                 }

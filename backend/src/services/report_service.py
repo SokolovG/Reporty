@@ -8,7 +8,7 @@ from backend.src.api.dto import (
     DailyReportResponse,
 )
 from backend.src.database.base import RecordStatus
-from backend.src.database.models import Report
+from backend.src.database.models import DailyRecord, Report
 from backend.src.database.repositories import (
     ReportRepository,
     DailyRecordRepository,
@@ -136,7 +136,7 @@ class ReportService:
         except Exception as e:
             raise InternalServerError(f"Failed to get reports: {str(e)}")
 
-    def _format_records_to_text(self, records: list, report_date: datetime) -> str:
+    def _format_records_to_text(self, records: list[DailyRecord], report_date: datetime) -> str:
         """Format records into a readable text report."""
         date_str = report_date.strftime("%d.%m.%Y")
 

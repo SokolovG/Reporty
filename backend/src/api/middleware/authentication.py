@@ -3,6 +3,7 @@ from litestar.middleware import AbstractAuthenticationMiddleware, Authentication
 from litestar.connection import ASGIConnection
 from litestar import Litestar
 from litestar.types import ASGIApp
+
 from backend.src.core.exceptions import AuthenticationError
 from backend.src.services import JWTService
 from backend.src.database.repositories import UserRepository
@@ -17,8 +18,8 @@ class JWTAuthenticationMiddleware(AbstractAuthenticationMiddleware):
             "/api/v1/auth/login",
             "/api/v1/auth/refresh",
             "/admin/*",
-            "/docs",
-            "/schema",
+            "/schema/*",
+            "/docs/*",
         ]
         super().__init__(app, exclude=exclude)
 
@@ -26,7 +27,15 @@ class JWTAuthenticationMiddleware(AbstractAuthenticationMiddleware):
         app = Litestar.from_scope(connection.scope)
         container = app.state.dishka_container
 
+        # Проверяем токен в cookie
         access_token = connection.cookies.get("accessToken")
+
+        # Если нет в cookie, проверяем Authorization header
+        if not access_token:
+            auth_header = connection.headers.get("authorization")
+            if auth_header and auth_header.startswith("Bearer "):
+                access_token = auth_header[7:]  # Убираем "Bearer "
+
         if not access_token:
             raise AuthenticationError("No access token")
 

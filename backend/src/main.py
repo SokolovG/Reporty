@@ -4,6 +4,8 @@ from dishka.integrations.litestar import setup_dishka, LitestarProvider
 from litestar import Litestar
 from litestar.config.cors import CORSConfig
 from litestar.types import ASGIApp
+from litestar.openapi.config import OpenAPIConfig
+from litestar.openapi.spec import Components, SecurityScheme
 from sqladmin_litestar_plugin import SQLAdminPlugin
 from litestar.middleware import DefineMiddleware
 
@@ -56,6 +58,25 @@ cors_config = CORSConfig(
     expose_headers=["authorization"],
 )
 
+openapi_config = OpenAPIConfig(
+    title="Reporty API",
+    version="1.0.0",
+    components=Components(
+        security_schemes={
+            "BearerAuth": SecurityScheme(
+                type="http",
+                scheme="bearer",
+                bearer_format="JWT",
+            ),
+            "CookieAuth": SecurityScheme(
+                type="apiKey",
+                name="accessToken",
+            ),
+        }
+    ),
+    security=[{"BearerAuth": []}, {"CookieAuth": []}],
+)
+
 
 def create_app() -> ASGIApp:
     container = make_async_container(MyProvider(), LitestarProvider())
@@ -73,6 +94,7 @@ def create_app() -> ASGIApp:
         debug=True,
         logging_config=logging_config,
         cors_config=cors_config,
+        openapi_config=openapi_config,
     )
 
     setup_dishka(container, app)
