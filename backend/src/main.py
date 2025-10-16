@@ -8,8 +8,11 @@ from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.spec import Components, SecurityScheme
 from sqladmin_litestar_plugin import SQLAdminPlugin
 from litestar.middleware import DefineMiddleware
+from litestar import Response
 
 from backend.src.api.middleware import ErrorHandlerMiddleware, JWTAuthenticationMiddleware
+from backend.src.core.exceptions import ApiException
+from backend.src.api.responses.base_responses import ErrorResponse
 from backend.src.api.routes import (
     record_router,
     report_router,
@@ -78,6 +81,21 @@ openapi_config = OpenAPIConfig(
 )
 
 
+def api_exception_handler(request, exc: ApiException) -> Response:
+    """Handle ApiException and return proper JSON response."""
+    error_response = ErrorResponse(
+        error_code=exc.error_code,
+        message=exc.message,
+        success=False,
+        details=exc.details,
+    )
+    return Response(
+        content=error_response,
+        status_code=exc.status_code,
+        media_type="application/json"
+    )
+
+
 def create_app() -> ASGIApp:
     container = make_async_container(MyProvider(), LitestarProvider())
 
@@ -91,6 +109,7 @@ def create_app() -> ASGIApp:
         ],
         middleware=[ErrorHandlerMiddleware, DefineMiddleware(JWTAuthenticationMiddleware)],
         plugins=[sqlalchemy_plugin, admin_plugin],
+        exception_handlers={ApiException: api_exception_handler},
         debug=True,
         logging_config=logging_config,
         cors_config=cors_config,

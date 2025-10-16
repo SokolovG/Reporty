@@ -2,7 +2,7 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
     import type { Report } from '$lib/types/report';
-    import { Button } from "$lib";
+    // import { Button } from "$lib";
 
     let { data } = $props();
     let report: Report = data.report;
@@ -67,7 +67,7 @@
         return result;
     }
 
-    $: parsedContent = parseContent(report.content);
+    $parsedContent = parseContent(report.content);
 </script>
 
 <div class="container mx-auto px-4 py-8 max-w-4xl">

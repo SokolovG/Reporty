@@ -1,15 +1,15 @@
 <!-- frontend/src/routes/reports/+page.svelte -->
 <script lang="ts">
-    import type { Report } from "$lib/types/report";
-    import { Button } from "$lib";
+    // import type { Report } from "$lib/types/report";
+    // import { Button } from "$lib";
     import { enhance } from '$app/forms';
     import { goto } from '$app/navigation';
 
     let { data, form } = $props();
-    let reports: Report[] = data.reports?.data || [];
+    let reports = data.reports?.data || [];
     let isGenerating = $state(false);
 
-    function formatDate(dateString: string): string {
+    function formatDate(dateString) {
         return new Date(dateString).toLocaleDateString('en-EN', {
             weekday: 'long',
             month: 'long',
@@ -20,7 +20,7 @@
         });
     }
 
-    function getPreview(content: string): string {
+    function getPreview(content) {
         return content.length > 150 ? content.substring(0, 150) + '...' : content;
     }
 </script>
@@ -103,11 +103,12 @@
     {:else}
         <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {#each reports as report}
-                <!-- svelte-ignore a11y_no_static_element_interactions -->
                 <!-- svelte-ignore a11y_click_events_have_key_events -->
+                <!-- svelte-ignore a11y_no_static_element_interactions -->
                 <div class="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
-                     onclick={() => goto(`/reports/${report.id}`)}>
-                    <!-- Header -->
+                    onclick={() => goto(`/reports/${report.id}`)}>
+                    
+                     
                     <div class="p-6 pb-4">
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center gap-2">

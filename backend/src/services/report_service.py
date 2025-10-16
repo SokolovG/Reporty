@@ -86,7 +86,10 @@ class ReportService:
         """Delete a report."""
         try:
             report = await self.repo.get_report(report_id=report_id, user_id=user_id)
-            await self.repo.delete(report)
+            await self.repo.delete(report.id)
+            await self.repo.session.commit()
+        except NotFoundError:
+            raise
         except Exception as e:
             raise InternalServerError(
                 f"Failed to delete report: {str(e)}", {"report_id": report_id}
