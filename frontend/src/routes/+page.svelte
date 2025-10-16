@@ -3,14 +3,14 @@
   const name = data.user?.displayName || data.user?.name || "Guest"
 </script>
 
-<div class="bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+<div class="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
   <div class="container mx-auto px-4 py-8">
     <section class="text-center mb-12">
       <!-- Welcome Message with beautiful styling -->
       <div class="mb-8">
         <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
           <span class="inline-block animate-pulse">👋</span>
-          <span class="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <span class="bg-gradient-to-r from-amber-700 to-orange-700 bg-clip-text text-transparent">
             Nice to see you, {name}!
           </span>
         </h1>
@@ -21,7 +21,7 @@
         <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
           Welcome to
         </h2>
-        <h2 class="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-6">
+        <h2 class="text-5xl md:text-6xl font-extrabold bg-gradient-to-r from-amber-700 via-orange-700 to-red-600 bg-clip-text text-transparent mb-6">
           Reporty
         </h2>
         <p class="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
@@ -33,7 +33,7 @@
       <div class="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
         <a
           href="/records"
-          class="group bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-4 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 min-w-[200px]"
+          class="group bg-gradient-to-r from-amber-600 to-orange-600 text-white px-8 py-4 rounded-xl hover:from-amber-700 hover:to-orange-700 transition-all duration-300 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 min-w-[200px]"
         >
           <span class="flex items-center justify-center gap-2">
             <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,7 +45,7 @@
 
         <a
           href="/reports"
-          class="group bg-white text-gray-700 px-8 py-4 rounded-xl border-2 border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-300 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 min-w-[200px]"
+          class="group bg-white text-gray-700 px-8 py-4 rounded-xl border-2 border-gray-200 hover:border-amber-300 hover:bg-amber-50 transition-all duration-300 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 min-w-[200px]"
         >
           <span class="flex items-center justify-center gap-2">
             <svg class="w-5 h-5 group-hover:scale-110 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">

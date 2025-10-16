@@ -124,7 +124,7 @@
 
                 <button
                     onclick={exportAsText}
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                    class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
                 >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -138,11 +138,11 @@
     <!-- Report Content -->
     <div class="bg-white border border-gray-200 rounded-xl shadow-sm">
         <!-- Header Badge -->
-        <div class="px-6 py-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 rounded-t-xl">
+        <div class="px-6 py-4 bg-gradient-to-r from-amber-50 to-orange-50 border-b border-gray-200 rounded-t-xl">
             <div class="flex items-center gap-2">
-                <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
+                <div class="w-3 h-3 bg-amber-500 rounded-full"></div>
                 <span class="font-medium text-gray-900">Report #{report.id}</span>
-                <span class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">
+                <span class="px-2 py-1 text-xs bg-amber-100 text-amber-700 rounded-full">
                     {report.entriesCount} tasks completed
                 </span>
             </div>
@@ -157,7 +157,7 @@
                             {item.content}
                         </h2>
                     {:else if item.type === 'task'}
-                        <div class="mb-4 p-4 bg-gray-50 rounded-lg border-l-4 border-blue-400">
+                        <div class="mb-4 p-4 bg-gray-50 rounded-lg border-l-4 border-amber-400">
                             <p class="text-gray-800 font-medium">{item.content}</p>
                         </div>
                     {:else if item.type === 'summary'}
@@ -184,7 +184,7 @@
                 </div>
 
                 <div class="flex gap-3">
-                    <button class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                    <button class="text-amber-600 hover:text-amber-700 text-sm font-medium">
                         Share Report
                     </button>
                 </div>

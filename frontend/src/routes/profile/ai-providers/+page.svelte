@@ -49,12 +49,12 @@
     }
 </script>
 
-<div class="bg-gradient-to-br from-blue-50 via-white to-indigo-50 min-h-screen">
+<div class="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 min-h-screen">
     <div class="container mx-auto px-4 py-8 max-w-6xl">
         <!-- Header -->
         <div class="mb-8">
             <div class="flex items-center gap-4 mb-4">
-                <a href="/profile" class="text-blue-600 hover:text-blue-800 transition-colors" aria-label="Edit ai providers">
+                <a href="/profile" class="text-amber-600 hover:text-amber-800 transition-colors" aria-label="Edit ai providers">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>

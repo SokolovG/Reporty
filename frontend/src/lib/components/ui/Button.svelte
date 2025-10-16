@@ -1,9 +1,9 @@
 <script>
     let { variant = 'primary', text} = $props();
     const variants = {
-        primary: 'bg-blue-600 hover:bg-blue-700',
-        success: 'bg-green-600 hover:bg-green-700',
-        warning: 'bg-yellow-600 hover:bg-yellow-700',
+        primary: 'bg-amber-600 hover:bg-amber-700',
+        success: 'bg-emerald-600 hover:bg-emerald-700',
+        warning: 'bg-orange-600 hover:bg-orange-700',
         danger: 'bg-red-600 hover:bg-red-700',
         purple: 'bg-purple-600 hover:bg-purple-700',
         indigo: 'bg-indigo-600 hover:bg-indigo-700'

@@ -45,7 +45,7 @@
 
 </script>
 
-<div class="bg-gradient-to-br from-blue-50 via-white to-indigo-50 min-h-screen">
+<div class="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 min-h-screen">
     <div class="container mx-auto px-4 py-8 max-w-4xl">
         <!-- Header -->
         <div class="mb-8">
@@ -53,7 +53,7 @@
             <nav class="flex mb-4" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 md:space-x-3">
                     <li class="inline-flex items-center">
-                        <a href="/" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+                        <a href="/" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-amber-600">
                             <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
                             </svg>
@@ -80,7 +80,7 @@
             <div class="lg:col-span-2 space-y-6">
                 <!-- Personal Information Card -->
                 <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4">
+                    <div class="bg-gradient-to-r from-amber-600 to-orange-600 px-6 py-4">
                         <div class="flex items-center justify-between">
                             <h2 class="text-xl font-semibold text-white flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -104,7 +104,7 @@
                         {#if !isEditing}
                             <div class="space-y-4">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
                                         {user.name ? user.name.split(' ').map(n => n[0]).join('') : 'U'}
                                     </div>
                                     <div>
@@ -265,7 +265,7 @@
                                             bind:checked={aiEditForm.aiAutoProcess}
                                             class="sr-only peer"
                                         />
-                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-amber-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
                                     </label>
                                 </div>
 
@@ -274,7 +274,7 @@
                                         <div class="block text-sm font-medium text-gray-700">AI Provider</div>
                                         <a
                                             href="/profile/ai-providers"
-                                            class="text-xs text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1"
+                                            class="text-xs text-amber-600 hover:text-amber-800 transition-colors flex items-center gap-1"
                                         >
                                             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -329,7 +329,7 @@
             <div class="space-y-6">
                 <!-- Task Types Card -->
                 <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-                    <div class="bg-gradient-to-r from-green-600 to-teal-600 px-6 py-4">
+                    <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-4">
                         <div class="flex items-center justify-between">
                             <h2 class="text-xl font-semibold text-white flex items-center gap-2">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -431,7 +431,7 @@
 
                 <!-- Quick Stats Card -->
                 <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-                    <div class="bg-gradient-to-r from-orange-600 to-red-600 px-6 py-4">
+                    <div class="bg-gradient-to-r from-stone-600 to-amber-700 px-6 py-4">
                         <h2 class="text-xl font-semibold text-white flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -458,7 +458,7 @@
                     </div>
                 </div>
                 <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-                    <div class="bg-gradient-to-r from-red-600 to-pink-600 px-6 py-4">
+                    <div class="bg-gradient-to-r from-red-600 to-rose-600 px-6 py-4">
                         <h2 class="text-xl font-semibold text-white flex items-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -474,7 +474,7 @@
                             class="space-y-4">
                             <button
                                 type="submit"
-                                class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-lg transition-colors flex items-center justify-center gap-2 font-medium">
+                                class="w-full bg-rose-600 hover:bg-rose-700 text-white px-4 py-3 rounded-lg transition-colors flex items-center justify-center gap-2 font-medium">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                 </svg>
