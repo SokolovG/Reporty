@@ -139,14 +139,6 @@
                             </form>
                     </div>
 
-                    {#if record.isProcessed}
-                        <div class="bg-amber-50 border border-amber-200 rounded p-3 mb-3">
-                            <div class="text-sm text-amber-900">
-                                ✨ AI has processed this record successfully.
-                            </div>
-                        </div>
-                    {/if}
-
                     <!-- Footer -->
                     <div class="flex items-center justify-between text-sm text-gray-500">
                         <span class="ml-1">

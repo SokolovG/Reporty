@@ -1,4 +1,5 @@
 
+import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad, Actions } from "./$types";
 
 export const load: PageServerLoad = async ({ fetch }) => {
@@ -12,7 +13,6 @@ export const load: PageServerLoad = async ({ fetch }) => {
         const reports = await reportsResponse.json();
         return { reports };
     } catch (error) {
-        // If it's a redirect, re-throw it
         if (error instanceof Response) {
             console.error(error)
             throw error;
@@ -42,6 +42,8 @@ export const actions: Actions = {
         } catch (error) {
 
         }
+        throw redirect(303, "/reports");
     }
+
 
 }
