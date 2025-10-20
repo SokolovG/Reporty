@@ -25,6 +25,7 @@ from backend.src.api.dto import (
     ExternalSystemUpdateRequest,
 )
 from backend.src.api.dto.auth_dto import UserResponse, UserUpdateRequest
+from backend.src.services.crypto_service import CryptoService
 
 
 class SettingsService:
@@ -34,7 +35,9 @@ class SettingsService:
         ai_models_repository: AIModelRepository,
         user_repository: UserRepository,
         external_system_repository: ExternalSystemRepository,
+        crypto_service: CryptoService,
     ) -> None:
+        self.crypto_service = crypto_service
         self.ai_provider_repository = ai_provider_repository
         self.ai_models_repository = ai_models_repository
         self.user_repository = user_repository
@@ -216,8 +219,8 @@ class SettingsService:
             if data.ai_model_id:
                 user.ai_model_id = data.ai_model_id
             if data.api_key is not None and data.api_key.strip():
-                # TODO: Encrypt API key before saving
-                ai_provider.encrypted_api_key = data.api_key  # Will be encrypted later
+                encrypted_api_key = self.crypto_service.encrypt(data.api_key)
+                ai_provider.encrypted_api_key = encrypted_api_key
 
             await self.ai_provider_repository.session.commit()
 
