@@ -225,7 +225,6 @@ class AIProvider(Base):
 
     requires_api_key: Mapped[bool] = mapped_column(default=True)
     is_active: Mapped[bool] = mapped_column(default=True)
-    encrypted_api_key: Mapped[str] = mapped_column(String(500), nullable=True)
 
     models: Mapped[list["AIModel"]] = relationship(
         "AIModel", back_populates="provider", cascade="all, delete-orphan"
@@ -305,3 +304,24 @@ class TaskType(Base):
 
     def __str__(self) -> str:
         return str(self.title)
+
+
+class AIProviderKey(Base):
+    __tablename__ = "ai_provider_keys"
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    ai_provider_id: Mapped[int] = mapped_column(ForeignKey("ai_providers.id"), nullable=False)
+    encrypted_key: Mapped[bytes] = mapped_column(nullable=False)
+    is_active: Mapped[bool] = mapped_column(default=True)
+    last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    user: Mapped["User"] = relationship("User")
+    provider: Mapped["AIProvider"] = relationship("AIProvider")
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "ai_provider_id", name="uk_user_provider_key"),
+        Index("ix_ai_provider_keys_user_active", "user_id", "is_active"),
+    )
+
+    def __str__(self) -> str:
+        return str(f"{self.provider}_{self.user_id}")

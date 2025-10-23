@@ -172,7 +172,7 @@ class SettingsService:
         except Exception as e:
             raise InternalServerError(f"Failed to update AI preferences: {str(e)}")
 
-    async def get_active_ai_providers(self, user_id: int) -> list[AIProviderResponse]:
+    async def get_active_ai_providers(self) -> list[AIProviderResponse]:
         """Get only active AI providers."""
         try:
             result = await self.ai_provider_repository.session.execute(
@@ -219,8 +219,7 @@ class SettingsService:
             if data.ai_model_id:
                 user.ai_model_id = data.ai_model_id
             if data.api_key is not None and data.api_key.strip():
-                encrypted_api_key = self.crypto_service.encrypt(data.api_key)
-                ai_provider.encrypted_api_key = encrypted_api_key
+                encrypted_api_key = self.crypto_service.encrypt(data.api_key)  # noqa
 
             await self.ai_provider_repository.session.commit()
 

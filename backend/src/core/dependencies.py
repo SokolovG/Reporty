@@ -13,6 +13,7 @@ from backend.src.database.repositories import (
     UserRepository,
     AIProviderRepository,
     AIModelRepository,
+    AIProviderKeyRepository,
 )
 from backend.src.services import (
     ReportService,
@@ -59,6 +60,10 @@ class MyProvider(Provider):
         return AIModelRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
+    def ai_key_repo(self, db_session: AsyncSession) -> AIProviderKeyRepository:
+        return AIProviderKeyRepository(session=db_session)
+
+    @provide(scope=Scope.REQUEST)
     def external_system_repo(self, db_session: AsyncSession) -> ExternalSystemRepository:
         return ExternalSystemRepository(session=db_session)
 
@@ -76,8 +81,10 @@ class MyProvider(Provider):
         return ExternalTaskRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
-    def crypto_service(self, db_session: AsyncSession) -> CryptoService:
-        return CryptoService()
+    def crypto_service(
+        self, db_session: AsyncSession, api_key_repo: AIProviderKeyRepository
+    ) -> CryptoService:
+        return CryptoService(api_key_repo=api_key_repo)
 
     @provide(scope=Scope.REQUEST)
     def task_service(
@@ -94,12 +101,14 @@ class MyProvider(Provider):
         external_system_repo: ExternalSystemRepository,
         ai_model_repo: AIModelRepository,
         user_repo: UserRepository,
+        crypto_service: CryptoService,
     ) -> SettingsService:
         return SettingsService(
             ai_provider_repository=ai_provider_repo,
             ai_models_repository=ai_model_repo,
             external_system_repository=external_system_repo,
             user_repository=user_repo,
+            crypto_service=crypto_service,
         )
 
     @provide(scope=Scope.REQUEST)

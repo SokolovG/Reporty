@@ -21,9 +21,8 @@ class Settings(BaseSettings):
     secret_key: str = os.getenv("SECRET_KEY", "")
     public_key: Path = BASE_DIR / ".certs" / "jwt-public.pem"
     private_key: Path = BASE_DIR / ".certs" / "jwt-private.pem"
+    master_encrypted_key: Path = BASE_DIR / ".certs" / "encryption_key"
     algorithm: str = "RS256"
-
-    ai_api_key: str | None = os.getenv("AI_API_KEY", None)
 
     default_external_system: str | None = os.getenv("DEFAULT_EXTERNAL_SYSTEM", None)
 
