@@ -1,4 +1,4 @@
-class CryptoService:
+class EncryptionService:
     async def encrypt(self, data: str) -> str:
         return ""
 

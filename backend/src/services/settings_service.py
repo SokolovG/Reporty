@@ -26,7 +26,7 @@ from backend.src.api.dto import (
 )
 from backend.src.api.dto.auth_dto import UserResponse, UserUpdateRequest
 from backend.src.database.repositories.ai_repository import AIProviderKeyRepository
-from backend.src.services.crypto_service import CryptoService
+from backend.src.services.encryption_service import EncryptionService
 
 
 class SettingsService:
@@ -36,10 +36,10 @@ class SettingsService:
         ai_models_repository: AIModelRepository,
         user_repository: UserRepository,
         external_system_repository: ExternalSystemRepository,
-        crypto_service: CryptoService,
+        encryption_service: EncryptionService,
         api_key_repo: AIProviderKeyRepository,
     ) -> None:
-        self.crypto_service = crypto_service
+        self.encryption_service = encryption_service
         self.ai_provider_repository = ai_provider_repository
         self.ai_models_repository = ai_models_repository
         self.user_repository = user_repository
@@ -222,7 +222,7 @@ class SettingsService:
             if data.ai_model_id:
                 user.ai_model_id = data.ai_model_id
             if data.api_key:
-                encrypted_api_key = await self.crypto_service.encrypt(data.api_key)
+                encrypted_api_key = await self.encryption_service.encrypt(data.api_key)
                 ai_key_model = AIProviderKey(
                     user_id=user_id,
                     ai_provider_id=ai_provider_id,

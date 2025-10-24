@@ -46,4 +46,4 @@ logging_config = LoggingConfig(
 def get_sync_engine() -> Engine:
     """Get synchronous engine for SQLAdmin."""
     sync_url = settings.database_url
-    return create_engine(sync_url, echo=settings.debug)
+    return create_engine(sync_url, echo=settings.DEBUG)
