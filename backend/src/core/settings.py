@@ -20,8 +20,8 @@ class Settings(BaseSettings):
     DEBUG: bool = os.getenv("DEBUG", "False").lower() == "true"
     SECRET_KEY: str = os.getenv("SECRET_KEY", "")
     MASTER_ENCRYPTION_KEY: str = os.getenv("MASTER_ENCRYPTION_KEY", "")
-    PUBLIC_KEY: Path = BASE_DIR / ".certs" / "jwt-public.pem"
-    PRIVATE_KEY: Path = BASE_DIR / ".certs" / "jwt-private.pem"
+    JWT_PUBLIC_KEY: str = os.getenv("JWT_PUBLIC_KEY", "")
+    JWT_PRIVATE_KEY: str = os.getenv("JWT_PRIVATE_KEY", "")
     ALHOTIRHM: str = "RS256"
 
     DEFAULT_EXTERNAL_SYSTEM: str | None = os.getenv("DEFAULT_EXTERNAL_SYSTEM", None)

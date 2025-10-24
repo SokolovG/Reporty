@@ -149,7 +149,6 @@ class AIProviderAdmin(ModelView, model=AIProvider):
         AIProvider.name,
         AIProvider.base_prompt,
         AIProvider.requires_api_key,
-        AIProvider.encrypted_api_key,
         AIProvider.is_active,
         AIProvider.models,
     ]

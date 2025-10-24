@@ -12,4 +12,4 @@ class AIModelRepository(repository.SQLAlchemyAsyncRepository[AIModel]):  # type:
 
 
 class AIProviderKeyRepository(repository.SQLAlchemyAsyncRepository[AIProviderKey]):  # type: ignore
-    model_type: type[AIProviderKey]
+    model_type: type[AIProviderKey] = AIProviderKey

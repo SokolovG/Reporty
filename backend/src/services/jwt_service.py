@@ -17,17 +17,16 @@ class JWTService:
             "type": "access",
         }
 
-        with open(settings.PRIVATE_KEY, "rb") as key_file:
-            pv_key = key_file.read()
-        token: str = jwt.encode(payload=payload, key=pv_key, algorithm=settings.ALHOTIRHM)
+        token: str = jwt.encode(
+            payload=payload, key=settings.JWT_PRIVATE_KEY, algorithm=settings.ALHOTIRHM
+        )
         return token
 
     async def verify_token(self, token: str, expected_type: str = "access") -> dict:
         try:
-            with open(settings.PUBLIC_KEY, "rb") as key_file:
-                public_key = key_file.read()
-
-            payload: dict = jwt.decode(token, public_key, algorithms=[settings.ALHOTIRHM])
+            payload: dict = jwt.decode(
+                token, settings.JWT_PUBLIC_KEY, algorithms=[settings.ALHOTIRHM]
+            )
             token_type = payload.get("type")
             if token_type != expected_type:
                 raise AuthenticationError(
@@ -45,9 +44,9 @@ class JWTService:
             "type": "refresh",
         }
 
-        with open(settings.PRIVATE_KEY, "rb") as key_file:
-            pv_key = key_file.read()
-        token: str = jwt.encode(payload=payload, key=pv_key, algorithm=settings.ALHOTIRHM)
+        token: str = jwt.encode(
+            payload=payload, key=settings.JWT_PRIVATE_KEY, algorithm=settings.ALHOTIRHM
+        )
         return token
 
     def hash_password(self, password: str) -> str:

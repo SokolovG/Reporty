@@ -18,7 +18,7 @@ class EncryptionService:
             )
 
         try:
-            self.fernet = Fernet(self.master_key.encode())
+            self.fernet = Fernet(self.master_key)
             logger.info("Encryption service initialized successfully")
         except Exception as e:
             logger.error(f"Failed to initialize encryption: {e}")

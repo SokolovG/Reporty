@@ -14,6 +14,11 @@ from backend.src.database.models import (
     ExternalTask,
     Report,
     User,
+    AIProvider,
+    AIModel,
+    TaskType,
+    AIProviderKey
+
 )
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
