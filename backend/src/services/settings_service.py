@@ -14,7 +14,7 @@ from backend.src.database.repositories import (
     ExternalSystemRepository,
     AIModelRepository,
 )
-from backend.src.database.models import TaskType, AIProvider, User, ExternalSystem
+from backend.src.database.models import AIProviderKey, TaskType, AIProvider, User, ExternalSystem
 from backend.src.api.dto import (
     TaskTypeRequest,
     TaskTypeUpdateRequest,
@@ -25,6 +25,7 @@ from backend.src.api.dto import (
     ExternalSystemUpdateRequest,
 )
 from backend.src.api.dto.auth_dto import UserResponse, UserUpdateRequest
+from backend.src.database.repositories.ai_repository import AIProviderKeyRepository
 from backend.src.services.crypto_service import CryptoService
 
 
@@ -36,12 +37,14 @@ class SettingsService:
         user_repository: UserRepository,
         external_system_repository: ExternalSystemRepository,
         crypto_service: CryptoService,
+        api_key_repo: AIProviderKeyRepository,
     ) -> None:
         self.crypto_service = crypto_service
         self.ai_provider_repository = ai_provider_repository
         self.ai_models_repository = ai_models_repository
         self.user_repository = user_repository
         self.external_system_repository = external_system_repository
+        self.api_key_repo = api_key_repo
         self._to_task_type_response = get_converter(TaskType, TaskTypeResponse)
         self._to_ai_provider_response = get_converter(AIProvider, AIProviderResponse)
         self._to_external_system_response = get_converter(ExternalSystem, ExternalSystemResponse)
@@ -218,8 +221,15 @@ class SettingsService:
 
             if data.ai_model_id:
                 user.ai_model_id = data.ai_model_id
-            if data.api_key is not None and data.api_key.strip():
-                encrypted_api_key = self.crypto_service.encrypt(data.api_key)  # noqa
+            if data.api_key:
+                encrypted_api_key = await self.crypto_service.encrypt(data.api_key)
+                ai_key_model = AIProviderKey(
+                    user_id=user_id,
+                    ai_provider_id=ai_provider_id,
+                    encrypted_key=encrypted_api_key,
+                )
+                await self.api_key_repo.add(ai_key_model)
+                await self.api_key_repo.session.commit()
 
             await self.ai_provider_repository.session.commit()
 
