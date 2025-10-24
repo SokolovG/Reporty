@@ -80,7 +80,7 @@ class MyProvider(Provider):
     def external_task_repo(self, db_session: AsyncSession) -> ExternalTaskRepository:
         return ExternalTaskRepository(session=db_session)
 
-    @provide(scope=Scope.REQUEST)
+    @provide(scope=Scope.APP)
     def encryption_service(self) -> EncryptionService:
         return EncryptionService()
 

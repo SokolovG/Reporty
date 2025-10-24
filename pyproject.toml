@@ -13,6 +13,7 @@ dependencies = [
     "asyncpg>=0.30.0",
     "bcrypt>=4.3.0",
     "black>=25.1.0",
+    "cryptography>=45.0.3",
     "dishka>=1.6.0",
     "dotenv>=0.9.9",
     "litestar>=2.16.0",
