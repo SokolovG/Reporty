@@ -223,12 +223,12 @@ class SettingsService:
                 user.ai_model_id = data.ai_model_id
             if data.api_key:
                 encrypted_api_key = await self.encryption_service.encrypt(data.api_key)
-                ai_key_model = AIProviderKey(
+                api_key = AIProviderKey(
                     user_id=user_id,
                     ai_provider_id=ai_provider_id,
                     encrypted_key=encrypted_api_key,
                 )
-                await self.api_key_repo.add(ai_key_model)
+                api_key_model = await self.api_key_repo.add(api_key)
                 await self.api_key_repo.session.commit()
 
             await self.ai_provider_repository.session.commit()
@@ -240,6 +240,7 @@ class SettingsService:
                 requires_api_key=ai_provider.requires_api_key,
                 is_active=ai_provider.is_active,
                 models=models_response,
+                is_key_set=True if api_key_model else False 
             )
 
         except NotFoundError:

@@ -54,6 +54,7 @@ class AIProviderResponse(msgspec.Struct):
     name: str
     requires_api_key: bool
     is_active: bool
+    is_key_set: bool
     models: list[AIModelResponse] = []
 
 
