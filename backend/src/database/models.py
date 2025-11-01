@@ -16,9 +16,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.src.database.base import Base, RecordStatus
 
 
-# TODO: USER_ID NULLABLE=FALSE!
-
-
 class DailyRecord(Base):
     """Daily developer record."""
 
@@ -120,11 +117,9 @@ class ExternalTask(Base):
 
     __tablename__ = "external_tasks"
 
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"), nullable=True, comment="ID пользователя"
-    )
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, comment="User ID")
     external_id: Mapped[int | None] = mapped_column(
-        Integer, nullable=True, comment="Task ID in external system"
+        Integer, nullable=False, comment="Task ID in external system"
     )
     external_system_id: Mapped[int] = mapped_column(
         ForeignKey("external_systems.id"),
@@ -132,7 +127,7 @@ class ExternalTask(Base):
         comment="Link to external system",
     )
 
-    title: Mapped[str | None] = mapped_column(String(500), nullable=True, comment="Task title")
+    title: Mapped[str | None] = mapped_column(String(500), nullable=False, comment="Task title")
     description: Mapped[str | None] = mapped_column(Text, nullable=True, comment="Task description")
     status: Mapped[str] = mapped_column(String(100), nullable=False, comment="Task status")
     url: Mapped[str] = mapped_column(String(256), nullable=False, comment="Task link")
@@ -185,7 +180,7 @@ class Report(Base):
 
     __tablename__ = "reports"
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True, comment="User ID")
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, comment="User ID")
     report_date: Mapped[datetime] = mapped_column(DateTime, nullable=False, comment="Report date")
 
     content: Mapped[str] = mapped_column(Text, nullable=False, comment="Generated report content")
@@ -261,7 +256,7 @@ class User(Base):
         String(50), unique=True, nullable=False, comment="Username for authentication"
     )
     email: Mapped[str] = mapped_column(
-        String(50), unique=True, nullable=True, comment="Email for authentication"
+        String(50), unique=True, nullable=False, comment="Email for authentication"
     )
     password_hash: Mapped[str] = mapped_column(String, nullable=False, comment="Password hash")
     is_active: Mapped[bool] = mapped_column(Boolean, default=False)

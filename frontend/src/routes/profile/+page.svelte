@@ -243,7 +243,8 @@
                                 </div>
                             </div>
                         {:else}
-                            # TODO: user can select from a list only ai provider when ai key configured, or it is local ai
+                            <!-- # TODO: user can select from a list only ai provider when ai key configured, or it is local ai -->
+                             <!-- #TODO: add reactivity in all ui -->
                             <form
                                 method="POST"
                                 action="?/updateAISettings"
