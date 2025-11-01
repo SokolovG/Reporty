@@ -46,7 +46,7 @@ class SettingsService:
         self.external_system_repository = external_system_repository
         self.api_key_repo = api_key_repo
         self._to_task_type_response = get_converter(TaskType, TaskTypeResponse)
-        self._to_ai_provider_response = get_converter(AIProvider, AIProviderResponse)
+        # self._to_ai_provider_response = get_converter(AIProvider, AIProviderResponse)
         self._to_external_system_response = get_converter(ExternalSystem, ExternalSystemResponse)
         self._to_user_response = get_converter(User, UserResponse)
         self._to_ai_preferences_response = get_converter(User, AIPreferencesResponse)
@@ -175,7 +175,7 @@ class SettingsService:
         except Exception as e:
             raise InternalServerError(f"Failed to update AI preferences: {str(e)}")
 
-    async def get_active_ai_providers(self) -> list[AIProviderResponse]:
+    async def get_active_ai_providers(self, user_id: int) -> list[AIProviderResponse]:
         """Get only active AI providers."""
         try:
             result = await self.ai_provider_repository.session.execute(
@@ -185,6 +185,9 @@ class SettingsService:
             )
             providers = result.scalars().all()
             response_list = []
+
+            user_provider_ids = await self.api_key_repo.get_all_keys_for_user(user_id=user_id)
+
             for provider in providers:
                 models_response = [AIModelResponse(id=m.id, name=m.name) for m in provider.models]
                 provider_response = AIProviderResponse(
@@ -193,6 +196,7 @@ class SettingsService:
                     requires_api_key=provider.requires_api_key,
                     is_active=provider.is_active,
                     models=models_response,
+                    is_key_set=provider.id in user_provider_ids,
                 )
                 response_list.append(provider_response)
             return response_list
@@ -240,7 +244,7 @@ class SettingsService:
                 requires_api_key=ai_provider.requires_api_key,
                 is_active=ai_provider.is_active,
                 models=models_response,
-                is_key_set=True if api_key_model else False 
+                is_key_set=True if api_key_model else False,
             )
 
         except NotFoundError:

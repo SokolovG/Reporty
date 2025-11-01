@@ -2,6 +2,7 @@
     import { getContext } from 'svelte';
     import { Button } from "$lib";
     import { enhance } from '$app/forms';
+    import { on } from 'svelte/events';
 
     const userContext = getContext("user")
     let user = $state({ ...userContext })
@@ -242,6 +243,7 @@
                                 </div>
                             </div>
                         {:else}
+                            # TODO: user can select from a list only ai provider when ai key configured, or it is local ai
                             <form
                                 method="POST"
                                 action="?/updateAISettings"

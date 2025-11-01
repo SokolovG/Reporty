@@ -56,7 +56,8 @@ class ProfileController(Controller):
         self, request: Request, settings_service: FromDishka[SettingsService]
     ) -> SuccessResponse:
         """Get available AI providers for user selection."""
-        providers = await settings_service.get_active_ai_providers()
+        user_id = request.user.id
+        providers = await settings_service.get_active_ai_providers(user_id=user_id)
         return SuccessResponse(
             message="Available AI providers retrieved successfully", data=providers
         )

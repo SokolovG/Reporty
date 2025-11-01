@@ -164,12 +164,16 @@
                                     <div class="text-sm font-medium text-gray-500">Model</div>
                                     <p class="text-gray-900">{provider.models.find(model => model.id == user.aiModelId)?.name || 'Not specified'}</p>
                                 </div>
-
-                                <div>
-                                    <div class="text-sm font-medium text-gray-500">API Key Required</div>
-                                    <p class="text-gray-900">{provider.requiresApiKey ? 'Yes' : 'No'}</p>
-                                </div>
-
+                                {#if provider.isKeySet}
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-900">API Key: Configured</div>
+                                    </div>
+                                {:else}
+                                    <div>
+                                        <div class="text-sm font-medium text-gray-500">API Key Required</div>
+                                        <p class="text-gray-900">{provider.requiresApiKey ? 'Yes' : 'No'}</p>
+                                    </div>
+                                {/if}
                             </div>
                         {/if}
                     </div>
