@@ -62,6 +62,7 @@ class AuthController(Controller):
     async def logout(self, request: Request) -> Response[SuccessResponse]:
         """Logout user by clearing refresh token cookie."""
         success_response = SuccessResponse(message="Successfully logged out")
+        # TODO: make token not valid
         response = SuccessResponseDTO.create_response_with_cookies(
             request=request,
             success_response=success_response,

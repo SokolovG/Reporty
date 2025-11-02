@@ -11,6 +11,9 @@ BASE_DIR = Path(__file__).parent.parent.parent
 
 
 class Settings(BaseSettings):
+    def __init__(self) -> None:
+        self.validate_required_secrets()
+
     # Database
     DB_HOST: str = os.getenv("DB_HOST", "db")
     DB_PORT: int = int(os.getenv("DB_PORT", "5432"))
@@ -40,6 +43,19 @@ class Settings(BaseSettings):
             },
         }
     )
+
+    @property
+    def validate_required_secrets(self) -> None:
+        required = {
+            "SECRET_KEY": self.SECRET_KEY,
+            "MASTER_ENCRYPTION_KEY": self.MASTER_ENCRYPTION_KEY,
+            "JWT_PUBLIC_KEY": self.JWT_PUBLIC_KEY,
+            "JWT_PRIVATE_KEY": self.JWT_PRIVATE_KEY,
+        }
+
+        missing = [k for k, v in required.items() if not v]
+        if missing:
+            raise ValueError(f"Missing required environment variables: {', '.join(missing)}")
 
     def get_enabled_systems(self) -> list[str]:
         """Get a list of enabled external systems."""

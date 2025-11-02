@@ -68,7 +68,7 @@ class AuthService:
         if not user:
             raise AuthenticationError("Invalid email or password", {"email": data.email})
 
-        success = await self.jwt_service.verify_password(data.password, user.hashed_password)
+        success = await self.jwt_service.verify_password(data.password, user.password_hash)
 
         if not success:
             raise AuthenticationError("Invalid email or password", {"email": data.email})

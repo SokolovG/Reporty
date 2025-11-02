@@ -39,6 +39,8 @@ class ReportService:
                 status=RecordStatus.OPEN, user_id=user_id
             )
 
+            # TODO: make better SQL, not N+1
+
             set_ids = set()
             unique_records = []
             for record in list(open_records) + list(today_records):
