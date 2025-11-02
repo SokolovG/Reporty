@@ -14,6 +14,7 @@ from backend.src.core.exceptions import (
     InternalServerError,
     NotFoundError,
 )
+from backend.src.core.validators import EmailValidator, PasswordValidator
 from backend.src.database.models import AIProvider, User
 from backend.src.database.repositories import UserRepository
 from backend.src.services.jwt_service import JWTService
@@ -36,6 +37,8 @@ class AuthService:
 
     async def register(self, data: RegisterRequest) -> UserResponse:
         """Register a new user."""
+        EmailValidator.validate(data.email)
+        PasswordValidator.validate(data.password)
         user = await self.repo.get_one_or_none(email=data.email)
         if user:
             raise ConflictError(
@@ -65,8 +68,7 @@ class AuthService:
         if not user:
             raise AuthenticationError("Invalid email or password", {"email": data.email})
 
-        hashed_password = await self.repo.get_hashed_password(email=data.email)
-        success = await self.jwt_service.verify_password(data.password, hashed_password)
+        success = await self.jwt_service.verify_password(data.password, user.hashed_password)
 
         if not success:
             raise AuthenticationError("Invalid email or password", {"email": data.email})

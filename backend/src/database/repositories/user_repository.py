@@ -53,12 +53,6 @@ class UserRepository(repository.SQLAlchemyAsyncRepository[User]):  # type: ignor
         await self.session.commit()
         return user
 
-    async def get_hashed_password(self, email: str) -> str:
-        """Get user's password hash by email."""
-        user = await self.get_one(email=email)
-        hash: str = user.password_hash
-        return hash
-
     # async def get_task_types_by_user_id(self, user_id: int) -> Sequence[TaskType]:
     #     """Get task types for user."""
     #     result = await self.session.execute(

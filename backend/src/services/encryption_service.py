@@ -23,7 +23,7 @@ class EncryptionService:
             logger.error(f"Failed to initialize encryption: {e}")
             raise
 
-    async def encrypt(self, plain_text: str) -> str:
+    async def encrypt(self, plain_text: str) -> bytes:
         """
         Encrypt plain text string.
 
@@ -48,7 +48,7 @@ class EncryptionService:
             logger.error(f"Encryption failed: {e}")
             raise
 
-    async def decrypt(self, encrypted_data: str) -> str:
+    async def decrypt(self, encrypted_data: bytes) -> str:
         """
         Decrypt encrypted bytes back to string.
 
