@@ -1,7 +1,7 @@
 import uvicorn
 from dishka import make_async_container
 from dishka.integrations.litestar import setup_dishka, LitestarProvider
-from litestar import Litestar
+from litestar import Litestar, Request
 from litestar.config.cors import CORSConfig
 from litestar.types import ASGIApp
 from litestar.openapi.config import OpenAPIConfig
@@ -11,6 +11,7 @@ from litestar.middleware import DefineMiddleware
 from litestar import Response
 
 from backend.src.api.middleware import ErrorHandlerMiddleware, JWTAuthenticationMiddleware
+from backend.src.core import settings
 from backend.src.core.exceptions import ApiException
 from backend.src.api.responses.base_responses import ErrorResponse
 from backend.src.api.routes import (
@@ -37,11 +38,13 @@ from backend.src.core.config import (
     logging_config,
 )
 from backend.src.core.dependencies import MyProvider
+from backend.src.services.admin_service import AdminAuth
 
 sqlalchemy_plugin = get_sqlalchemy_plugin()
 sqlalchemy_config = get_sqlalchemy_config()
 admin_plugin = SQLAdminPlugin(
     engine=get_sync_engine(),
+    authentication_backend=AdminAuth(secret_key=settings.SECRET_KEY),  # type: ignore
     base_url="/admin",
     views=[
         DailyRecordAdmin,
@@ -81,7 +84,7 @@ openapi_config = OpenAPIConfig(
 )
 
 
-def api_exception_handler(request, exc: ApiException) -> Response:
+def api_exception_handler(request: Request, exc: ApiException) -> Response:
     """Handle ApiException and return proper JSON response."""
     error_response = ErrorResponse(
         error_code=exc.error_code,
@@ -90,9 +93,7 @@ def api_exception_handler(request, exc: ApiException) -> Response:
         details=exc.details,
     )
     return Response(
-        content=error_response,
-        status_code=exc.status_code,
-        media_type="application/json"
+        content=error_response, status_code=exc.status_code, media_type="application/json"
     )
 
 

@@ -18,7 +18,7 @@ def get_sqlalchemy_config() -> SQLAlchemyAsyncConfig:
         create_all=False,
         metadata=Base.metadata,
         engine_config=EngineConfig(echo=False),
-        before_send_handler="autocommit",
+        # before_send_handler="autocommit",
         session_config=AsyncSessionConfig(expire_on_commit=False),
     )
 

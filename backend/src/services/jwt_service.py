@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import bcrypt
 import jwt
@@ -12,8 +12,8 @@ class JWTService:
     async def create_access_token(self, user_id: int) -> str:
         payload = {
             "sub": str(user_id),
-            "iat": datetime.utcnow(),
-            "exp": datetime.utcnow() + timedelta(minutes=15),
+            "iat": datetime.now(timezone.utc),
+            "exp": datetime.now(timezone.utc) + timedelta(minutes=15),
             "type": "access",
         }
 
