@@ -18,14 +18,14 @@ class JWTService:
         }
 
         token: str = jwt.encode(
-            payload=payload, key=settings.JWT_PRIVATE_KEY, algorithm=settings.ALHOTIRHM
+            payload=payload, key=settings.JWT_PRIVATE_KEY, algorithm=settings.ALGORITHM
         )
         return token
 
     async def verify_token(self, token: str, expected_type: str = "access") -> dict:
         try:
             payload: dict = jwt.decode(
-                token, settings.JWT_PUBLIC_KEY, algorithms=[settings.ALHOTIRHM]
+                token, settings.JWT_PUBLIC_KEY, algorithms=[settings.ALGORITHM]
             )
             token_type = payload.get("type")
             if token_type != expected_type:
@@ -39,13 +39,13 @@ class JWTService:
     async def create_refresh_token(self, user_id: int) -> str:
         payload = {
             "sub": str(user_id),
-            "iat": datetime.utcnow(),
-            "exp": datetime.utcnow() + timedelta(days=7),
+            "iat": datetime.now(timezone.utc),
+            "exp": datetime.now(timezone.utc) + timedelta(days=7),
             "type": "refresh",
         }
 
         token: str = jwt.encode(
-            payload=payload, key=settings.JWT_PRIVATE_KEY, algorithm=settings.ALHOTIRHM
+            payload=payload, key=settings.JWT_PRIVATE_KEY, algorithm=settings.ALGORITHM
         )
         return token
 

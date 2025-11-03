@@ -3,6 +3,7 @@ from dataclasses import field
 from pathlib import Path
 
 from dotenv import load_dotenv
+from pydantic import model_validator
 from pydantic_settings import BaseSettings
 
 load_dotenv()
@@ -11,9 +12,6 @@ BASE_DIR = Path(__file__).parent.parent.parent
 
 
 class Settings(BaseSettings):
-    def __init__(self) -> None:
-        self.validate_required_secrets()
-
     # Database
     DB_HOST: str = os.getenv("DB_HOST", "db")
     DB_PORT: int = int(os.getenv("DB_PORT", "5432"))
@@ -21,11 +19,11 @@ class Settings(BaseSettings):
     DB_USER: str = os.getenv("DB_USER", "postgres")
     DB_PASSWORD: str = os.getenv("DB_PASSWORD", "password")
     DEBUG: bool = os.getenv("DEBUG", "False").lower() == "true"
-    SECRET_KEY: str = os.getenv("SECRET_KEY", "")
-    MASTER_ENCRYPTION_KEY: str = os.getenv("MASTER_ENCRYPTION_KEY", "")
-    JWT_PUBLIC_KEY: str = os.getenv("JWT_PUBLIC_KEY", "")
-    JWT_PRIVATE_KEY: str = os.getenv("JWT_PRIVATE_KEY", "")
-    ALHOTIRHM: str = "RS256"
+    SECRET_KEY: str
+    MASTER_ENCRYPTION_KEY: str
+    JWT_PUBLIC_KEY: str
+    JWT_PRIVATE_KEY: str
+    ALGORITHM: str = "RS256"
 
     DEFAULT_EXTERNAL_SYSTEM: str | None = os.getenv("DEFAULT_EXTERNAL_SYSTEM", None)
 
@@ -44,8 +42,9 @@ class Settings(BaseSettings):
         }
     )
 
-    @property
-    def validate_required_secrets(self) -> None:
+    @model_validator(mode="after")
+    def validate_required_secrets(self):
+        """Verification of mandatory secrets AFTER initialisation."""
         required = {
             "SECRET_KEY": self.SECRET_KEY,
             "MASTER_ENCRYPTION_KEY": self.MASTER_ENCRYPTION_KEY,
@@ -55,7 +54,9 @@ class Settings(BaseSettings):
 
         missing = [k for k, v in required.items() if not v]
         if missing:
-            raise ValueError(f"Missing required environment variables: {', '.join(missing)}")
+            raise ValueError(f"Missing required secrets: {', '.join(missing)}")
+
+        return self
 
     def get_enabled_systems(self) -> list[str]:
         """Get a list of enabled external systems."""

@@ -11,7 +11,6 @@ from litestar.middleware import DefineMiddleware
 from litestar import Response
 
 from backend.src.api.middleware import ErrorHandlerMiddleware, JWTAuthenticationMiddleware
-from backend.src.core import settings
 from backend.src.core.exceptions import ApiException
 from backend.src.api.responses.base_responses import ErrorResponse
 from backend.src.api.routes import (
@@ -38,13 +37,13 @@ from backend.src.core.config import (
     logging_config,
 )
 from backend.src.core.dependencies import MyProvider
-from backend.src.services.admin_service import AdminAuth
+# from backend.src.services.admin_service import AdminAuth
 
 sqlalchemy_plugin = get_sqlalchemy_plugin()
 sqlalchemy_config = get_sqlalchemy_config()
 admin_plugin = SQLAdminPlugin(
     engine=get_sync_engine(),
-    authentication_backend=AdminAuth(secret_key=settings.SECRET_KEY),  # type: ignore
+    # authentication_backend=AdminAuth(secret_key=""),  # type: ignore
     base_url="/admin",
     views=[
         DailyRecordAdmin,

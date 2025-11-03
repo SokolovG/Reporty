@@ -275,6 +275,7 @@ class User(Base):
     )
     ai_model: Mapped["AIModel | None"] = relationship("AIModel")
     custom_prompt: Mapped[str] = mapped_column(String, nullable=True, comment="Custom base prompt")
+    is_admin: Mapped[bool] = mapped_column(Boolean, nullable=True, default=False, comment="Role")
 
     def __str__(self) -> str:
         return str(self.name)
