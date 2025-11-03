@@ -22,6 +22,8 @@ from backend.src.services.notification_service import NotificationService
 
 logger = getLogger(__name__)
 
+user_to_response = get_converter(User, UserResponse)
+
 
 class AuthService:
     def __init__(
@@ -33,7 +35,6 @@ class AuthService:
         self.repo = user_repository
         self.jwt_service = jwt_service
         self.notification_service = notification_service
-        self._to_response = get_converter(User, UserResponse)
 
     async def register(self, data: RegisterRequest) -> UserResponse:
         """Register a new user."""
@@ -60,7 +61,7 @@ class AuthService:
             password_hash=hashed_password,
         )
         await self.notification_service.send_register_notification()
-        return self._to_response(user)
+        return user_to_response(user)
 
     async def login(self, data: LoginRequest) -> TokenInfo:
         """Authenticate user and return tokens."""
@@ -102,7 +103,7 @@ class AuthService:
         if not user:
             raise NotFoundError("User")
 
-        return self._to_response(user)
+        return user_to_response(user)
 
     async def reset_password(self) -> None:
         """Reset user password."""

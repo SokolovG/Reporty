@@ -29,6 +29,12 @@ from backend.src.database.repositories.ai_repository import AIProviderKeyReposit
 from backend.src.services.encryption_service import EncryptionService
 
 
+to_task_type_response = get_converter(TaskType, TaskTypeResponse)
+to_external_system_response = get_converter(ExternalSystem, ExternalSystemResponse)
+to_user_response = get_converter(User, UserResponse)
+to_ai_preferences_response = get_converter(User, AIPreferencesResponse)
+
+
 class SettingsService:
     def __init__(
         self,
@@ -45,11 +51,6 @@ class SettingsService:
         self.user_repository = user_repository
         self.external_system_repository = external_system_repository
         self.api_key_repo = api_key_repo
-        self._to_task_type_response = get_converter(TaskType, TaskTypeResponse)
-        # self._to_ai_provider_response = get_converter(AIProvider, AIProviderResponse)
-        self._to_external_system_response = get_converter(ExternalSystem, ExternalSystemResponse)
-        self._to_user_response = get_converter(User, UserResponse)
-        self._to_ai_preferences_response = get_converter(User, AIPreferencesResponse)
 
     async def get_task_types(self, user_id: int) -> list[TaskTypeResponse]:
         """Get all task types for a user."""
@@ -62,7 +63,7 @@ class SettingsService:
             if not user:
                 return []
 
-            return [self._to_task_type_response(task_type) for task_type in user.task_types]
+            return [to_task_type_response(task_type) for task_type in user.task_types]
         except Exception as e:
             raise InternalServerError(f"Failed to get task types: {str(e)}", {"user_id": user_id})
 
@@ -84,7 +85,7 @@ class SettingsService:
             )
             user.task_types.append(task_type)
             await self.user_repository.session.commit()
-            return self._to_task_type_response(task_type)
+            return to_task_type_response(task_type)
         except NotFoundError:
             raise
         except Exception as e:
@@ -119,7 +120,7 @@ class SettingsService:
                 task_type.is_active = data.is_active
 
             await self.user_repository.session.commit()
-            return self._to_task_type_response(task_type)
+            return to_task_type_response(task_type)
         except NotFoundError:
             raise
         except Exception as e:
@@ -170,7 +171,7 @@ class SettingsService:
             if data.custom_prompt is not None:
                 user.custom_prompt = data.custom_prompt
             await self.user_repository.session.commit()
-            return self._to_ai_preferences_response(user)
+            return to_ai_preferences_response(user)
 
         except Exception as e:
             raise InternalServerError(f"Failed to update AI preferences: {str(e)}")
@@ -258,7 +259,7 @@ class SettingsService:
         """Get user with all information."""
         try:
             user = await self.user_repository.get_one(id=user_id)
-            return self._to_user_response(user)
+            return to_user_response(user)
         except Exception as e:
             raise InternalServerError(f"Failed to get user: {str(e)}", {"user_id": user_id})
 
@@ -272,7 +273,7 @@ class SettingsService:
                 position=data.position,
                 email=data.email,
             )
-            return self._to_user_response(user)
+            return to_user_response(user)
         except Exception as e:
             raise InternalServerError(f"Failed to update user: {str(e)}", {"user_id": user_id})
 
@@ -280,7 +281,7 @@ class SettingsService:
         """Get all external systems."""
         try:
             result = await self.external_system_repository.session.execute(select(ExternalSystem))
-            return [self._to_external_system_response(s) for s in result.scalars().all()]
+            return [to_external_system_response(s) for s in result.scalars().all()]
         except Exception as e:
             raise InternalServerError(f"Failed to get external systems: {str(e)}")
 
@@ -290,7 +291,7 @@ class SettingsService:
             result = await self.external_system_repository.session.execute(
                 select(ExternalSystem).where(ExternalSystem.is_active == True)  # noqa: E712
             )
-            return [self._to_external_system_response(s) for s in result.scalars().all()]
+            return [to_external_system_response(s) for s in result.scalars().all()]
         except Exception as e:
             raise InternalServerError(f"Failed to get active external systems: {str(e)}")
 
@@ -312,7 +313,7 @@ class SettingsService:
 
             updated_system = await self.external_system_repository.update(system)
             await self.external_system_repository.session.commit()
-            return self._to_external_system_response(updated_system)
+            return to_external_system_response(updated_system)
         except Exception as e:
             raise InternalServerError(
                 f"Failed to update external system: {str(e)}", {"system_id": system_id}

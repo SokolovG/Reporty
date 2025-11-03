@@ -18,6 +18,9 @@ from backend.src.database.repositories import (
 )
 
 
+record_to_response = get_converter(DailyRecord, DailyRecordResponse)
+
+
 class RecordService:
     def __init__(
         self,
@@ -26,7 +29,6 @@ class RecordService:
     ) -> None:
         self.repo = record_repo
         self.user_repository = user_repository
-        self._to_response = get_converter(DailyRecord, DailyRecordResponse)
         self.ai_service = ""
 
     async def create_record(self, data: DailyRecordRequest, user_id: int) -> DailyRecordResponse:
@@ -41,9 +43,9 @@ class RecordService:
                 saved_record.ai_processed = ai_processed
                 updated_record = await self.repo.update(saved_record)
                 await self.repo.session.commit()
-                return self._to_response(updated_record)
+                return record_to_response(updated_record)
 
-            return self._to_response(saved_record)
+            return record_to_response(saved_record)
         except ValueError as e:
             raise ValidationError(str(e), {"user_id": user_id})
         except Exception as e:
@@ -53,7 +55,7 @@ class RecordService:
         """Get a specific record by ID."""
         try:
             record = await self.repo.get_record(record_id=record_id, user_id=user_id)
-            return self._to_response(record)
+            return record_to_response(record)
         except Exception as e:
             raise InternalServerError(f"Failed to get record: {str(e)}", {"record_id": record_id})
 
@@ -70,7 +72,7 @@ class RecordService:
             else:
                 records = await self.repo.get_all_records(user_id=user_id)
 
-            return [self._to_response(record) for record in records]
+            return [record_to_response(record) for record in records]
         except Exception as e:
             raise InternalServerError(f"Failed to get records: {str(e)}")
 
@@ -85,7 +87,7 @@ class RecordService:
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
-            return self._to_response(updated_record)
+            return record_to_response(updated_record)
         except Exception as e:
             raise InternalServerError(
                 f"Failed to append to record: {str(e)}", {"record_id": record_id}
@@ -112,7 +114,7 @@ class RecordService:
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
-            return self._to_response(updated_record)
+            return record_to_response(updated_record)
         except Exception as e:
             raise InternalServerError(
                 f"Failed to update record: {str(e)}", {"record_id": record_id}
@@ -166,7 +168,7 @@ class RecordService:
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
-            return self._to_response(updated_record)
+            return record_to_response(updated_record)
         except Exception as e:
             raise InternalServerError(
                 f"Failed to link external task: {str(e)}",
@@ -181,7 +183,7 @@ class RecordService:
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
-            return self._to_response(updated_record)
+            return record_to_response(updated_record)
         except Exception as e:
             raise InternalServerError(
                 f"Failed to unlink external task: {str(e)}", {"record_id": record_id}
@@ -200,7 +202,7 @@ class RecordService:
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
-            return self._to_response(updated_record)
+            return record_to_response(updated_record)
         except Exception as e:
             raise InternalServerError(
                 f"Failed to process record with AI: {str(e)}",
@@ -217,7 +219,7 @@ class RecordService:
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
-            return self._to_response(updated_record)
+            return record_to_response(updated_record)
         except Exception as e:
             raise InternalServerError(
                 f"Failed to update record status: {str(e)}", {"record_id": record_id}
@@ -242,7 +244,7 @@ class RecordService:
             record.is_approved = True
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
-            return self._to_response(updated_record)
+            return record_to_response(updated_record)
 
         except Exception as e:
             raise InternalServerError(
