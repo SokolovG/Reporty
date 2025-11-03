@@ -1,6 +1,5 @@
 from logging import getLogger
 from sqlalchemy import select
-from adaptix._internal.conversion.facade.func import get_converter
 
 from backend.src.api.dto import (
     ChangePasswordRequest,
@@ -15,14 +14,13 @@ from backend.src.core.exceptions import (
     NotFoundError,
 )
 from backend.src.core.validators import EmailValidator, PasswordValidator
-from backend.src.database.models import AIProvider, User
+from backend.src.database.models import AIProvider
 from backend.src.database.repositories import UserRepository
 from backend.src.services.jwt_service import JWTService
 from backend.src.services.notification_service import NotificationService
+from backend.src.api.dto.converters import user_to_response
 
 logger = getLogger(__name__)
-
-user_to_response = get_converter(User, UserResponse)
 
 
 class AuthService:

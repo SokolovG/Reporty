@@ -1,7 +1,5 @@
 from datetime import datetime
 
-from adaptix.conversion import get_converter
-
 from backend.src.core.exceptions import InternalServerError, ValidationError
 from backend.src.api.dto import DailyRecordRequest, DailyRecordResponse
 from backend.src.api.dto.record_dto import (
@@ -11,14 +9,11 @@ from backend.src.api.dto.record_dto import (
     AppendToRecordRequest,
     RecordStatusUpdateRequest,
 )
-from backend.src.database.models import DailyRecord
 from backend.src.database.repositories import (
     DailyRecordRepository,
     UserRepository,
 )
-
-
-record_to_response = get_converter(DailyRecord, DailyRecordResponse)
+from backend.src.api.dto.converters import record_to_response
 
 
 class RecordService:

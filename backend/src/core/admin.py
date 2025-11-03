@@ -40,6 +40,7 @@ class UserAdmin(ModelView, model=User):
         User.ai_model_id,
         User.custom_prompt,
         User.is_verify,
+        User.is_admin,
     ]
 
     form_columns = [
@@ -55,6 +56,7 @@ class UserAdmin(ModelView, model=User):
         User.task_types,
         User.is_active,
         User.is_verify,
+        User.is_admin,
     ]
 
 

@@ -1,4 +1,3 @@
-from adaptix.conversion import get_converter
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
@@ -27,12 +26,12 @@ from backend.src.api.dto import (
 from backend.src.api.dto.auth_dto import UserResponse, UserUpdateRequest
 from backend.src.database.repositories.ai_repository import AIProviderKeyRepository
 from backend.src.services.encryption_service import EncryptionService
-
-
-to_task_type_response = get_converter(TaskType, TaskTypeResponse)
-to_external_system_response = get_converter(ExternalSystem, ExternalSystemResponse)
-to_user_response = get_converter(User, UserResponse)
-to_ai_preferences_response = get_converter(User, AIPreferencesResponse)
+from backend.src.api.dto.converters import (
+    task_type_to_response,
+    external_system_to_response,
+    user_to_response,
+    to_ai_preferences_response,
+)
 
 
 class SettingsService:
@@ -63,7 +62,7 @@ class SettingsService:
             if not user:
                 return []
 
-            return [to_task_type_response(task_type) for task_type in user.task_types]
+            return [task_type_to_response(task_type) for task_type in user.task_types]
         except Exception as e:
             raise InternalServerError(f"Failed to get task types: {str(e)}", {"user_id": user_id})
 
@@ -85,7 +84,7 @@ class SettingsService:
             )
             user.task_types.append(task_type)
             await self.user_repository.session.commit()
-            return to_task_type_response(task_type)
+            return task_type_to_response(task_type)
         except NotFoundError:
             raise
         except Exception as e:
@@ -120,7 +119,7 @@ class SettingsService:
                 task_type.is_active = data.is_active
 
             await self.user_repository.session.commit()
-            return to_task_type_response(task_type)
+            return task_type_to_response(task_type)
         except NotFoundError:
             raise
         except Exception as e:
@@ -259,7 +258,7 @@ class SettingsService:
         """Get user with all information."""
         try:
             user = await self.user_repository.get_one(id=user_id)
-            return to_user_response(user)
+            return user_to_response(user)
         except Exception as e:
             raise InternalServerError(f"Failed to get user: {str(e)}", {"user_id": user_id})
 
@@ -273,7 +272,7 @@ class SettingsService:
                 position=data.position,
                 email=data.email,
             )
-            return to_user_response(user)
+            return user_to_response(user)
         except Exception as e:
             raise InternalServerError(f"Failed to update user: {str(e)}", {"user_id": user_id})
 
@@ -281,7 +280,7 @@ class SettingsService:
         """Get all external systems."""
         try:
             result = await self.external_system_repository.session.execute(select(ExternalSystem))
-            return [to_external_system_response(s) for s in result.scalars().all()]
+            return [external_system_to_response(s) for s in result.scalars().all()]
         except Exception as e:
             raise InternalServerError(f"Failed to get external systems: {str(e)}")
 
@@ -291,7 +290,7 @@ class SettingsService:
             result = await self.external_system_repository.session.execute(
                 select(ExternalSystem).where(ExternalSystem.is_active == True)  # noqa: E712
             )
-            return [to_external_system_response(s) for s in result.scalars().all()]
+            return [external_system_to_response(s) for s in result.scalars().all()]
         except Exception as e:
             raise InternalServerError(f"Failed to get active external systems: {str(e)}")
 
@@ -313,7 +312,7 @@ class SettingsService:
 
             updated_system = await self.external_system_repository.update(system)
             await self.external_system_repository.session.commit()
-            return to_external_system_response(updated_system)
+            return external_system_to_response(updated_system)
         except Exception as e:
             raise InternalServerError(
                 f"Failed to update external system: {str(e)}", {"system_id": system_id}
