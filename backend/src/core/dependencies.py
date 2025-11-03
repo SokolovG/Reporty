@@ -1,7 +1,9 @@
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Type, TypeVar
 
 from dishka import Scope, provide
 from dishka.provider import Provider
+from litestar import Request, Litestar
+from starlette.requests import Request as StarletteRequest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.src.core.config import get_sqlalchemy_config
@@ -25,6 +27,19 @@ from backend.src.services import (
     JWTService,
     NotificationService,
 )
+
+
+T = TypeVar("T")
+
+
+async def get_dependency(request: Request | StarletteRequest, dependency_type: Type[T]) -> T:
+    """Helper to get dependencies from Dishka via Starlette request."""
+    litestar_app = Litestar.from_scope(request.scope)
+    container = litestar_app.state.dishka_container
+
+    async with container() as request_container:
+        obj: T = await request_container.get(dependency_type)
+        return obj
 
 
 class MyProvider(Provider):
