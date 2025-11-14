@@ -5,7 +5,7 @@ from advanced_alchemy import repository
 from sqlalchemy import and_, select
 from sqlalchemy.orm import selectinload
 
-from backend.src.api.dto import DailyRecordRequest, RecordStatusUpdateRequest
+from backend.src.api.dto import DailyRecordRequest
 from backend.src.core.exceptions import NotFoundError
 from backend.src.database.base import RecordStatus
 from backend.src.database.models import DailyRecord, ExternalTask
@@ -41,10 +41,6 @@ class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]): 
         if not record:
             raise NotFoundError("Daily record", record_id)
         return record
-
-    async def update_record_status(self, record_id: int, data: RecordStatusUpdateRequest) -> None:
-        # TODO: create logic
-        return None
 
     async def get_by_title_user_and_date(
         self, title: str, user_id: int, day: date
