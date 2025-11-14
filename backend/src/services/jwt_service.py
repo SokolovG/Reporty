@@ -13,7 +13,7 @@ class JWTService:
         payload = {
             "sub": str(user_id),
             "iat": datetime.now(timezone.utc),
-            "exp": datetime.now(timezone.utc) + timedelta(minutes=15),
+            "exp": datetime.now(timezone.utc) + timedelta(minutes=5),
             "type": "access",
         }
 

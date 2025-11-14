@@ -27,14 +27,12 @@ class JWTAuthenticationMiddleware(AbstractAuthenticationMiddleware):
         app = Litestar.from_scope(connection.scope)
         container = app.state.dishka_container
 
-        # Проверяем токен в cookie
         access_token = connection.cookies.get("accessToken")
 
-        # Если нет в cookie, проверяем Authorization header
         if not access_token:
             auth_header = connection.headers.get("authorization")
             if auth_header and auth_header.startswith("Bearer "):
-                access_token = auth_header[7:]  # Убираем "Bearer "
+                access_token = auth_header[7:]  # delete "Bearer "
 
         if not access_token:
             raise AuthenticationError("No access token")
