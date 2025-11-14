@@ -1,14 +1,37 @@
 from advanced_alchemy.config import AsyncSessionConfig
 from advanced_alchemy.extensions.litestar import EngineConfig
 from dotenv import load_dotenv
-from litestar.contrib.sqlalchemy.plugins import SQLAlchemyAsyncConfig, SQLAlchemyPlugin
+from litestar.contrib.sqlalchemy.plugins import SQLAlchemyAsyncConfig
 from litestar.logging import LoggingConfig
+from litestar.config.cors import CORSConfig
 from sqlalchemy import Engine, create_engine
 
 from backend.src.core.settings import settings
 from backend.src.database.base import Base
+from litestar.openapi.config import OpenAPIConfig
+from litestar.openapi.spec import Components, SecurityScheme
+
 
 load_dotenv()
+
+openapi_config = OpenAPIConfig(
+    title="Reporty API",
+    version="1.0.0",
+    components=Components(
+        security_schemes={
+            "BearerAuth": SecurityScheme(
+                type="http",
+                scheme="bearer",
+                bearer_format="JWT",
+            ),
+            "CookieAuth": SecurityScheme(
+                type="apiKey",
+                name="accessToken",
+            ),
+        }
+    ),
+    security=[{"BearerAuth": []}, {"CookieAuth": []}],
+)
 
 
 def get_sqlalchemy_config() -> SQLAlchemyAsyncConfig:
@@ -21,11 +44,6 @@ def get_sqlalchemy_config() -> SQLAlchemyAsyncConfig:
         # before_send_handler="autocommit",
         session_config=AsyncSessionConfig(expire_on_commit=False),
     )
-
-
-def get_sqlalchemy_plugin() -> SQLAlchemyPlugin:
-    """Get SQLAlchemy plugin."""
-    return SQLAlchemyPlugin(config=get_sqlalchemy_config())
 
 
 logging_config = LoggingConfig(
@@ -47,3 +65,11 @@ def get_sync_engine() -> Engine:
     """Get synchronous engine for SQLAdmin."""
     sync_url = settings.database_url
     return create_engine(sync_url, echo=settings.DEBUG)
+
+
+cors_config = CORSConfig(
+    allow_origins=["http://localhost:5173", "http://0.0.0.0:8080"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["authorization"],
+)

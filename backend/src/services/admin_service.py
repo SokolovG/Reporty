@@ -48,8 +48,6 @@ class AdminAuth(AuthenticationBackend):
 
         return False
 
-    # TODO: add new endpoint only for adding admin with flag is_admin true default(OR?)
-
     async def logout(self, request: Request) -> bool:
         request.session.clear()
         return True

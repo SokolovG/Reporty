@@ -2,17 +2,14 @@ import uvicorn
 from dishka import make_async_container
 from dishka.integrations.litestar import setup_dishka, LitestarProvider
 from litestar import Litestar, Request
-from litestar.config.cors import CORSConfig
 from litestar.types import ASGIApp
-from litestar.openapi.config import OpenAPIConfig
-from litestar.openapi.spec import Components, SecurityScheme
-from sqladmin_litestar_plugin import SQLAdminPlugin
 from litestar.middleware import DefineMiddleware
 from litestar import Response
 
 from backend.src.api.middleware import ErrorHandlerMiddleware, JWTAuthenticationMiddleware
+from backend.src.cli.base import cli
 from backend.src.core.exceptions import ApiException
-from backend.src.core.settings import settings
+from backend.src.core.plugins import get_sqlalchemy_plugin, admin_plugin
 from backend.src.api.responses.base_responses import ErrorResponse
 from backend.src.api.routes import (
     record_router,
@@ -21,67 +18,16 @@ from backend.src.api.routes import (
     profile_router,
     auth_router,
 )
-from backend.src.core.admin import (
-    AIModelAdmin,
-    DailyRecordAdmin,
-    ExternalSystemAdmin,
-    ExternalTaskAdmin,
-    ReportAdmin,
-    UserAdmin,
-    AIProviderAdmin,
-    TaskTypeAdmin,
-)
-from backend.src.core.config import (
+from backend.src.core.configs import (
     get_sqlalchemy_config,
-    get_sqlalchemy_plugin,
-    get_sync_engine,
     logging_config,
+    openapi_config,
+    cors_config,
 )
 from backend.src.core.dependencies import MyProvider
-from backend.src.services.admin_service import AdminAuth
 
 sqlalchemy_plugin = get_sqlalchemy_plugin()
 sqlalchemy_config = get_sqlalchemy_config()
-admin_plugin = SQLAdminPlugin(
-    engine=get_sync_engine(),
-    authentication_backend=AdminAuth(secret_key=settings.SECRET_KEY),
-    base_url="/admin",
-    views=[
-        DailyRecordAdmin,
-        ExternalSystemAdmin,
-        ExternalTaskAdmin,
-        ReportAdmin,
-        UserAdmin,
-        AIProviderAdmin,
-        TaskTypeAdmin,
-        AIModelAdmin,
-    ],
-)
-cors_config = CORSConfig(
-    allow_origins=["http://localhost:5173", "http://0.0.0.0:8080"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-    expose_headers=["authorization"],
-)
-
-openapi_config = OpenAPIConfig(
-    title="Reporty API",
-    version="1.0.0",
-    components=Components(
-        security_schemes={
-            "BearerAuth": SecurityScheme(
-                type="http",
-                scheme="bearer",
-                bearer_format="JWT",
-            ),
-            "CookieAuth": SecurityScheme(
-                type="apiKey",
-                name="accessToken",
-            ),
-        }
-    ),
-    security=[{"BearerAuth": []}, {"CookieAuth": []}],
-)
 
 
 def api_exception_handler(request: Request, exc: ApiException) -> Response:
@@ -124,4 +70,5 @@ def create_app() -> ASGIApp:
 app = create_app()
 
 if __name__ == "__main__":
+    cli()
     uvicorn.run(app, host="127.0.0.1", port=8000, reload=True)

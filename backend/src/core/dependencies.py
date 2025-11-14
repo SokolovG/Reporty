@@ -6,7 +6,7 @@ from litestar import Request, Litestar
 from starlette.requests import Request as StarletteRequest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.src.core.config import get_sqlalchemy_config
+from backend.src.core.configs import get_sqlalchemy_config
 from backend.src.database.repositories import (
     DailyRecordRepository,
     ReportRepository,
