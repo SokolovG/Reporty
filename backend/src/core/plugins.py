@@ -1,7 +1,7 @@
 from litestar.contrib.sqlalchemy.plugins import SQLAlchemyPlugin
 from sqladmin_litestar_plugin import SQLAdminPlugin
 
-from backend.src.core import settings
+from backend.src.core.settings import settings
 from backend.src.core.configs import get_sqlalchemy_config, get_sync_engine
 from backend.src.services.admin_service import AdminAuth
 
