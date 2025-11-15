@@ -1,5 +1,4 @@
 from logging import getLogger
-from sqlalchemy import select
 
 from backend.src.api.dto import (
     ChangePasswordRequest,
@@ -10,11 +9,9 @@ from backend.src.api.dto.auth_dto import UserResponse, TokenInfo
 from backend.src.core.exceptions import (
     AuthenticationError,
     ConflictError,
-    InternalServerError,
     NotFoundError,
 )
 from backend.src.core.validators import EmailValidator, PasswordValidator
-from backend.src.database.models import AIProvider
 from backend.src.database.repositories import UserRepository
 from backend.src.services.jwt_service import JWTService
 from backend.src.services.notification_service import NotificationService
@@ -34,7 +31,7 @@ class AuthService:
         self.jwt_service = jwt_service
         self.notification_service = notification_service
 
-    async def register(self, data: RegisterRequest) -> UserResponse:
+    async def register(self, data: RegisterRequest, is_admin: bool = False) -> UserResponse:
         """Register a new user."""
         EmailValidator.validate(data.email)
         PasswordValidator.validate(data.password)
@@ -44,19 +41,9 @@ class AuthService:
                 "User already exists", {"email": data.email, "reason": "email_taken"}
             )
 
-        result = await self.repo.session.execute(
-            select(AIProvider).where(AIProvider.is_active).limit(1)
-        )
-        default_ai_provider = result.scalar_one_or_none()
-
-        if not default_ai_provider:
-            raise InternalServerError("No active AI provider found")
-
         hashed_password = self.jwt_service.hash_password(data.password)
         user = await self.repo.create_user(
-            email=data.email,
-            name=data.name,
-            password_hash=hashed_password,
+            email=data.email, name=data.name, password_hash=hashed_password, is_admin=is_admin
         )
         await self.notification_service.send_register_notification()
         return user_to_response(user)

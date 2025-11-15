@@ -1,5 +1,4 @@
 from advanced_alchemy import repository
-
 from backend.src.database.models import User
 
 
@@ -15,6 +14,7 @@ class UserRepository(repository.SQLAlchemyAsyncRepository[User]):  # type: ignor
         department: str | None = None,
         position: str | None = None,
         ai_auto_process: bool = False,
+        is_admin: bool = False,
     ) -> User:
         """Create a new user with profile information."""
         user = User(
@@ -25,6 +25,7 @@ class UserRepository(repository.SQLAlchemyAsyncRepository[User]):  # type: ignor
             department=department,
             position=position,
             ai_auto_process=ai_auto_process,
+            is_admin=is_admin,
         )
         await self.add(user)
         await self.session.commit()
@@ -52,27 +53,3 @@ class UserRepository(repository.SQLAlchemyAsyncRepository[User]):  # type: ignor
 
         await self.session.commit()
         return user
-
-    # async def get_task_types_by_user_id(self, user_id: int) -> Sequence[TaskType]:
-    #     """Get task types for user."""
-    #     result = await self.session.execute(
-    #         select(TaskType)
-    #         .join(UserProfile, TaskType.user_profile_id == UserProfile.id)
-    #         .where(UserProfile.user_id == user_id)
-    #         .where(TaskType.is_active == True)  # noqa: E712
-    #         .order_by(TaskType.title)
-    #     )
-    #     return result.scalars().all()
-
-    # async def create_task_type(
-    #     self, user_id: int, title: str, color: str | None = None
-    # ) -> TaskType:
-    #     """Create new task type for user."""
-    #     profile = await self.get_by_user_id(user_id)
-
-    #     task_type = TaskType(user_profile_id=profile.id, title=title, color=color)
-
-    #     self.session.add(task_type)
-    #     await self.session.commit()
-    #     await self.session.refresh(task_type)
-    #     return task_type
