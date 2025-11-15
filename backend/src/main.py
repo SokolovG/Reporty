@@ -7,7 +7,6 @@ from litestar.middleware import DefineMiddleware
 from litestar import Response
 
 from backend.src.api.middleware import ErrorHandlerMiddleware, JWTAuthenticationMiddleware
-from backend.src.cli.base import cli
 from backend.src.core.exceptions import ApiException
 from backend.src.core.plugins import get_sqlalchemy_plugin, admin_plugin
 from backend.src.api.responses.base_responses import ErrorResponse
@@ -25,6 +24,7 @@ from backend.src.core.configs import (
     cors_config,
 )
 from backend.src.core.dependencies import MyProvider
+
 
 sqlalchemy_plugin = get_sqlalchemy_plugin()
 sqlalchemy_config = get_sqlalchemy_config()
@@ -70,5 +70,4 @@ def create_app() -> ASGIApp:
 app = create_app()
 
 if __name__ == "__main__":
-    cli()
     uvicorn.run(app, host="127.0.0.1", port=8000, reload=True)
