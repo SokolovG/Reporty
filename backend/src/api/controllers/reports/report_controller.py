@@ -4,7 +4,7 @@ from dishka import FromDishka
 from dishka.integrations.litestar import inject
 from litestar import Controller, delete, get, patch, post, Request
 
-from backend.src.api.dto import (
+from backend.src.api.dto.reports import (
     DailyReportRequest,
     DailyReportRequestDTO,
     DailyReportRequestUpdate,

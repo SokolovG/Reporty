@@ -1,14 +1,13 @@
 from datetime import datetime
 
-from backend.src.core.exceptions import InternalServerError, ValidationError
-from backend.src.api.dto import DailyRecordRequest, DailyRecordResponse
-from backend.src.api.dto.record_dto import (
-    DailyRecordWithTaskResponse,
-    ExternalTaskInfo,
-    DailyRecordUpdateRequest,
+from backend.src.api.dto.records.requests import (
     AppendToRecordRequest,
+    DailyRecordUpdateRequest,
     RecordStatusUpdateRequest,
 )
+from backend.src.api.dto.records.responses import DailyRecordWithTaskResponse, ExternalTaskInfo
+from backend.src.core.exceptions import InternalServerError, ValidationError
+from backend.src.api.dto import DailyRecordRequest, DailyRecordResponse
 from backend.src.database.repositories import (
     DailyRecordRepository,
     UserRepository,

@@ -2,7 +2,7 @@ from starlette.requests import Request
 from sqladmin.authentication import AuthenticationBackend
 
 from backend.src.core.dependencies import get_dependency
-from backend.src.database.repositories.user_repository import UserRepository
+from backend.src.database.repositories.auth.user_repository import UserRepository
 from backend.src.services.auth.jwt_service import JWTService
 
 

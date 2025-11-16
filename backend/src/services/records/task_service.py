@@ -1,16 +1,18 @@
 from datetime import datetime, timezone
 from sqlalchemy import select
 
-from backend.src.core.exceptions import NotFoundError, InternalServerError
-from backend.src.database.repositories.external_system_repository import ExternalSystemRepository
-from backend.src.database.repositories.external_task_repository import (
-    ExternalTaskRepository,
-)
-from backend.src.database.models import ExternalTask
-from backend.src.api.dto.record_dto import (
+from backend.src.api.dto.records.requests import (
     ExternalTaskCreateRequest,
     ExternalTaskUpdateRequest,
-    ExternalTaskResponse,
+)
+from backend.src.api.dto.records.responses import ExternalTaskResponse
+from backend.src.core.exceptions import NotFoundError, InternalServerError
+from backend.src.database.models import ExternalTask
+from backend.src.database.repositories.external.external_task_repository import (
+    ExternalTaskRepository,
+)
+from backend.src.database.repositories.external.external_system_repository import (
+    ExternalSystemRepository,
 )
 
 

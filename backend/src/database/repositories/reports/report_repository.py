@@ -4,7 +4,7 @@ from datetime import date
 from advanced_alchemy import repository
 from sqlalchemy import and_, select
 
-from backend.src.api.dto.report_dto import DailyReportRequestUpdate
+from backend.src.api.dto.reports.requests import DailyReportRequestUpdate
 from backend.src.core.exceptions import NotFoundError
 from backend.src.database.models import Report
 

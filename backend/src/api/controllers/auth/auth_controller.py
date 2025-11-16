@@ -3,7 +3,7 @@ from dishka.integrations.litestar import inject
 from litestar import Controller, get, post, Request, Response
 from litestar.datastructures.cookie import Cookie
 
-from backend.src.api.dto import (
+from backend.src.api.dto.auth import (
     ChangePasswordRequest,
     LoginRequest,
     RegisterRequest,

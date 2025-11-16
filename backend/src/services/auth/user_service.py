@@ -1,6 +1,7 @@
+from backend.src.api.dto.auth.requests import UserUpdateRequest
+from backend.src.api.dto.auth.responses import UserResponse
 from backend.src.core.exceptions import InternalServerError
 from backend.src.database.repositories import UserRepository
-from backend.src.api.dto.auth_dto import UserResponse, UserUpdateRequest
 from backend.src.api.dto.converters import user_to_response
 
 

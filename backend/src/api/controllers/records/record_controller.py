@@ -4,13 +4,11 @@ from dishka.integrations.litestar import inject
 from litestar import Controller, delete, get, post, patch, Request
 from litestar.params import Parameter
 
-from backend.src.api.dto import (
+from backend.src.api.dto.records import (
     DailyRecordRequest,
     DailyRecordRequestDTO,
     RecordStatusUpdateRequest,
     RecordStatusUpdateRequestDTO,
-)
-from backend.src.api.dto.record_dto import (
     LinkTaskRequest,
     LinkTaskRequestDTO,
     DailyRecordUpdateRequestDTO,
@@ -31,12 +29,7 @@ class RecordController(Controller):
         request: Request,
         record_service: FromDishka[RecordService],
     ) -> SuccessResponse:
-        """
-
-        Raises:
-            ValidationError
-            InternalServerError
-        """
+        """Create a new daily record."""
         user_id = request.user.id
         result = await record_service.create_record(data=data, user_id=user_id)
         return SuccessResponse(message="Record created successfully", data=result)
@@ -49,11 +42,7 @@ class RecordController(Controller):
         record_id: int,
         request: Request,
     ) -> SuccessResponse:
-        """
-        Raises:
-            NotFoundError
-            InternalServerError
-        """
+        """Get a specific record by ID."""
         user_id = request.user.id
         result = await record_service.get_record(record_id=record_id, user_id=user_id)
         return SuccessResponse(message="Record retrieved successfully", data=result)
@@ -68,10 +57,7 @@ class RecordController(Controller):
             query="date", default=None, description="Filter records by date (YYYY-MM-DD format)"
         ),
     ) -> SuccessResponse:
-        """
-        Raises:
-            InternalServerError
-        """
+        """Get all records for user."""
         user_id = request.user.id
         result = await record_service.get_records(target_date=date, user_id=user_id)
         return SuccessResponse(message="Records retrieved successfully", data=result)
@@ -89,11 +75,7 @@ class RecordController(Controller):
         request: Request,
         data: RecordStatusUpdateRequest,
     ) -> SuccessResponse:
-        """
-        Raises:
-            NotFoundError
-            InternalServerError
-        """
+        """Update record status."""
         user_id = request.user.id
         result = await record_service.update_status(record_id=record_id, data=data, user_id=user_id)
         return SuccessResponse(message="Record status updated successfully", data=result)
@@ -111,11 +93,7 @@ class RecordController(Controller):
         request: Request,
         record_service: FromDishka[RecordService],
     ) -> SuccessResponse:
-        """
-        Raises:
-            NotFoundError
-            InternalServerError
-        """
+        """Append content to existing record."""
         user_id = request.user.id
         result = await record_service.append_to_record(
             record_id=record_id, data=data, user_id=user_id
@@ -135,11 +113,7 @@ class RecordController(Controller):
         request: Request,
         record_service: FromDishka[RecordService],
     ) -> SuccessResponse:
-        """
-        Raises:
-            NotFoundError
-            InternalServerError
-        """
+        """Update an existing record."""
         user_id = request.user.id
         result = await record_service.update_record(record_id=record_id, data=data, user_id=user_id)
         return SuccessResponse(message="Record updated successfully", data=result)
@@ -149,11 +123,7 @@ class RecordController(Controller):
     async def get_record_with_task(
         self, record_service: FromDishka[RecordService], record_id: int, request: Request
     ) -> SuccessResponse:
-        """
-        Raises:
-            NotFoundError
-            InternalServerError
-        """
+        """Get record with external task information."""
         user_id = request.user.id
         result = await record_service.get_record_with_task(record_id=record_id, user_id=user_id)
         return SuccessResponse(message="Record with task retrieved successfully", data=result)
@@ -171,11 +141,7 @@ class RecordController(Controller):
         request: Request,
         data: LinkTaskRequest,
     ) -> SuccessResponse:
-        """
-        Raises:
-            NotFoundError
-            InternalServerError
-        """
+        """Link record to external task."""
         user_id = request.user.id
         result = await record_service.link_to_external_task(
             record_id=record_id, external_task_id=data.external_task_id, user_id=user_id
@@ -191,11 +157,7 @@ class RecordController(Controller):
     async def unlink_external_task(
         self, record_service: FromDishka[RecordService], record_id: int, request: Request
     ) -> SuccessResponse:
-        """
-        Raises:
-            NotFoundError
-            InternalServerError
-        """
+        """Unlink external task from record."""
         user_id = request.user.id
         result = await record_service.unlink_from_external_task(
             record_id=record_id, user_id=user_id
@@ -207,11 +169,7 @@ class RecordController(Controller):
     async def delete_record(
         self, record_service: FromDishka[RecordService], record_id: int, request: Request
     ) -> None:
-        """
-        Raises:
-            NotFoundError
-            InternalServerError
-        """
+        """Delete a record."""
         user_id = request.user.id
         await record_service.delete_record(record_id=record_id, user_id=user_id)
 
@@ -220,11 +178,7 @@ class RecordController(Controller):
     async def process_record_with_ai(
         self, record_service: FromDishka[RecordService], record_id: int, request: Request
     ) -> SuccessResponse:
-        """
-        Raises:
-            NotFoundError
-            InternalServerError
-        """
+        """Process record with AI."""
         user_id = request.user.id
         result = await record_service.process_with_ai(record_id=record_id, user_id=user_id)
         return SuccessResponse(message="Record processed with AI successfully", data=result)
@@ -234,6 +188,7 @@ class RecordController(Controller):
     async def approve_record(
         self, record_service: FromDishka[RecordService], record_id: int, request: Request
     ) -> SuccessResponse:
+        """Approve processed record."""
         user_id = request.user.id
         result = await record_service.approve_record(record_id=record_id, user_id=user_id)
         return SuccessResponse(message="Record approved successfully", data=result)

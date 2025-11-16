@@ -1,5 +1,14 @@
 from adaptix.conversion import get_converter
 
+from backend.src.api.dto.auth.responses import UserResponse
+from backend.src.api.dto.records.responses import DailyRecordResponse
+from backend.src.api.dto.reports.responses import DailyReportResponse
+from backend.src.api.dto.settings.responses import (
+    AIModelResponse,
+    AIPreferencesResponse,
+    ExternalSystemResponse,
+    TaskTypeResponse,
+)
 from backend.src.database.models import (
     ExternalSystem,
     User,
@@ -7,16 +16,6 @@ from backend.src.database.models import (
     Report,
     TaskType,
     AIModel,
-)
-
-from backend.src.api.dto.auth_dto import UserResponse
-from backend.src.api.dto.record_dto import DailyRecordResponse
-from backend.src.api.dto.report_dto import DailyReportResponse
-from backend.src.api.dto.settings_dto import (
-    AIPreferencesResponse,
-    ExternalSystemResponse,
-    TaskTypeResponse,
-    AIModelResponse,
 )
 
 # Auth converters

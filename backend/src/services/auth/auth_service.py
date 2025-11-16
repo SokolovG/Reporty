@@ -5,7 +5,7 @@ from backend.src.api.dto import (
     LoginRequest,
     RegisterRequest,
 )
-from backend.src.api.dto.auth_dto import UserResponse, TokenInfo
+from backend.src.api.dto.auth.responses import TokenInfo, UserResponse
 from backend.src.core.exceptions import (
     AuthenticationError,
     ConflictError,

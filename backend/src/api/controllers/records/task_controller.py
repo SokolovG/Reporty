@@ -1,14 +1,14 @@
 from litestar import Controller, post, put, delete, Request
-from backend.src.api.dto.record_dto import (
+from backend.src.api.dto.records import (
     ExternalTaskCreateRequest,
     ExternalTaskCreateRequestDTO,
     ExternalTaskUpdateRequest,
     ExternalTaskUpdateRequestDTO,
 )
+from backend.src.services.records.task_service import TaskService
 from dishka.integrations.litestar import inject
 from dishka import FromDishka
 from backend.src.api.responses.base_responses import SuccessResponse, SuccessResponseDTO
-from backend.src.services.records.task_service import TaskService
 
 
 class TaskController(Controller):
@@ -20,6 +20,7 @@ class TaskController(Controller):
         task_service: FromDishka[TaskService],
         request: Request,
     ) -> SuccessResponse:
+        """Create a new external task."""
         user_id = request.user.id
         result = await task_service.create_external_task(data=data, user_id=user_id)
         return SuccessResponse(message="External task created successfully", data=result)
@@ -37,6 +38,7 @@ class TaskController(Controller):
         task_service: FromDishka[TaskService],
         request: Request,
     ) -> SuccessResponse:
+        """Update an external task."""
         user_id = request.user.id
         result = await task_service.update_external_task(
             task_id=task_id, data=data, user_id=user_id
@@ -48,5 +50,6 @@ class TaskController(Controller):
     async def delete_external_task(
         self, task_id: int, task_service: FromDishka[TaskService], request: Request
     ) -> None:
+        """Delete an external task."""
         user_id = request.user.id
         await task_service.delete_external_task(task_id=task_id, user_id=user_id)

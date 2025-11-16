@@ -2,8 +2,8 @@ from dishka import FromDishka
 from dishka.integrations.litestar import inject
 from litestar import Controller, get, post, patch, delete, Request
 
-from backend.src.api.dto.auth_dto import UserUpdateRequest, UserUpdateRequestDTO
-from backend.src.api.dto.settings_dto import (
+from backend.src.api.dto.auth import UserUpdateRequest, UserUpdateRequestDTO
+from backend.src.api.dto.settings import (
     AIPreferencesUpdateRequest,
     AIPreferencesUpdateRequestDTO,
     AIProviderUpdateRequest,

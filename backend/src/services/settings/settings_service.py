@@ -1,11 +1,20 @@
+"""
+Settings Service - handles user preferences and configuration.
+
+TODO: Split into domain-specific services:
+- AIPreferencesService (ai domain)
+- TaskTypeService (records domain)
+- UserProfileService (auth domain)
+- ExternalSystemService (shared domain)
+"""
+
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from backend.src.api.dto.settings_dto import (
-    AIModelResponse,
-    AIPreferencesUpdateRequest,
-    AIPreferencesResponse,
-)
+from backend.src.api.dto.auth.requests import UserUpdateRequest
+from backend.src.api.dto.auth.responses import UserResponse
+from backend.src.api.dto.settings.requests import AIPreferencesUpdateRequest
+from backend.src.api.dto.settings.responses import AIModelResponse, AIPreferencesResponse
 from backend.src.core.exceptions import NotFoundError, InternalServerError
 from backend.src.database.repositories import (
     AIProviderRepository,
@@ -23,18 +32,19 @@ from backend.src.api.dto import (
     AIProviderUpdateRequest,
     ExternalSystemUpdateRequest,
 )
-from backend.src.api.dto.auth_dto import UserResponse, UserUpdateRequest
-from backend.src.database.repositories.ai_repository import AIProviderKeyRepository
 from backend.src.api.dto.converters import (
     task_type_to_response,
     external_system_to_response,
     user_to_response,
     to_ai_preferences_response,
 )
+from backend.src.database.repositories.ai.ai_repository import AIProviderKeyRepository
 from backend.src.services.shared.encryption_service import EncryptionService
 
 
 class SettingsService:
+    """Service for managing user settings and preferences."""
+
     def __init__(
         self,
         ai_provider_repository: AIProviderRepository,
@@ -51,6 +61,7 @@ class SettingsService:
         self.external_system_repository = external_system_repository
         self.api_key_repo = api_key_repo
 
+    # Task Types Management
     async def get_task_types(self, user_id: int) -> list[TaskTypeResponse]:
         """Get all task types for a user."""
         try:
@@ -155,6 +166,7 @@ class SettingsService:
                 f"Failed to delete task type: {str(e)}", {"task_type_id": task_type_id}
             )
 
+    # AI Preferences Management
     async def update_user_ai_preferences(
         self, user_id: int, data: AIPreferencesUpdateRequest
     ) -> AIPreferencesResponse:
@@ -254,6 +266,7 @@ class SettingsService:
                 f"Failed to update AI provider: {str(e)}", {"ai_provider_id": ai_provider_id}
             )
 
+    # User Management
     async def get_user(self, user_id: int) -> UserResponse:
         """Get user with all information."""
         try:
@@ -276,6 +289,7 @@ class SettingsService:
         except Exception as e:
             raise InternalServerError(f"Failed to update user: {str(e)}", {"user_id": user_id})
 
+    # External Systems Management
     async def get_external_systems(self) -> list[ExternalSystemResponse]:
         """Get all external systems."""
         try:
