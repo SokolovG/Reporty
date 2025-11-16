@@ -24,7 +24,6 @@ class AIService:
             if not user.ai_provider_id:
                 raise NotFoundError("AI provider not configured for user")
 
-            # Get encrypted API key for user's selected provider
             api_key_data = await self.api_key_repository.get_user_provider_key(
                 user_id=user_id, provider_id=user.ai_provider_id
             )
@@ -32,15 +31,12 @@ class AIService:
             if not api_key_data:
                 raise NotFoundError("API key not found for selected AI provider")
 
-            # Decrypt API key
             decrypted_key = await self.encryption_service.decrypt(api_key_data.encrypted_key)
 
-            # Get AI provider info
             ai_provider = (
                 AIProviders(user.ai_provider.name) if user.ai_provider else AIProviders.LOCAL
             )
 
-            # Process with AI
             processed_string = await self._process_with_ai(
                 raw_data=raw_data,
                 api_key=decrypted_key,
@@ -62,7 +58,6 @@ class AIService:
     ) -> str:
         """Internal method to process data with specific AI provider."""
 
-        # Base prompt for transforming developer notes to business language
         base_prompt = """
         Transform the following developer note into a professional business description.
         Make it clear, concise, and suitable for management reporting.
@@ -78,7 +73,6 @@ class AIService:
         Business description:
         """
 
-        # Use custom prompt if provided
         prompt = custom_prompt or base_prompt
         formatted_prompt = prompt.format(raw_data=raw_data)
 
@@ -114,12 +108,3 @@ class AIService:
         """Process with local AI model."""
         # TODO: Implement local model integration (Ollama, etc.)
         return f"[Local] Processed: {prompt[:50]}..."
-
-    async def test_provider_connection(self, user_id: int, provider_id: int) -> bool:
-        """Test if AI provider connection is working."""
-        try:
-            # Simple test to verify API key and connection
-            test_result = await self.process_record("test connection", user_id)
-            return bool(test_result)
-        except Exception:
-            return False
