@@ -3,7 +3,6 @@ from sqladmin_litestar_plugin import SQLAdminPlugin
 
 from backend.src.core.settings import settings
 from backend.src.core.configs import get_sqlalchemy_config, get_sync_engine
-from backend.src.services.admin_service import AdminAuth
 
 from backend.src.core.admin import (
     AIModelAdmin,
@@ -15,6 +14,7 @@ from backend.src.core.admin import (
     AIProviderAdmin,
     TaskTypeAdmin,
 )
+from backend.src.services.auth.admin_service import AdminAuth
 
 
 def get_sqlalchemy_plugin() -> SQLAlchemyPlugin:

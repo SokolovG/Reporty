@@ -13,8 +13,8 @@ from backend.src.api.dto.settings import (
     TaskTypeRequestDTO,
     TaskTypeUpdateRequestDTO,
 )
-from backend.src.services.settings_service import SettingsService
 from backend.src.api.responses.base_responses import SuccessResponse, SuccessResponseDTO
+from backend.src.services.settings.settings_service import SettingsService
 
 
 class ProfileController(Controller):
