@@ -18,14 +18,16 @@ from backend.src.database.repositories import (
     AIProviderKeyRepository,
 )
 from backend.src.services import (
-    ReportService,
-    EncryptionService,
     AuthService,
-    TaskService,
-    SettingsService,
-    RecordService,
     JWTService,
+    UserService,
+    RecordService,
+    TaskService,
+    ReportService,
+    AIService,
+    EncryptionService,
     NotificationService,
+    SettingsService,
 )
 
 
@@ -34,7 +36,7 @@ T = TypeVar("T")
 
 async def get_dependency(request: Request | StarletteRequest, dependency_type: Type[T]) -> T:
     """Helper to get dependencies from Dishka via Starlette request."""
-    litestar_app = Litestar.from_scope(request.scope)
+    litestar_app = Litestar.from_scope(request.scope)  # type:ignore
     container = litestar_app.state.dishka_container
 
     async with container() as request_container:
@@ -63,8 +65,11 @@ class MyProvider(Provider):
         self,
         record_repo: DailyRecordRepository,
         user_repo: UserRepository,
+        ai_service: AIService,
     ) -> RecordService:
-        return RecordService(record_repo=record_repo, user_repository=user_repo)
+        return RecordService(
+            record_repo=record_repo, user_repository=user_repo, ai_service=ai_service
+        )
 
     @provide(scope=Scope.REQUEST)
     def ai_provider_repo(self, db_session: AsyncSession) -> AIProviderRepository:
@@ -146,3 +151,16 @@ class MyProvider(Provider):
         notification_service: NotificationService,
     ) -> AuthService:
         return AuthService(user_repo, jwt_service, notification_service)
+
+    @provide(scope=Scope.REQUEST)
+    def user_service(self, user_repo: UserRepository) -> UserService:
+        return UserService(user_repo)
+
+    @provide(scope=Scope.REQUEST)
+    def ai_service(
+        self,
+        encryption_service: EncryptionService,
+        user_repo: UserRepository,
+        api_key_repo: AIProviderKeyRepository,
+    ) -> AIService:
+        return AIService(encryption_service, user_repo, api_key_repo)

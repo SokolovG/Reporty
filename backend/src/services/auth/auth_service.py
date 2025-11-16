@@ -13,8 +13,8 @@ from backend.src.core.exceptions import (
 )
 from backend.src.core.validators import EmailValidator, PasswordValidator
 from backend.src.database.repositories import UserRepository
-from backend.src.services.jwt_service import JWTService
-from backend.src.services.notification_service import NotificationService
+from backend.src.services.auth.jwt_service import JWTService
+from backend.src.services.shared.notification_service import NotificationService
 from backend.src.api.dto.converters import user_to_response
 
 logger = getLogger(__name__)

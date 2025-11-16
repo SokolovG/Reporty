@@ -14,6 +14,7 @@ from backend.src.database.repositories import (
     UserRepository,
 )
 from backend.src.api.dto.converters import record_to_response
+from backend.src.services.ai.ai_service import AIService
 
 
 class RecordService:
@@ -21,10 +22,11 @@ class RecordService:
         self,
         record_repo: DailyRecordRepository,
         user_repository: UserRepository,
+        ai_service: AIService | None = None,
     ) -> None:
         self.repo = record_repo
         self.user_repository = user_repository
-        self.ai_service = ""
+        self.ai_service = ai_service
 
     async def create_record(self, data: DailyRecordRequest, user_id: int) -> DailyRecordResponse:
         """Create a new daily record."""
@@ -32,13 +34,18 @@ class RecordService:
             saved_record = await self.repo.create_record(data, user_id)
             user = await self.user_repository.get_one(id=user_id)
 
-            if user.ai_auto_process:
-                # ai_processed = await self.ai_service.process(data.raw_input, user_id)
-                ai_processed = ""
-                saved_record.ai_processed = ai_processed
-                updated_record = await self.repo.update(saved_record)
-                await self.repo.session.commit()
-                return record_to_response(updated_record)
+            if user.ai_auto_process and self.ai_service:
+                try:
+                    ai_processed = await self.ai_service.process_record(data.raw_input, user_id)
+                    saved_record.ai_processed = ai_processed
+                    saved_record.is_processed = True
+                    saved_record.processed_at = datetime.now()
+                    updated_record = await self.repo.update(saved_record)
+                    await self.repo.session.commit()
+                    return record_to_response(updated_record)
+                except Exception:
+                    # If AI processing fails, continue without it
+                    pass
 
             return record_to_response(saved_record)
         except ValueError as e:
@@ -188,8 +195,11 @@ class RecordService:
         """Process record with AI."""
         try:
             record = await self.repo.get_record(record_id=record_id, user_id=user_id)
-            # ai_processed = await self.ai_service.process(record.raw_input, user_id)
-            ai_processed = ""
+
+            if not self.ai_service:
+                raise InternalServerError("AI service not available")
+
+            ai_processed = await self.ai_service.process_record(record.raw_input, user_id)
             record.ai_processed = ai_processed
             record.processed_at = datetime.now()
             record.is_processed = True

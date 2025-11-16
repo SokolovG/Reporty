@@ -5,10 +5,10 @@ from backend.src.api.dto.record_dto import (
     ExternalTaskUpdateRequest,
     ExternalTaskUpdateRequestDTO,
 )
-from backend.src.services.task_service import TaskService
 from dishka.integrations.litestar import inject
 from dishka import FromDishka
 from backend.src.api.responses.base_responses import SuccessResponse, SuccessResponseDTO
+from backend.src.services.records.task_service import TaskService
 
 
 class TaskController(Controller):

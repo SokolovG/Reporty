@@ -20,3 +20,13 @@ class AIProviderKeyRepository(repository.SQLAlchemyAsyncRepository[AIProviderKey
             select(AIProviderKey.ai_provider_id).where(AIProviderKey.user_id == user_id)
         )
         return set(result.scalars().all())
+
+    async def get_user_provider_key(self, user_id: int, provider_id: int) -> AIProviderKey | None:
+        """Get API key for specific user and provider."""
+        result = await self.session.execute(
+            select(AIProviderKey)
+            .where(AIProviderKey.user_id == user_id)
+            .where(AIProviderKey.ai_provider_id == provider_id)
+            .where(AIProviderKey.is_active == True)  # noqa: E712
+        )
+        return result.scalar_one_or_none()

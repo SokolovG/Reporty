@@ -25,13 +25,13 @@ from backend.src.api.dto import (
 )
 from backend.src.api.dto.auth_dto import UserResponse, UserUpdateRequest
 from backend.src.database.repositories.ai_repository import AIProviderKeyRepository
-from backend.src.services.encryption_service import EncryptionService
 from backend.src.api.dto.converters import (
     task_type_to_response,
     external_system_to_response,
     user_to_response,
     to_ai_preferences_response,
 )
+from backend.src.services.shared.encryption_service import EncryptionService
 
 
 class SettingsService:
