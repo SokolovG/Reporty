@@ -1,19 +1,34 @@
-from backend.src.services.auth_service import AuthService
-from backend.src.services.crypto_service import CryptoService
-from backend.src.services.jwt_service import JWTService
-from backend.src.services.notification_service import NotificationService
-from backend.src.services.record_service import RecordService
-from backend.src.services.report_service import ReportService
-from backend.src.services.settings_service import SettingsService
-from backend.src.services.task_service import TaskService
+# Domain-based imports
+from backend.src.services.auth import AuthService, JWTService, UserService, AdminAuth
+from backend.src.services.records import RecordService, TaskService
+from backend.src.services.reports import ReportService
+from backend.src.services.ai import AIService
+from backend.src.services.shared import (
+    EncryptionService,
+    NotificationService,
+    PaginationParams,
+    PaginatedResponse,
+)
+from backend.src.services.settings import SettingsService
 
 __all__ = [
-    "RecordService",
-    "ReportService",
-    "CryptoService",
-    "SettingsService",
+    # Auth domain
     "AuthService",
-    "TaskService",
     "JWTService",
+    "UserService",
+    "AdminAuth",
+    # Records domain
+    "RecordService",
+    "TaskService",
+    # Reports domain
+    "ReportService",
+    # AI domain
+    "AIService",
+    # Shared utilities
+    "EncryptionService",
     "NotificationService",
+    "PaginationParams",
+    "PaginatedResponse",
+    # Settings domain
+    "SettingsService",
 ]

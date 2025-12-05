@@ -1,4 +1,6 @@
-import type { PageServerLoad } from "./$types";
+
+import { redirect } from "@sveltejs/kit";
+import type { PageServerLoad, Actions } from "./$types";
 
 export const load: PageServerLoad = async ({ fetch }) => {
 
@@ -11,11 +13,37 @@ export const load: PageServerLoad = async ({ fetch }) => {
         const reports = await reportsResponse.json();
         return { reports };
     } catch (error) {
-        // If it's a redirect, re-throw it
         if (error instanceof Response) {
-            console.log(error)
+            console.error(error)
             throw error;
         }
         return { reports: [] };
     }
 };
+
+export const actions: Actions = {
+
+    create: async ({ request, fetch }) => {
+        const formData = await request.formData()
+        const data = formData.get("data")
+
+        try {
+            const body = {
+                "data": data?.toString()
+            };
+            const response = await fetch("api/v1/reports", {
+                method: "POST",
+                body: JSON.stringify(body),
+            });
+
+            if (!response.ok) {
+                return { error: 'Failed to create report' };
+            }
+        } catch (error) {
+
+        }
+        throw redirect(303, "/reports");
+    }
+
+
+}

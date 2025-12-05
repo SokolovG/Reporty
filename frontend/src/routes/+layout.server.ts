@@ -1,5 +1,6 @@
+import type { User } from '$lib/types/user';
 import type { LayoutServerLoad } from './$types';
-import { redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import { jwtVerify, importSPKI } from 'jose';
 
 const PUBLIC_KEY = `-----BEGIN PUBLIC KEY-----
@@ -20,21 +21,67 @@ async function getPublicKey() {
 export const load: LayoutServerLoad = async ({ url, fetch, cookies }) => {
   const publicPaths = ['/login', '/register'];
   const isPublicPath = publicPaths.some(path => url.pathname.startsWith(path));
-  const accessToken = cookies.get("accessToken")
+  const accessToken = cookies.get("accessToken");
+  const refreshToken = cookies.get("refreshToken")
 
-  async function tokenRefresh() {
+
+  async function tokenRefresh(): Promise<boolean> {
     try {
       const refreshResponse = await fetch('/api/v1/auth/refresh', {
         method: 'POST',
         credentials: 'include'
       });
-      return refreshResponse.ok;
-      } catch {
-        return false;
+      if (refreshResponse.ok) {
+        return true;
       }
+      return false;
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      return false;
+    }
+  }
+
+  async function fetchUser(): Promise<User> {
+    const userResponse = await fetch("/api/v1/auth/me", {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    if (!userResponse.ok) {
+      throw error(401, 'Failed to fetch user data');
     }
 
+    const userData = await userResponse.json();
+
+    if (!userData.success) {
+      throw error(401, 'Failed to fetch user data');
+    }
+
+    return {
+      id: userData.data.id,
+      name: userData.data.name,
+      email: userData.data.email,
+      displayName: userData.data.displayName,
+      department: userData.data.department,
+      position: userData.data.position,
+      aiAutoProcess: userData.data.aiAutoProcess,
+      aiProviderId: userData.data.aiProviderId,
+      isActive: userData.data.isActive,
+      isVerify: userData.data.isActive,
+      aiModelId: userData.data.aiModelId,
+      customPrompt: userData.data.customPrompt
+    };
+  }
+
   if (!accessToken) {
+    if (refreshToken) {
+      const refreshed = await tokenRefresh();
+      if (refreshed) {
+        const user = await fetchUser();
+        return { user };
+      }
+
+    }
     if (!isPublicPath) {
       throw redirect(302, '/login?error=no_token');
     }
@@ -43,35 +90,27 @@ export const load: LayoutServerLoad = async ({ url, fetch, cookies }) => {
 
   try {
     const publicKey = await getPublicKey();
-    const { payload } = await jwtVerify(accessToken, publicKey);
+    await jwtVerify(accessToken, publicKey);
 
+    const user = await fetchUser();
+    return { user };
 
-    if (payload.exp && payload.exp < Date.now() / 1000) {
+  } catch (err) {
+    console.error('Auth error:', err);
+
+    if (err instanceof Error && err.name === 'JWTExpired') {
       const refreshed = await tokenRefresh();
-      if (!refreshed) {
-        if (!isPublicPath) {
-          throw redirect(302, '/login?error=token_expired');
-        }
-        return { user: null };
+
+      if (refreshed) {
+        const user = await fetchUser();
+        return { user };
       }
     }
 
-  const newAccessToken = cookies.get("accessToken");
-  if (newAccessToken) {
-    const { payload } = await jwtVerify(newAccessToken, publicKey)
-    return {user: {id: payload.id}}
-  }
-
-  return {
-      user: {
-        id: payload.sub,
-      }
-    };
-
-    } catch (error) {
     if (!isPublicPath) {
       throw redirect(302, '/login?error=invalid_token');
     }
     return { user: null };
   }
+
 };

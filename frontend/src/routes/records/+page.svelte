@@ -24,12 +24,12 @@
                 <input
                     name="title"
                     placeholder="Title"
-                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
                     required
                 />
                 <select
                     name="taskType"
-                    class="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    class="w-40 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
                 >
                     <option value="">Select type</option>
                     {#each taskTypes as taskType}
@@ -41,12 +41,12 @@
                 <input
                     name="rawInput"
                     placeholder="What did you work on? (Enter to save)"
-                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
                     required
                 />
                 <button
                     type="submit"
-                    class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                    class="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition-colors"
                 >
                     Add
                 </button>
@@ -57,10 +57,10 @@
         {#if form?.error}
             <div class="mt-2 p-3 bg-red-50 border border-red-200 rounded-lg">
                 <div class="flex items-center gap-2">
-                    <svg class="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-4 h-4 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
                     </svg>
-                    <span class="text-red-800 text-sm">{form.error}</span>
+                    <span class="text-rose-800 text-sm">{form.error}</span>
                 </div>
             </div>
         {/if}
@@ -84,13 +84,13 @@
                                 {record.isProcessed ? 'Processed' : 'Pending'}
                             </StatusBadge>
                             {#if record.isApproved}
-                                <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700">Approved</span>
+                                <span class="px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-700">Approved</span>
                             {/if}
                         </div>
 
                         <div class="flex items-center gap-1">
                             <button
-                                class="p-1 text-gray-400 hover:text-blue-600 rounded"
+                                class="p-1 text-gray-400 hover:text-amber-600 rounded"
                                 aria-label="Edit record"
                                 onclick={() => goto(`/records/${record.id}`)}
                             >
@@ -104,7 +104,7 @@
                                 <input type="hidden" name="recordId" value={record.id} />
                                 <button
                                     type="submit"
-                                    class="p-1 text-gray-400 hover:text-red-600 rounded"
+                                    class="p-1 text-gray-400 hover:text-rose-600 rounded"
                                     aria-label="Delete record"
                                 >
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,20 +132,12 @@
                                 <input
                                     name="additionalInput"
                                     placeholder="Add follow-up note..."
-                                    class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                    class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none"
                                     required
                                 />
                                 <Button text="Add" variant="primary"></Button>
                             </form>
                     </div>
-
-                    {#if record.isProcessed}
-                        <div class="bg-blue-50 border border-blue-200 rounded p-3 mb-3">
-                            <div class="text-sm text-blue-900">
-                                ✨ AI has processed this record successfully.
-                            </div>
-                        </div>
-                    {/if}
 
                     <!-- Footer -->
                     <div class="flex items-center justify-between text-sm text-gray-500">
@@ -164,7 +156,7 @@
                                 <form method="POST" action="/records/{record.id}?/updateStatus" style="display: inline;">
                                     <input type="hidden" name="recordId" value={record.id} />
                                     <input type="hidden" name="newStatus" value="CLOSED" />
-                                    <button type="submit" class="text-green-600 hover:text-green-700 hover:underline">
+                                    <button type="submit" class="text-emerald-600 hover:text-emerald-700 hover:underline">
                                         ✓ Complete
                                     </button>
                                 </form>
@@ -173,12 +165,12 @@
                             {#if !record.isProcessed}
                                 <form method="POST" action="/records/{record.id}?/processAI" style="display: inline;">
                                     <input type="hidden" name="recordId" value={record.id} />
-                                    <button type="submit" class="text-blue-600 hover:underline">Process</button>
+                                    <button type="submit" class="text-amber-600 hover:underline">Process</button>
                                 </form>
                             {:else if !record.isApproved}
                                     <form method="POST" action="/records/{record.id}?/approve" style="display: inline;">
                                         <input type="hidden" name="recordId" value={record.id} />
-                                        <button class="text-green-600 hover:underline">Approve</button>
+                                        <button class="text-emerald-600 hover:underline">Approve</button>
                                     </form>
                             {/if}
                         </div>

@@ -4,7 +4,7 @@
 
       <!-- Logo and description -->
       <div class="flex items-center space-x-2 mb-4 md:mb-0">
-        <div class="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
+        <div class="w-6 h-6 bg-amber-600 rounded flex items-center justify-center">
           <span class="text-white font-bold text-xs">R</span>
         </div>
         <div>
@@ -24,8 +24,8 @@
     <!-- Additional links -->
     <div class="mt-6 pt-6 border-t border-gray-200">
       <div class="flex flex-wrap justify-center md:justify-start space-x-6 text-sm text-gray-500">
-        <a href="http://0.0.0.0:8080/schema" class="hover:text-blue-600 transition-colors">Documentation</a>
-        <a href="https://github.com/SokolovG/Reporty" class="hover:text-blue-600 transition-colors">GitHub</a>
+        <a href="http://0.0.0.0:8080/schema" class="hover:text-amber-600 transition-colors">Documentation</a>
+        <a href="https://github.com/SokolovG/Reporty" class="hover:text-amber-600 transition-colors">GitHub</a>
       </div>
     </div>
   </div>

@@ -2,6 +2,7 @@ from markupsafe import Markup
 from sqladmin import ModelView
 
 from backend.src.database.models import (
+    AIModel,
     DailyRecord,
     ExternalSystem,
     ExternalTask,
@@ -24,7 +25,39 @@ class UserAdmin(ModelView, model=User):
     name = "User"
     name_plural = "Users"
     icon = "fa-solid fa-user"
-    column_exclude_list = [User.password_hash]
+    form_include_pk = True
+    column_list = [
+        User.id,
+        User.name,
+        User.email,
+        User.display_name,
+        User.department,
+        User.position,
+        User.ai_auto_process,
+        User.ai_provider_id,
+        User.task_types,
+        User.is_active,
+        User.ai_model_id,
+        User.custom_prompt,
+        User.is_verify,
+        User.is_admin,
+    ]
+
+    form_columns = [
+        User.name,
+        User.email,
+        User.display_name,
+        User.department,
+        User.position,
+        User.ai_auto_process,
+        User.ai_provider_id,
+        User.ai_model_id,
+        User.custom_prompt,
+        User.task_types,
+        User.is_active,
+        User.is_verify,
+        User.is_admin,
+    ]
 
 
 class DailyRecordAdmin(ModelView, model=DailyRecord):
@@ -117,8 +150,14 @@ class AIProviderAdmin(ModelView, model=AIProvider):
         AIProvider.id,
         AIProvider.name,
         AIProvider.base_prompt,
-        AIProvider.model_name,
         AIProvider.requires_api_key,
-        AIProvider.encrypted_api_key,
         AIProvider.is_active,
+        AIProvider.models,
     ]
+
+
+class AIModelAdmin(ModelView, model=AIModel):
+    name = "AI model"
+    name_plural = "AI models"
+
+    column_list = [AIModel.id, AIModel.name, AIModel.ai_provider_id, AIModel.created_at]

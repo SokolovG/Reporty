@@ -1,8 +1,9 @@
 import os
-from dataclasses import field
 from pathlib import Path
+from typing import Self
 
 from dotenv import load_dotenv
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings
 
 load_dotenv()
@@ -12,28 +13,23 @@ BASE_DIR = Path(__file__).parent.parent.parent
 
 class Settings(BaseSettings):
     # Database
-    db_host: str = os.getenv("DB_HOST", "db")
-    db_port: int = int(os.getenv("DB_PORT", "5432"))
-    db_name: str = os.getenv("DB_NAME", "reporty")
-    db_user: str = os.getenv("DB_USER", "postgres")
-    db_password: str = os.getenv("DB_PASSWORD", "password")
-    debug: bool = os.getenv("DEBUG", "False").lower() == "true"
-    secret_key: str = os.getenv("SECRET_KEY", "")
-    public_key: Path = BASE_DIR / ".certs" / "jwt-public.pem"
-    private_key: Path = BASE_DIR / ".certs" / "jwt-private.pem"
-    algorithm: str = "RS256"
+    DB_HOST: str = os.getenv("DB_HOST", "db")
+    DB_PORT: int = int(os.getenv("DB_PORT", "5432"))
+    DB_NAME: str = os.getenv("DB_NAME", "reporty")
+    DB_USER: str = os.getenv("DB_USER", "postgres")
+    DB_PASSWORD: str = os.getenv("DB_PASSWORD", "password")
+    DEBUG: bool = os.getenv("DEBUG", "False").lower() == "true"
 
-    ai_api_key: str | None = os.getenv("AI_API_KEY", None)
+    SECRET_KEY: str = Field(..., description="Secret key for application")
+    MASTER_ENCRYPTION_KEY: str = Field(..., description="Master key for encryption")
+    JWT_PUBLIC_KEY: str = Field(..., description="JWT public key")
+    JWT_PRIVATE_KEY: str = Field(..., description="JWT private key")
+    ALGORITHM: str = "RS256"
 
-    default_external_system: str | None = os.getenv("DEFAULT_EXTERNAL_SYSTEM", None)
+    DEFAULT_EXTERNAL_SYSTEM: str | None = os.getenv("DEFAULT_EXTERNAL_SYSTEM", None)
 
-    external_systems_config: dict = field(
+    EXTERNAL_SYSTEM_CONFIG: dict = Field(
         default_factory=lambda: {
-            "bitrix": {
-                "enabled": os.getenv("BITRIX_ENABLED", "False").lower() == "true",
-                "webhook_url": os.getenv("BITRIX_WEBHOOK_URL"),
-                "user_id": os.getenv("BITRIX_USER_ID"),
-            },
             "jira": {
                 "enabled": os.getenv("JIRA_ENABLED", "False").lower() == "true",
                 "base_url": os.getenv("JIRA_BASE_URL"),
@@ -47,33 +43,47 @@ class Settings(BaseSettings):
         }
     )
 
+    @model_validator(mode="after")
+    def validate_required_secrets(self) -> Self:
+        """Verification of mandatory secrets AFTER initialisation."""
+        required = {
+            "SECRET_KEY": self.SECRET_KEY,
+            "MASTER_ENCRYPTION_KEY": self.MASTER_ENCRYPTION_KEY,
+            "JWT_PUBLIC_KEY": self.JWT_PUBLIC_KEY,
+            "JWT_PRIVATE_KEY": self.JWT_PRIVATE_KEY,
+        }
+
+        missing = [k for k, v in required.items() if not v]
+        if missing:
+            raise ValueError(f"Missing required secrets: {', '.join(missing)}")
+
+        return self
+
     def get_enabled_systems(self) -> list[str]:
         """Get a list of enabled external systems."""
         return [
             system_name
-            for system_name, config in self.external_systems_config.items()
+            for system_name, config in self.EXTERNAL_SYSTEM_CONFIG.items()
             if config.get("enabled", False)
         ]
 
     @property
     def database_url(self) -> str:
         """Synchronous URL for migrations and admin panel."""
-        return f"postgresql://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
+        return f"postgresql://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
     @property
     def async_database_url(self) -> str:
         """An asynchronous URL for the app to run."""
-        return f"postgresql+asyncpg://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}"
+        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
     def validate_system_config(self, system_name: str) -> bool:
         """Validate configuration for a specific system."""
-        config = self.external_systems_config.get(system_name, {})
+        config = self.EXTERNAL_SYSTEM_CONFIG.get(system_name, {})
 
         if not config.get("enabled", False):
             return False
 
-        if system_name == "bitrix":
-            return all([config.get("webhook_url"), config.get("user_id")])
         elif system_name == "jira":
             return all([config.get("base_url"), config.get("email"), config.get("api_token")])
         elif system_name == "asana":
@@ -83,12 +93,14 @@ class Settings(BaseSettings):
 
     def get_system_config(self, system_name: str) -> dict:
         """Get configuration for a specific system."""
-        return self.external_systems_config.get(system_name, {})  # type: ignore
+        return self.EXTERNAL_SYSTEM_CONFIG.get(system_name, {})  # type: ignore
 
-    class Config:
-        mode = os.getenv("MODE", "local")
-        env_file = f"backend/.env.{mode}"
-        env_file_encoding = "utf-8"
+    model_config = {
+        "env_file": f"backend/.env.{os.getenv('MODE', 'local')}",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": True,
+        "extra": "ignore",
+    }
 
 
-settings = Settings()
+settings = Settings()  # type: ignore[call-arg]

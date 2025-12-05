@@ -39,7 +39,7 @@
                     {record.isProcessed ? 'Processed' : 'Pending'}
                 </span>
                 {#if record.isApproved}
-                    <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700">Approved</span>
+                    <span class="px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-700">Approved</span>
                 {/if}
             </div>
 
@@ -47,13 +47,13 @@
 
         <div class="mb-6">
     <div class="flex items-center gap-2 mb-4">
-        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
         <h3 class="text-lg font-medium text-gray-900">Original Input</h3>
     </div>
 
-    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-400 rounded-r-lg p-4 mb-6">
+    <div class="bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-400 rounded-r-lg p-4 mb-6">
         <p class="text-gray-900 leading-relaxed">{record.rawInput}</p>
     </div>
 
@@ -66,7 +66,7 @@
             <div class="relative">
                 <textarea
                     name="rawInput"
-                    class="w-full border-2 border-gray-300 rounded-lg p-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none transition-all duration-200 shadow-sm"
+                    class="w-full border-2 border-gray-300 rounded-lg p-4 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none resize-none transition-all duration-200 shadow-sm"
                     rows="4"
                     placeholder="Update your input..."
                 >{record.rawInput}</textarea>
@@ -77,7 +77,7 @@
             </div>
 
             <div class="flex gap-3 justify-end pt-2">
-                <button type="button" class="text-white px-4 py-2 rounded-lg transition-colors bg-blue-600 hover:bg-blue-700" onclick={goBack}>Cancel</button>
+                <button type="button" class="text-white px-4 py-2 rounded-lg transition-colors bg-amber-600 hover:bg-amber-700" onclick={goBack}>Cancel</button>
                 <Button text="Save Changes" variant="primary"/>
             </div>
         </form>
@@ -106,14 +106,14 @@
 
         <!-- Processing Status -->
         {#if record.isProcessed}
-            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
                 <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span class="text-blue-900 font-medium">AI Processing Complete</span>
+                    <span class="text-amber-900 font-medium">AI Processing Complete</span>
                 </div>
-                <p class="text-blue-800 mt-2">This record has been successfully processed by AI.</p>
+                <p class="text-amber-800 mt-2">This record has been successfully processed by AI.</p>
             </div>
         {/if}
 

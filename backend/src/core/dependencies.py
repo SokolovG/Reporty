@@ -1,10 +1,12 @@
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Type, TypeVar
 
 from dishka import Scope, provide
 from dishka.provider import Provider
+from litestar import Request, Litestar
+from starlette.requests import Request as StarletteRequest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.src.core.config import get_sqlalchemy_config
+from backend.src.core.configs import get_sqlalchemy_config
 from backend.src.database.repositories import (
     DailyRecordRepository,
     ReportRepository,
@@ -12,17 +14,34 @@ from backend.src.database.repositories import (
     ExternalTaskRepository,
     UserRepository,
     AIProviderRepository,
+    AIModelRepository,
+    AIProviderKeyRepository,
 )
 from backend.src.services import (
-    ReportService,
-    CryptoService,
     AuthService,
-    TaskService,
-    SettingsService,
-    RecordService,
     JWTService,
+    UserService,
+    RecordService,
+    TaskService,
+    ReportService,
+    AIService,
+    EncryptionService,
     NotificationService,
+    SettingsService,
 )
+
+
+T = TypeVar("T")
+
+
+async def get_dependency(request: Request | StarletteRequest, dependency_type: Type[T]) -> T:
+    """Helper to get dependencies from Dishka via Starlette request."""
+    litestar_app = Litestar.from_scope(request.scope)  # type:ignore
+    container = litestar_app.state.dishka_container
+
+    async with container() as request_container:
+        obj: T = await request_container.get(dependency_type)
+        return obj
 
 
 class MyProvider(Provider):
@@ -46,12 +65,23 @@ class MyProvider(Provider):
         self,
         record_repo: DailyRecordRepository,
         user_repo: UserRepository,
+        ai_service: AIService,
     ) -> RecordService:
-        return RecordService(record_repo=record_repo, user_repository=user_repo)
+        return RecordService(
+            record_repo=record_repo, user_repository=user_repo, ai_service=ai_service
+        )
 
     @provide(scope=Scope.REQUEST)
     def ai_provider_repo(self, db_session: AsyncSession) -> AIProviderRepository:
         return AIProviderRepository(session=db_session)
+
+    @provide(scope=Scope.REQUEST)
+    def ai_model_repo(self, db_session: AsyncSession) -> AIModelRepository:
+        return AIModelRepository(session=db_session)
+
+    @provide(scope=Scope.REQUEST)
+    def ai_key_repo(self, db_session: AsyncSession) -> AIProviderKeyRepository:
+        return AIProviderKeyRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
     def external_system_repo(self, db_session: AsyncSession) -> ExternalSystemRepository:
@@ -70,9 +100,9 @@ class MyProvider(Provider):
     def external_task_repo(self, db_session: AsyncSession) -> ExternalTaskRepository:
         return ExternalTaskRepository(session=db_session)
 
-    @provide(scope=Scope.REQUEST)
-    def crypto_service(self, db_session: AsyncSession) -> CryptoService:
-        return CryptoService()
+    @provide(scope=Scope.APP)
+    def encryption_service(self) -> EncryptionService:
+        return EncryptionService()
 
     @provide(scope=Scope.REQUEST)
     def task_service(
@@ -87,12 +117,18 @@ class MyProvider(Provider):
         self,
         ai_provider_repo: AIProviderRepository,
         external_system_repo: ExternalSystemRepository,
+        ai_model_repo: AIModelRepository,
         user_repo: UserRepository,
+        encryption_service: EncryptionService,
+        api_key_repo: AIProviderKeyRepository,
     ) -> SettingsService:
         return SettingsService(
             ai_provider_repository=ai_provider_repo,
+            ai_models_repository=ai_model_repo,
             external_system_repository=external_system_repo,
             user_repository=user_repo,
+            encryption_service=encryption_service,
+            api_key_repo=api_key_repo,
         )
 
     @provide(scope=Scope.REQUEST)
@@ -115,3 +151,16 @@ class MyProvider(Provider):
         notification_service: NotificationService,
     ) -> AuthService:
         return AuthService(user_repo, jwt_service, notification_service)
+
+    @provide(scope=Scope.REQUEST)
+    def user_service(self, user_repo: UserRepository) -> UserService:
+        return UserService(user_repo)
+
+    @provide(scope=Scope.REQUEST)
+    def ai_service(
+        self,
+        encryption_service: EncryptionService,
+        user_repo: UserRepository,
+        api_key_repo: AIProviderKeyRepository,
+    ) -> AIService:
+        return AIService(encryption_service, user_repo, api_key_repo)

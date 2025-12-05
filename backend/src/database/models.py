@@ -16,9 +16,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.src.database.base import Base, RecordStatus
 
 
-# TODO: USER_ID NULLABLE=FALSE!
-
-
 class DailyRecord(Base):
     """Daily developer record."""
 
@@ -73,9 +70,12 @@ class DailyRecord(Base):
             f" is_processed={self.is_processed})>"
         )
 
+    def __str__(self) -> str:
+        return str(self.title)
+
 
 class ExternalSystem(Base):
-    """External task management system (Bitrix, Jira, Asana, etc.)."""
+    """External task management system (Jira, Asana, etc.)."""
 
     __tablename__ = "external_systems"
 
@@ -83,12 +83,12 @@ class ExternalSystem(Base):
         String(50),
         unique=True,
         nullable=False,
-        comment="System identifier (bitrix, jira, asana)",
+        comment="System identifier (jira, asana)",
     )
     display_name: Mapped[str] = mapped_column(
         String(100),
         nullable=False,
-        comment="Human-readable name (Bitrix24, Jira Cloud)",
+        comment="Human-readable name (Jira Cloud)",
     )
     api_config: Mapped[dict] = mapped_column(
         JSON, nullable=False, comment="API connection settings"
@@ -108,17 +108,18 @@ class ExternalSystem(Base):
             f" active={self.is_active})>"
         )
 
+    def __str__(self) -> str:
+        return str(self.name)
+
 
 class ExternalTask(Base):
     """Task from external task management system."""
 
     __tablename__ = "external_tasks"
 
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id"), nullable=True, comment="ID пользователя"
-    )
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, comment="User ID")
     external_id: Mapped[int | None] = mapped_column(
-        Integer, nullable=True, comment="Task ID in external system"
+        Integer, nullable=False, comment="Task ID in external system"
     )
     external_system_id: Mapped[int] = mapped_column(
         ForeignKey("external_systems.id"),
@@ -126,7 +127,7 @@ class ExternalTask(Base):
         comment="Link to external system",
     )
 
-    title: Mapped[str | None] = mapped_column(String(500), nullable=True, comment="Task title")
+    title: Mapped[str | None] = mapped_column(String(500), nullable=False, comment="Task title")
     description: Mapped[str | None] = mapped_column(Text, nullable=True, comment="Task description")
     status: Mapped[str] = mapped_column(String(100), nullable=False, comment="Task status")
     url: Mapped[str] = mapped_column(String(256), nullable=False, comment="Task link")
@@ -170,13 +171,16 @@ class ExternalTask(Base):
             f"title='{self.title or ''}...', status='{self.status}')>"
         )
 
+    def __str__(self) -> str:
+        return self.title if self.title else f"External task {self.external_id}"
+
 
 class Report(Base):
     """Generated a daily/weekly report."""
 
     __tablename__ = "reports"
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True, comment="User ID")
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, comment="User ID")
     report_date: Mapped[datetime] = mapped_column(DateTime, nullable=False, comment="Report date")
 
     content: Mapped[str] = mapped_column(Text, nullable=False, comment="Generated report content")
@@ -201,6 +205,9 @@ class Report(Base):
             f"entries_count={self.entries_count})>"
         )
 
+    def __str__(self) -> str:
+        return str(self.content[:10])
+
 
 class AIProvider(Base):
     __tablename__ = "ai_providers"
@@ -211,13 +218,33 @@ class AIProvider(Base):
         Text, nullable=True, comment="Basic system prompt."
     )
 
-    model_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
-
     requires_api_key: Mapped[bool] = mapped_column(default=True)
     is_active: Mapped[bool] = mapped_column(default=True)
-    encrypted_api_key: Mapped[str] = mapped_column(String(500), nullable=True)
+
+    models: Mapped[list["AIModel"]] = relationship(
+        "AIModel", back_populates="provider", cascade="all, delete-orphan"
+    )
 
     __table_args__ = (Index("ix_ai_providers_active", "is_active"),)
+
+    def __str__(self) -> str:
+        return str(self.name)
+
+
+class AIModel(Base):
+    """AI model"""
+
+    __tablename__ = "ai_models"
+
+    ai_provider_id: Mapped[int] = mapped_column(ForeignKey("ai_providers.id"))
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+
+    provider: Mapped["AIProvider"] = relationship("AIProvider", back_populates="models")
+
+    __table_args__ = (UniqueConstraint("ai_provider_id", "name", name="uk_provider_model"),)
+
+    def __str__(self) -> str:
+        return str(self.name[:10])
 
 
 class User(Base):
@@ -229,11 +256,9 @@ class User(Base):
         String(50), unique=True, nullable=False, comment="Username for authentication"
     )
     email: Mapped[str] = mapped_column(
-        String(50), unique=True, nullable=True, comment="Email for authentication"
+        String(50), unique=True, nullable=False, comment="Email for authentication"
     )
-    password_hash: Mapped[str] = mapped_column(
-        String, unique=True, nullable=False, comment="Password hash"
-    )
+    password_hash: Mapped[str] = mapped_column(String, nullable=False, comment="Password hash")
     is_active: Mapped[bool] = mapped_column(Boolean, default=False)
     is_verify: Mapped[bool] = mapped_column(Boolean, default=False)
 
@@ -242,12 +267,18 @@ class User(Base):
     position: Mapped[str | None] = mapped_column(String(100), nullable=True)
     ai_auto_process: Mapped[bool] = mapped_column(default=False)
     ai_provider_id: Mapped[int] = mapped_column(ForeignKey("ai_providers.id"), nullable=True)
+    ai_model_id: Mapped[int | None] = mapped_column(ForeignKey("ai_models.id"))
 
-    # Relationships
-    ai_provider: Mapped["AIProvider"] = relationship("AIProvider")
+    ai_provider: Mapped["AIProvider | None"] = relationship("AIProvider")
     task_types: Mapped[list["TaskType"]] = relationship(
         "TaskType", back_populates="user", cascade="all, delete-orphan"
     )
+    ai_model: Mapped["AIModel | None"] = relationship("AIModel")
+    custom_prompt: Mapped[str] = mapped_column(String, nullable=True, comment="Custom base prompt")
+    is_admin: Mapped[bool] = mapped_column(Boolean, nullable=True, default=False, comment="Role")
+
+    def __str__(self) -> str:
+        return str(self.name)
 
 
 class TaskType(Base):
@@ -266,3 +297,27 @@ class TaskType(Base):
         UniqueConstraint("user_id", "title", name="uk_user_task_type"),
         Index("ix_task_types_user_active", "user_id", "is_active"),
     )
+
+    def __str__(self) -> str:
+        return str(self.title)
+
+
+class AIProviderKey(Base):
+    __tablename__ = "ai_provider_keys"
+
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
+    ai_provider_id: Mapped[int] = mapped_column(ForeignKey("ai_providers.id"), nullable=False)
+    encrypted_key: Mapped[bytes] = mapped_column(nullable=False)
+    is_active: Mapped[bool] = mapped_column(default=True)
+    last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    user: Mapped["User"] = relationship("User")
+    provider: Mapped["AIProvider"] = relationship("AIProvider")
+
+    __table_args__ = (
+        UniqueConstraint("user_id", "ai_provider_id", name="uk_user_provider_key"),
+        Index("ix_ai_provider_keys_user_active", "user_id", "is_active"),
+    )
+
+    def __str__(self) -> str:
+        return str(f"{self.provider}_{self.user_id}")

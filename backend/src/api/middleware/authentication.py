@@ -1,10 +1,14 @@
+from logging import getLogger
 from litestar.middleware import AbstractAuthenticationMiddleware, AuthenticationResult
 from litestar.connection import ASGIConnection
 from litestar import Litestar
 from litestar.types import ASGIApp
+
 from backend.src.core.exceptions import AuthenticationError
 from backend.src.services import JWTService
 from backend.src.database.repositories import UserRepository
+
+logger = getLogger(__name__)
 
 
 class JWTAuthenticationMiddleware(AbstractAuthenticationMiddleware):
@@ -12,9 +16,10 @@ class JWTAuthenticationMiddleware(AbstractAuthenticationMiddleware):
         exclude = [
             "/api/v1/auth/register",
             "/api/v1/auth/login",
+            "/api/v1/auth/refresh",
             "/admin/*",
-            "/docs",
-            "/schema",
+            "/schema/*",
+            "/docs/*",
         ]
         super().__init__(app, exclude=exclude)
 
@@ -23,6 +28,12 @@ class JWTAuthenticationMiddleware(AbstractAuthenticationMiddleware):
         container = app.state.dishka_container
 
         access_token = connection.cookies.get("accessToken")
+
+        if not access_token:
+            auth_header = connection.headers.get("authorization")
+            if auth_header and auth_header.startswith("Bearer "):
+                access_token = auth_header[7:]  # delete "Bearer "
+
         if not access_token:
             raise AuthenticationError("No access token")
 

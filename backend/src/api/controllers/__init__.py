@@ -1,13 +1,12 @@
-from backend.src.api.controllers.record_controller import RecordController
-from backend.src.api.controllers.report_controller import ReportController
-from backend.src.api.controllers.settings_controller import SettingsController
-from backend.src.api.controllers.task_controller import TaskController
-from backend.src.api.controllers.auth_controller import AuthController
+from backend.src.api.controllers.auth import AuthController
+from backend.src.api.controllers.records import RecordController, TaskController
+from backend.src.api.controllers.reports import ReportController
+from backend.src.api.controllers.profile import ProfileController
 
 __all__ = [
-    "ReportController",
+    "AuthController",
     "RecordController",
     "TaskController",
-    "SettingsController",
-    "AuthController",
+    "ReportController",
+    "ProfileController",
 ]
