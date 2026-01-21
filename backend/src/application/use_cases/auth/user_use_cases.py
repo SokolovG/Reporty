@@ -1,28 +1,53 @@
-from backend.src.infrastructure.database.repositories import UserRepository
-from backend.src.infrastructure.exceptions.api_exceptions import NotFoundError
-from backend.src.presentation.dto.auth.responses import UserResponse
+from backend.src.infrastructure.database.repositories import (
+    AIModelRepository,
+    AIProviderKeyRepository,
+    AIProviderRepository,
+    ExternalSystemRepository,
+    UserRepository,
+)
+from backend.src.infrastructure.encryption.encryption_service import EncryptionService
+from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError
+from backend.src.presentation.dto import UserResponse, UserUpdateRequest
 from backend.src.presentation.dto.converters import user_to_response
 
 
 class UserUseCases:
-    """Use cases for user-related operations."""
+    """Service for managing user settings and preferences."""
 
-    def __init__(self, user_repository: UserRepository) -> None:
+    def __init__(
+        self,
+        ai_provider_repository: AIProviderRepository,
+        ai_models_repository: AIModelRepository,
+        user_repository: UserRepository,
+        external_system_repository: ExternalSystemRepository,
+        encryption_service: EncryptionService,
+        api_key_repo: AIProviderKeyRepository,
+    ) -> None:
+        self.encryption_service = encryption_service
+        self.ai_provider_repository = ai_provider_repository
+        self.ai_models_repository = ai_models_repository
         self.user_repository = user_repository
+        self.external_system_repository = external_system_repository
+        self.api_key_repo = api_key_repo
 
-    async def get_user_profile(self, user_id: int) -> UserResponse:
-        """Get user profile by ID."""
-        user = await self.user_repository.get_one_or_none(id=user_id)
-        if not user:
-            raise NotFoundError("User", user_id)
+    async def get(self, user_id: int) -> UserResponse:
+        """Get user with all information."""
+        try:
+            user = await self.user_repository.get_one(id=user_id)
+            return user_to_response(user)
+        except Exception as e:
+            raise InternalServerError(f"Failed to get user: {str(e)}", {"user_id": user_id})
 
-        return user_to_response(user)
-
-    async def update_user_profile(self, user_id: int, **kwargs) -> UserResponse:
-        """Update user profile."""
-        user = await self.user_repository.get_one_or_none(id=user_id)
-        if not user:
-            raise NotFoundError("User", user_id)
-
-        # TODO: Implement profile update logic
-        return user_to_response(user)
+    async def update(self, user_id: int, data: UserUpdateRequest) -> UserResponse:
+        """Update user information."""
+        try:
+            user = await self.user_repository.update_profile(
+                user_id=user_id,
+                display_name=data.display_name,
+                department=data.department,
+                position=data.position,
+                email=data.email,
+            )
+            return user_to_response(user)
+        except Exception as e:
+            raise InternalServerError(f"Failed to update user: {str(e)}", {"user_id": user_id})

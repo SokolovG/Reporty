@@ -154,8 +154,23 @@ class MyProvider(Provider):
         return AuthUseCase(user_repo, jwt_service, notification_service)
 
     @provide(scope=Scope.REQUEST)
-    def user_use_cases(self, user_repo: UserRepository) -> UserUseCases:
-        return UserUseCases(user_repo)
+    def user_use_cases(
+        self,
+        user_repo: UserRepository,
+        ai_provider_repo: AIProviderRepository,
+        ai_model_repo: AIModelRepository,
+        external_system_repo: ExternalSystemRepository,
+        encryption_service: EncryptionService,
+        ai_key_repo: AIProviderKeyRepository,
+    ) -> UserUseCases:
+        return UserUseCases(
+            ai_provider_repository=ai_provider_repo,
+            ai_models_repository=ai_model_repo,
+            user_repository=user_repo,
+            external_system_repository=external_system_repo,
+            encryption_service=encryption_service,
+            api_key_repo=ai_key_repo,
+        )
 
     @provide(scope=Scope.REQUEST)
     def ai_use_cases(
