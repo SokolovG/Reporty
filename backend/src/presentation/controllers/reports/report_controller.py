@@ -5,58 +5,69 @@ from dishka.integrations.litestar import inject
 from litestar import Controller, Request, delete, get, patch, post
 
 from backend.src.application.use_cases.reports.report_use_cases import ReportUseCases
+from backend.src.infrastructure.database.mappers import Converter
 from backend.src.presentation.dto.reports import (
-    DailyReportRequest,
-    DailyReportRequestDTO,
-    DailyReportRequestUpdate,
+    ReportRequest,
+    ReportRequestDTO,
+    ReportRequestUpdate,
+    ReportResponse,
 )
 from backend.src.presentation.responses.base_responses import SuccessResponse, SuccessResponseDTO
 
 
 class ReportController(Controller):
-    @post(dto=DailyReportRequestDTO, return_dto=SuccessResponseDTO)
+    @post(dto=ReportRequestDTO, return_dto=SuccessResponseDTO)
     @inject
     async def create_report(
         self,
-        data: DailyReportRequest,
-        report_use_cases: FromDishka[ReportUseCases],
         request: Request,
+        data: ReportRequest,
+        report_use_cases: FromDishka[ReportUseCases],
+        converter: FromDishka[Converter],
     ) -> SuccessResponse:
         """Create a new report."""
         user_id = request.user.id
         report = await report_use_cases.create(data=data, user_id=user_id)
-        result = report_to_response(report)
+        result = converter.convert(report, ReportResponse)
         return SuccessResponse(message="Report created successfully", data=result)
 
     @get("/{report_id:int}", return_dto=SuccessResponseDTO)
     @inject
     async def get_report(
-        self, report_use_cases: FromDishka[ReportUseCases], report_id: int, request: Request
+        self,
+        request: Request,
+        report_id: int,
+        report_use_cases: FromDishka[ReportUseCases],
+        converter: FromDishka[Converter],
     ) -> SuccessResponse:
         """Get a specific report."""
         user_id = request.user.id
         report = await report_use_cases.get(report_id=report_id, user_id=user_id)
-        result = report_to_response(report)
+        result = converter.convert(report, ReportResponse)
         return SuccessResponse(message="Report retrieved successfully", data=result)
 
     @get(return_dto=SuccessResponseDTO)
     @inject
     async def get_reports(
         self,
-        report_use_cases: FromDishka[ReportUseCases],
         request: Request,
+        report_use_cases: FromDishka[ReportUseCases],
+        converter: FromDishka[Converter],
         date: datetime | None = None,
     ) -> SuccessResponse:
         """Get all reports."""
         user_id = request.user.id
         reports = await report_use_cases.get_many(user_id=user_id)
-        result = [report_to_response(report) for report in reports]
+        result = [converter.convert(report, ReportResponse) for report in reports]
         return SuccessResponse(message="Reports retrieved successfully", data=result)
 
     @delete("/{report_id:int}", status_code=204)
     @inject
     async def delete_report(
-        self, report_use_cases: FromDishka[ReportUseCases], report_id: int, request: Request
+        self,
+        request: Request,
+        report_id: int,
+        report_use_cases: FromDishka[ReportUseCases],
     ) -> None:
         """Delete a report."""
         user_id = request.user.id
@@ -66,12 +77,13 @@ class ReportController(Controller):
     @inject
     async def update_report(
         self,
-        report_use_cases: FromDishka[ReportUseCases],
         request: Request,
-        update_data: DailyReportRequestUpdate,
+        update_data: ReportRequestUpdate,
+        report_use_cases: FromDishka[ReportUseCases],
+        converter: FromDishka[Converter],
     ) -> SuccessResponse:
         """Update a report."""
         user_id = request.user.id
         report = await report_use_cases.update(update_data=update_data, user_id=user_id)
-        result = report_to_response(report)
+        result = converter.convert(report, ReportResponse)
         return SuccessResponse(message="Report updated successfully", data=result)

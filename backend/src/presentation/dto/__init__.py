@@ -31,11 +31,11 @@ from backend.src.presentation.dto.records import (
     RecordStatusUpdateRequestDTO,
 )
 from backend.src.presentation.dto.reports import (
-    DailyReportRequest,
-    DailyReportRequestDTO,
-    DailyReportRequestUpdate,
-    DailyReportRequestUpdateDTO,
-    DailyReportResponse,
+    ReportRequest,
+    ReportRequestDTO,
+    ReportRequestUpdate,
+    ReportRequestUpdateDTO,
+    ReportResponse,
 )
 from backend.src.presentation.dto.settings import (
     AIModelResponse,
@@ -89,11 +89,11 @@ __all__ = [
     "ExternalTaskUpdateRequestDTO",
     "ExternalTaskResponse",
     # Reports domain
-    "DailyReportRequest",
-    "DailyReportRequestUpdate",
-    "DailyReportResponse",
-    "DailyReportRequestDTO",
-    "DailyReportRequestUpdateDTO",
+    "ReportRequest",
+    "ReportRequestUpdate",
+    "ReportResponse",
+    "ReportRequestDTO",
+    "ReportRequestUpdateDTO",
     # Settings domain
     "TaskTypeRequest",
     "TaskTypeUpdateRequest",

@@ -1,11 +1,12 @@
 from datetime import datetime
+
 import msgspec
 
 
-class DailyReportRequest(msgspec.Struct):
+class ReportRequest(msgspec.Struct):
     date: datetime = datetime.today()
 
 
-class DailyReportRequestUpdate(msgspec.Struct):
+class ReportRequestUpdate(msgspec.Struct):
     report_id: int
     # TODO: report update

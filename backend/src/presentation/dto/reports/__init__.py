@@ -1,22 +1,22 @@
 from backend.src.presentation.dto.reports.dto_classes import (
-    DailyReportRequestDTO,
-    DailyReportRequestUpdateDTO,
+    ReportRequestDTO,
+    ReportRequestUpdateDTO,
 )
 from backend.src.presentation.dto.reports.requests import (
-    DailyReportRequest,
-    DailyReportRequestUpdate,
+    ReportRequest,
+    ReportRequestUpdate,
 )
 from backend.src.presentation.dto.reports.responses import (
-    DailyReportResponse,
+    ReportResponse,
 )
 
 __all__ = [
     # Requests
-    "DailyReportRequest",
-    "DailyReportRequestUpdate",
+    "ReportRequest",
+    "ReportRequestUpdate",
     # Responses
-    "DailyReportResponse",
+    "ReportResponse",
     # DTOs
-    "DailyReportRequestDTO",
-    "DailyReportRequestUpdateDTO",
+    "ReportRequestDTO",
+    "ReportRequestUpdateDTO",
 ]

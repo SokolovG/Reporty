@@ -10,8 +10,8 @@ from backend.src.infrastructure.database.repositories import (
 )
 from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError, NotFoundError
 from backend.src.presentation.dto import (
-    DailyReportRequest,
-    DailyReportRequestUpdate,
+    ReportRequest,
+    ReportRequestUpdate,
 )
 
 logger = getLogger(__name__)
@@ -28,7 +28,7 @@ class ReportUseCases:
         self.record_repo = record_repo
         self.user_repository = user_repository
 
-    async def create(self, data: DailyReportRequest, user_id: int) -> ReportModel:
+    async def create(self, data: ReportRequest, user_id: int) -> ReportModel:
         """Create a new daily report."""
         try:
             today_records = await self.record_repo.get_records_by_date(
@@ -84,7 +84,7 @@ class ReportUseCases:
                 f"Failed to delete report: {str(e)}", {"report_id": report_id}
             )
 
-    async def update(self, update_data: DailyReportRequestUpdate, user_id: int) -> ReportModel:
+    async def update(self, update_data: ReportRequestUpdate, user_id: int) -> ReportModel:
         """Update a report."""
         try:
             report = await self.repo.get_report(report_id=update_data.report_id, user_id=user_id)

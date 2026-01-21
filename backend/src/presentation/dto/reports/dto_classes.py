@@ -1,15 +1,12 @@
 from litestar.dto import DTOConfig
 
 from backend.src.presentation.dto.base import BaseMsgspecDTO
-from backend.src.presentation.dto.reports.requests import (
-    DailyReportRequest,
-    DailyReportRequestUpdate,
-)
+from backend.src.presentation.dto.reports.requests import ReportRequest, ReportRequestUpdate
 
 
-class DailyReportRequestDTO(BaseMsgspecDTO[DailyReportRequest]):
+class ReportRequestDTO(BaseMsgspecDTO[ReportRequest]):
     config = DTOConfig()
 
 
-class DailyReportRequestUpdateDTO(BaseMsgspecDTO[DailyReportRequestUpdate]):
+class ReportRequestUpdateDTO(BaseMsgspecDTO[ReportRequestUpdate]):
     config = DTOConfig(partial=True, exclude={"id"})

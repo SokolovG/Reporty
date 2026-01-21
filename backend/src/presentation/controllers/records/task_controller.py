@@ -3,6 +3,8 @@ from dishka.integrations.litestar import inject
 from litestar import Controller, Request, delete, post, put
 
 from backend.src.application.use_cases.tasks.tasks_use_cases import TasksUseCase
+from backend.src.infrastructure.database.mappers import Converter
+from backend.src.presentation.dto import ExternalTaskResponse
 from backend.src.presentation.dto.records import (
     ExternalTaskCreateRequest,
     ExternalTaskCreateRequestDTO,
@@ -17,14 +19,15 @@ class TaskController(Controller):
     @inject
     async def create_external_task(
         self,
+        request: Request,
         data: ExternalTaskCreateRequest,
         task_use_casess: FromDishka[TasksUseCase],
-        request: Request,
+        converter: FromDishka[Converter],
     ) -> SuccessResponse:
         """Create a new external task."""
         user_id = request.user.id
         task = await task_use_casess.create_external(data=data, user_id=user_id)
-        result = external_task_to_response(task)
+        result = converter.convert(task, ExternalTaskResponse)
         return SuccessResponse(message="External task created successfully", data=result)
 
     @put(
@@ -35,15 +38,16 @@ class TaskController(Controller):
     @inject
     async def update_external_task(
         self,
+        request: Request,
         task_id: int,
         data: ExternalTaskUpdateRequest,
         task_use_casess: FromDishka[TasksUseCase],
-        request: Request,
+        converter: FromDishka[Converter],
     ) -> SuccessResponse:
         """Update an external task."""
         user_id = request.user.id
         task = await task_use_casess.update_external(task_id=task_id, data=data, user_id=user_id)
-        result = external_task_to_response(task)
+        result = converter.convert(task, ExternalTaskResponse)
         return SuccessResponse(message="External task updated successfully", data=result)
 
     @delete("/external-tasks/{task_id:int}", status_code=204)

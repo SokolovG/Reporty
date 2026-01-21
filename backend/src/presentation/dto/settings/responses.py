@@ -40,3 +40,6 @@ class ExternalSystemResponse(msgspec.Struct):
     display_name: str
     api_config: dict
     is_active: bool
+
+
+class ExternalTaskResponse(msgspec.Struct): ...  # TODO
