@@ -1,11 +1,13 @@
 import logging
+
 import msgspec
+from litestar.exceptions import HTTPException
 from litestar.middleware.base import AbstractMiddleware
 from litestar.status_codes import HTTP_500_INTERNAL_SERVER_ERROR
-from litestar.exceptions import HTTPException
-from litestar.types import Scope, Receive, Send
-from backend.src.core.exceptions import ApiException
-from backend.src.api.responses.base_responses import ErrorResponse
+from litestar.types import Receive, Scope, Send
+
+from backend.src.infrastructure.exceptions.api_exceptions import ApiException
+from backend.src.presentation.responses import ErrorResponse
 
 
 class ErrorHandlerMiddleware(AbstractMiddleware):

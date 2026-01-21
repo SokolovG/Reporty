@@ -1,4 +1,4 @@
-from backend.src.database.repositories.auth.user_repository import UserRepository
+from backend.src.infrastructure.database.repositories import UserRepository
 
 __all__ = [
     "UserRepository",

@@ -24,7 +24,7 @@ class SuccessResponseDTO(MsgspecDTO[SuccessResponse]):
 
     def data_to_encodable_type(self, data: SuccessResponse | Collection) -> dict[str, Any]:
         if isinstance(data, Collection) and not isinstance(data, (str, bytes)):
-            return {"items": [self._process_single_response(item) for item in data]}
+            return {"items": [self._process_single_response(item) for item in data]}  # ty: ignore
 
         raw_dict = msgspec.to_builtins(data)
         return self._apply_camel_case_recursive(raw_dict)

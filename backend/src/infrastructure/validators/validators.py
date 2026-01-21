@@ -1,5 +1,6 @@
-from backend.src.core.exceptions import ValidationError
 import re
+
+from backend.src.infrastructure.exceptions.api_exceptions import ValidationError
 
 
 class PasswordValidator:

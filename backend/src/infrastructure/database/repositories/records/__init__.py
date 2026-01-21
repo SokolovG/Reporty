@@ -1,5 +1,5 @@
-from backend.src.database.repositories.records.record_repository import DailyRecordRepository
-from backend.src.database.repositories.external.external_task_repository import (
+from backend.src.infrastructure.database.repositories import (
+    DailyRecordRepository,
     ExternalTaskRepository,
 )
 

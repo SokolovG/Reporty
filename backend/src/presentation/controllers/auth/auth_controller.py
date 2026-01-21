@@ -3,6 +3,7 @@ from dishka.integrations.litestar import inject
 from litestar import Controller, Request, Response, get, post
 from litestar.datastructures.cookie import Cookie
 
+from backend.src.application.use_cases.auth.auth_use_cases import AuthUseCase
 from backend.src.infrastructure.exceptions.api_exceptions import AuthenticationError
 from backend.src.presentation.dto import (
     AccessTokenResponse,
@@ -18,7 +19,7 @@ class AuthController(Controller):
     @post("/register", return_dto=SuccessResponseDTO)
     @inject
     async def register(
-        self, service: FromDishka[AuthService], data: RegisterRequest
+        self, service: FromDishka[AuthUseCase], data: RegisterRequest
     ) -> SuccessResponse:
         """Register a new user."""
         user = await service.register(data)
@@ -27,7 +28,7 @@ class AuthController(Controller):
     @post("/login")
     @inject
     async def login(
-        self, request: Request, service: FromDishka[AuthService], data: LoginRequest
+        self, request: Request, service: FromDishka[AuthUseCase], data: LoginRequest
     ) -> Response[SuccessResponse]:
         """Login user and return tokens."""
         token_info = await service.login(data)
@@ -89,7 +90,7 @@ class AuthController(Controller):
     @post("/refresh")
     @inject
     async def refresh_token(
-        self, service: FromDishka[AuthService], request: Request
+        self, service: FromDishka[AuthUseCase], request: Request
     ) -> Response[SuccessResponse]:
         """Refresh access token."""
         refresh_token: str | None = request.cookies.get("refreshToken")
@@ -119,7 +120,7 @@ class AuthController(Controller):
     @post("/change-password", return_dto=SuccessResponseDTO)
     @inject
     async def change_password(
-        self, service: FromDishka[AuthService], request: Request, data: ChangePasswordRequest
+        self, service: FromDishka[AuthUseCase], request: Request, data: ChangePasswordRequest
     ) -> SuccessResponse:
         """Change user password."""
         user_id = request.user.id
@@ -130,7 +131,7 @@ class AuthController(Controller):
     @inject
     async def get_me(
         self,
-        service: FromDishka[AuthService],
+        service: FromDishka[AuthUseCase],
         request: Request,
     ) -> SuccessResponse:
         """Get current user profile."""

@@ -5,13 +5,13 @@ from advanced_alchemy import repository
 from sqlalchemy import and_, select
 from sqlalchemy.orm import selectinload
 
-from backend.src.api.dto import DailyRecordRequest
-from backend.src.core.exceptions import NotFoundError
-from backend.src.database.base import RecordStatus
-from backend.src.database.models import DailyRecord, ExternalTask
+from backend.src.infrastructure.database.base import RecordStatus
+from backend.src.infrastructure.database.models import DailyRecord, ExternalTask
+from backend.src.infrastructure.exceptions.api_exceptions import NotFoundError
+from backend.src.presentation.dto import DailyRecordRequest
 
 
-class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]):
+class DailyRecordRepository(repository.SQLAlchemyAsyncRepository[DailyRecord]):  # ty: ignore
     model_type: type[DailyRecord] = DailyRecord
 
     async def create_record(self, data: DailyRecordRequest, user_id: int) -> DailyRecord:

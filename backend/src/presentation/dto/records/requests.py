@@ -1,5 +1,6 @@
 import msgspec
-from backend.src.database.base import RecordStatus
+
+from backend.src.infrastructure.database.base import RecordStatus
 
 
 class DailyRecordRequest(msgspec.Struct):

@@ -1,4 +1,4 @@
-from backend.src.api.controllers.profile.profile_controller import ProfileController
+from backend.src.presentation.controllers import ProfileController
 
 __all__ = [
     "ProfileController",

@@ -1,4 +1,4 @@
-from backend.src.api.dto.shared.user_dto import (
+from backend.src.presentation.dto.shared.user_dto import (
     UserReadDTO,
     UserRegistrationDTO,
     UserUpdateDTO,

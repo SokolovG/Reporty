@@ -1,9 +1,9 @@
 from advanced_alchemy import repository
 
-from backend.src.database.models import User
+from backend.src.infrastructure.database.models import User
 
 
-class UserRepository(repository.SQLAlchemyAsyncRepository[User]):
+class UserRepository(repository.SQLAlchemyAsyncRepository[User]):  # ty: ignore
     model_type: type[User] = User
 
     async def create_user(

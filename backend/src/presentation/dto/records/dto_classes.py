@@ -1,15 +1,16 @@
 from litestar.dto import DTOConfig
-from backend.src.api.dto.base import BaseMsgspecDTO
-from backend.src.api.dto.records.requests import (
+
+from backend.src.presentation.dto.base import BaseMsgspecDTO
+from backend.src.presentation.dto.records.requests import (
+    AppendToRecordRequest,
     DailyRecordRequest,
     DailyRecordUpdateRequest,
-    AppendToRecordRequest,
-    LinkTaskRequest,
-    RecordStatusUpdateRequest,
     ExternalTaskCreateRequest,
     ExternalTaskUpdateRequest,
+    LinkTaskRequest,
+    RecordStatusUpdateRequest,
 )
-from backend.src.api.dto.records.responses import (
+from backend.src.presentation.dto.records.responses import (
     DailyRecordWithTaskResponse,
     ExternalTaskResponse,
 )

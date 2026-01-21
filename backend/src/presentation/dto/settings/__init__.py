@@ -1,24 +1,24 @@
-from backend.src.api.dto.settings.requests import (
-    TaskTypeRequest,
-    TaskTypeUpdateRequest,
+from backend.src.presentation.dto import (
     AIPreferencesUpdateRequest,
     AIProviderUpdateRequest,
     ExternalSystemUpdateRequest,
+    TaskTypeRequest,
+    TaskTypeUpdateRequest,
 )
-from backend.src.api.dto.settings.responses import (
-    TaskTypeResponse,
-    AIPreferencesResponse,
-    AIModelResponse,
-    AIProviderResponse,
-    AISettingsUpdateResponse,
-    ExternalSystemResponse,
-)
-from backend.src.api.dto.settings.dto_classes import (
-    TaskTypeRequestDTO,
-    TaskTypeUpdateRequestDTO,
+from backend.src.presentation.dto.settings.dto_classes import (
     AIPreferencesUpdateRequestDTO,
     AIProviderUpdateRequestDTO,
     ExternalSystemUpdateRequestDTO,
+    TaskTypeRequestDTO,
+    TaskTypeUpdateRequestDTO,
+)
+from backend.src.presentation.dto.settings.responses import (
+    AIModelResponse,
+    AIPreferencesResponse,
+    AIProviderResponse,
+    AISettingsUpdateResponse,
+    ExternalSystemResponse,
+    TaskTypeResponse,
 )
 
 __all__ = [

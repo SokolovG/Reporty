@@ -1,20 +1,21 @@
 from dishka import FromDishka
 from dishka.integrations.litestar import inject
-from litestar import Controller, get, post, patch, delete, Request
+from litestar import Controller, Request, delete, get, patch, post
 
-from backend.src.api.dto.auth import UserUpdateRequest, UserUpdateRequestDTO
-from backend.src.api.dto.settings import (
+from backend.src.application.use_cases.settings.settings_use_cases import SettingsUseCases
+from backend.src.application.use_cases.tasks.tasks_use_cases import TasksUseCase
+from backend.src.presentation.dto.auth import UserUpdateRequest, UserUpdateRequestDTO
+from backend.src.presentation.dto.settings import (
     AIPreferencesUpdateRequest,
     AIPreferencesUpdateRequestDTO,
     AIProviderUpdateRequest,
     AIProviderUpdateRequestDTO,
     TaskTypeRequest,
-    TaskTypeUpdateRequest,
     TaskTypeRequestDTO,
+    TaskTypeUpdateRequest,
     TaskTypeUpdateRequestDTO,
 )
-from backend.src.api.responses.base_responses import SuccessResponse, SuccessResponseDTO
-from backend.src.services.settings.settings_service import SettingsService
+from backend.src.presentation.responses.base_responses import SuccessResponse, SuccessResponseDTO
 
 
 class ProfileController(Controller):
@@ -26,11 +27,11 @@ class ProfileController(Controller):
         self,
         data: UserUpdateRequest,
         request: Request,
-        settings_service: FromDishka[SettingsService],
+        settings_use_cases: FromDishka[SettingsUseCases],
     ) -> SuccessResponse:
         """Update user profile information."""
         user_id = request.user.id
-        updated_user = await settings_service.update_user(user_id=user_id, data=data)
+        updated_user = await settings_use_cases.update_user(user_id=user_id, data=data)
         return SuccessResponse(message="User updated successfully", data=updated_user)
 
     @patch("/ai-preferences", dto=AIPreferencesUpdateRequestDTO, return_dto=SuccessResponseDTO)
@@ -39,11 +40,11 @@ class ProfileController(Controller):
         self,
         data: AIPreferencesUpdateRequest,
         request: Request,
-        settings_service: FromDishka[SettingsService],
+        settings_use_cases: FromDishka[SettingsUseCases],
     ) -> SuccessResponse:
         """Update user's AI preferences (provider selection, auto-processing)."""
         user_id = request.user.id
-        updated_preferences = await settings_service.update_user_ai_preferences(
+        updated_preferences = await settings_use_cases.update_user_ai_preferences(
             user_id=user_id, data=data
         )
         return SuccessResponse(
@@ -53,11 +54,11 @@ class ProfileController(Controller):
     @get("/ai-preferences/providers", return_dto=SuccessResponseDTO)
     @inject
     async def get_available_ai_providers(
-        self, request: Request, settings_service: FromDishka[SettingsService]
+        self, request: Request, settings_use_cases: FromDishka[SettingsUseCases]
     ) -> SuccessResponse:
         """Get available AI providers for user selection."""
         user_id = request.user.id
-        providers = await settings_service.get_active_ai_providers(user_id=user_id)
+        providers = await settings_use_cases.get_active_ai_providers(user_id=user_id)
         return SuccessResponse(
             message="Available AI providers retrieved successfully", data=providers
         )
@@ -67,11 +68,12 @@ class ProfileController(Controller):
     async def get_task_types(
         self,
         request: Request,
-        settings_service: FromDishka[SettingsService],
+        settings_use_cases: FromDishka[SettingsUseCases],
+        task_types_use_case: FromDishka[TasksUseCase],
     ) -> SuccessResponse:
         """Get user's task types."""
         user_id = request.user.id
-        task_types = await settings_service.get_task_types(user_id=user_id)
+        task_types = await task_types_use_case.get_types(user_id=user_id)
         return SuccessResponse(message="Task types retrieved successfully", data=task_types)
 
     @post("/task-types", dto=TaskTypeRequestDTO, return_dto=SuccessResponseDTO)
@@ -80,11 +82,12 @@ class ProfileController(Controller):
         self,
         data: TaskTypeRequest,
         request: Request,
-        settings_service: FromDishka[SettingsService],
+        settings_use_cases: FromDishka[SettingsUseCases],
+        task_types_use_case: FromDishka[TasksUseCase],
     ) -> SuccessResponse:
         """Create new task type for user."""
         user_id = request.user.id
-        task_type = await settings_service.create_task_type(user_id=user_id, data=data)
+        task_type = await task_types_use_case.create_type(user_id=user_id, data=data)
         return SuccessResponse(message="Task type created successfully", data=task_type)
 
     @patch(
@@ -98,11 +101,12 @@ class ProfileController(Controller):
         task_type_id: int,
         data: TaskTypeUpdateRequest,
         request: Request,
-        settings_service: FromDishka[SettingsService],
+        settings_use_cases: FromDishka[SettingsUseCases],
+        task_types_use_case: FromDishka[TasksUseCase],
     ) -> SuccessResponse:
         """Update user's task type."""
         user_id = request.user.id
-        task_type = await settings_service.update_task_type(
+        task_type = await task_types_use_case.update_type(
             task_type_id=task_type_id, data=data, user_id=user_id
         )
         return SuccessResponse(message="Task type updated successfully", data=task_type)
@@ -113,11 +117,11 @@ class ProfileController(Controller):
         self,
         task_type_id: int,
         request: Request,
-        settings_service: FromDishka[SettingsService],
+        settings_use_cases: FromDishka[SettingsUseCases],
     ) -> None:
         """Delete user's task type."""
         user_id = request.user.id
-        await settings_service.delete_task_type(task_type_id=task_type_id, user_id=user_id)
+        await settings_use_cases.delete_task_type(task_type_id=task_type_id, user_id=user_id)
 
     @patch(
         "/ai-preferences/providers/{ai_provider_id:int}",
@@ -130,11 +134,11 @@ class ProfileController(Controller):
         ai_provider_id: int,
         request: Request,
         data: AIProviderUpdateRequest,
-        settings_service: FromDishka[SettingsService],
+        settings_use_cases: FromDishka[SettingsUseCases],
     ) -> SuccessResponse:
         """Update AI provider configuration (admin only)."""
         user_id = request.user.id
-        updated_provider = await settings_service.update_ai_provider(
+        updated_provider = await settings_use_cases.update_ai_provider(
             ai_provider_id=ai_provider_id, data=data, user_id=user_id
         )
         return SuccessResponse(message="AI provider updated successfully", data=updated_provider)

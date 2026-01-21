@@ -1,17 +1,17 @@
 from datetime import datetime
 
+from backend.src.application.use_cases.ai.ai_use_cases import AIUseCases
 from backend.src.infrastructure.database.repositories import DailyRecordRepository
 from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError
 from backend.src.presentation.dto import DailyRecordResponse
 from backend.src.presentation.dto.converters import record_to_response
-from backend.src.services import AIService
 
 
 class ProcessRecordWithAIUseCases:
     def __init__(
         self,
         record_repo: DailyRecordRepository,
-        ai_service: AIService | None = None,
+        ai_service: AIUseCases | None = None,
     ) -> None:
         self.repo = record_repo
         self.ai_service = ai_service

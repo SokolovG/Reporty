@@ -1,5 +1,6 @@
 from logging import getLogger
 
+from backend.src.application.ports.notification import NotificationService
 from backend.src.infrastructure.database.repositories import UserRepository
 from backend.src.infrastructure.encryption.jwt_service import JWTService
 from backend.src.infrastructure.exceptions.api_exceptions import (
@@ -15,6 +16,7 @@ from backend.src.presentation.dto import (
     TokenInfo,
     UserResponse,
 )
+from backend.src.presentation.dto.converters import user_to_response
 
 logger = getLogger(__name__)
 

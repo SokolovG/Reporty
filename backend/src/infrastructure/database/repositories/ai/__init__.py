@@ -1,7 +1,7 @@
-from backend.src.database.repositories.ai.ai_repository import (
-    AIProviderRepository,
+from backend.src.infrastructure.database.repositories import (
     AIModelRepository,
     AIProviderKeyRepository,
+    AIProviderRepository,
 )
 
 __all__ = [

@@ -3,9 +3,9 @@ from datetime import datetime, timedelta, timezone
 import bcrypt
 import jwt
 
-from backend.src.api.dto import TokenInfo
-from backend.src.core.exceptions import AuthenticationError
-from backend.src.core.settings import settings
+from backend.src.infrastructure.config.settings import settings
+from backend.src.infrastructure.exceptions.api_exceptions import AuthenticationError
+from backend.src.presentation.dto import TokenInfo
 
 
 class JWTService:

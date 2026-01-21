@@ -1,6 +1,4 @@
-from backend.src.database.repositories.external.external_system_repository import (
-    ExternalSystemRepository,
-)
+from backend.src.infrastructure.database.repositories import ExternalSystemRepository
 
 __all__ = [
     "ExternalSystemRepository",

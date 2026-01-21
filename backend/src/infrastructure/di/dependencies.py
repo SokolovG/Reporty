@@ -6,8 +6,19 @@ from litestar import Litestar, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request as StarletteRequest
 
-from backend.src.core.configs import get_sqlalchemy_config
-from backend.src.database.repositories import (
+from backend.src.application.ports.notification import (
+    DefaultNotificationService,
+    NotificationService,
+)
+from backend.src.application.use_cases.ai.ai_use_cases import AIUseCases
+from backend.src.application.use_cases.auth.auth_use_cases import AuthUseCase
+from backend.src.application.use_cases.auth.user_use_cases import UserUseCases
+from backend.src.application.use_cases.records.record_use_cases import RecordUseCases
+from backend.src.application.use_cases.reports.report_use_cases import ReportUseCases
+from backend.src.application.use_cases.settings.settings_use_cases import SettingsUseCases
+from backend.src.application.use_cases.tasks.tasks_use_cases import TasksUseCase
+from backend.src.infrastructure.config.configs import get_sqlalchemy_config
+from backend.src.infrastructure.database.repositories import (
     AIModelRepository,
     AIProviderKeyRepository,
     AIProviderRepository,
@@ -17,18 +28,8 @@ from backend.src.database.repositories import (
     ReportRepository,
     UserRepository,
 )
-from backend.src.services import (
-    AIService,
-    AuthService,
-    EncryptionService,
-    JWTService,
-    NotificationService,
-    RecordService,
-    ReportService,
-    SettingsService,
-    TaskService,
-    UserService,
-)
+from backend.src.infrastructure.encryption.encryption_service import EncryptionService
+from backend.src.infrastructure.encryption.jwt_service import JWTService
 
 T = TypeVar("T")
 
@@ -64,9 +65,9 @@ class MyProvider(Provider):
         self,
         record_repo: DailyRecordRepository,
         user_repo: UserRepository,
-        ai_service: AIService,
-    ) -> RecordService:
-        return RecordService(
+        ai_service: AIUseCases,
+    ) -> RecordUseCases:
+        return RecordUseCases(
             record_repo=record_repo, user_repository=user_repo, ai_service=ai_service
         )
 
@@ -87,13 +88,13 @@ class MyProvider(Provider):
         return ExternalSystemRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
-    def report_service(
+    def report_use_cases(
         self,
         report_repo: ReportRepository,
         record_repo: DailyRecordRepository,
         user_repo: UserRepository,
-    ) -> ReportService:
-        return ReportService(report_repo, record_repo, user_repository=user_repo)
+    ) -> ReportUseCases:
+        return ReportUseCases(report_repo, record_repo, user_repository=user_repo)
 
     @provide(scope=Scope.REQUEST)
     def external_task_repo(self, db_session: AsyncSession) -> ExternalTaskRepository:
@@ -104,15 +105,16 @@ class MyProvider(Provider):
         return EncryptionService()
 
     @provide(scope=Scope.REQUEST)
-    def task_service(
+    def task_use_casess(
         self,
         external_task_repo: ExternalTaskRepository,
         external_system_repo: ExternalSystemRepository,
-    ) -> TaskService:
-        return TaskService(external_task_repo, external_system_repo)
+        user_repo: UserRepository,
+    ) -> TasksUseCase:
+        return TasksUseCase(external_task_repo, external_system_repo, user_repo)
 
     @provide(scope=Scope.REQUEST)
-    def settings_service(
+    def settings_use_cases(
         self,
         ai_provider_repo: AIProviderRepository,
         external_system_repo: ExternalSystemRepository,
@@ -120,8 +122,8 @@ class MyProvider(Provider):
         user_repo: UserRepository,
         encryption_service: EncryptionService,
         api_key_repo: AIProviderKeyRepository,
-    ) -> SettingsService:
-        return SettingsService(
+    ) -> SettingsUseCases:
+        return SettingsUseCases(
             ai_provider_repository=ai_provider_repo,
             ai_models_repository=ai_model_repo,
             external_system_repository=external_system_repo,
@@ -140,7 +142,7 @@ class MyProvider(Provider):
 
     @provide(scope=Scope.REQUEST)
     def notification_service(self) -> NotificationService:
-        return NotificationService()
+        return DefaultNotificationService()
 
     @provide(scope=Scope.REQUEST)
     def auth_service(
@@ -148,12 +150,12 @@ class MyProvider(Provider):
         user_repo: UserRepository,
         jwt_service: JWTService,
         notification_service: NotificationService,
-    ) -> AuthService:
-        return AuthService(user_repo, jwt_service, notification_service)
+    ) -> AuthUseCase:
+        return AuthUseCase(user_repo, jwt_service, notification_service)
 
     @provide(scope=Scope.REQUEST)
-    def user_service(self, user_repo: UserRepository) -> UserService:
-        return UserService(user_repo)
+    def user_service(self, user_repo: UserRepository) -> UserUseCases:
+        return UserUseCases(user_repo)
 
     @provide(scope=Scope.REQUEST)
     def ai_service(
@@ -161,5 +163,5 @@ class MyProvider(Provider):
         encryption_service: EncryptionService,
         user_repo: UserRepository,
         api_key_repo: AIProviderKeyRepository,
-    ) -> AIService:
-        return AIService(encryption_service, user_repo, api_key_repo)
+    ) -> AIUseCases:
+        return AIUseCases(encryption_service, user_repo, api_key_repo)

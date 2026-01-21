@@ -1,7 +1,8 @@
-from cryptography.fernet import Fernet
 from logging import getLogger
-from backend.src.core.settings import settings
 
+from cryptography.fernet import Fernet
+
+from backend.src.infrastructure.config.settings import settings
 
 logger = getLogger(__name__)
 

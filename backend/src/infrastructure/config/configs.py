@@ -1,16 +1,15 @@
 from advanced_alchemy.config import AsyncSessionConfig
 from advanced_alchemy.extensions.litestar import EngineConfig
 from dotenv import load_dotenv
+from litestar.config.cors import CORSConfig
 from litestar.contrib.sqlalchemy.plugins import SQLAlchemyAsyncConfig
 from litestar.logging import LoggingConfig
-from litestar.config.cors import CORSConfig
-from sqlalchemy import Engine, create_engine
-
-from backend.src.core.settings import settings
-from backend.src.database.base import Base
 from litestar.openapi.config import OpenAPIConfig
 from litestar.openapi.spec import Components, SecurityScheme
+from sqlalchemy import Engine, create_engine
 
+from backend.src.infrastructure.config.settings import settings
+from backend.src.infrastructure.database.base import Base
 
 load_dotenv()
 

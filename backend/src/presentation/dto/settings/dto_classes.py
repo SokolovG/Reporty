@@ -1,11 +1,12 @@
 from litestar.dto import DTOConfig
-from backend.src.api.dto.base import BaseMsgspecDTO
-from backend.src.api.dto.settings.requests import (
-    TaskTypeRequest,
-    TaskTypeUpdateRequest,
+
+from backend.src.presentation.dto.base import BaseMsgspecDTO
+from backend.src.presentation.dto.settings.requests import (
     AIPreferencesUpdateRequest,
     AIProviderUpdateRequest,
     ExternalSystemUpdateRequest,
+    TaskTypeRequest,
+    TaskTypeUpdateRequest,
 )
 
 

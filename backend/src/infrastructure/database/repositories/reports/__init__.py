@@ -1,4 +1,4 @@
-from backend.src.database.repositories.reports.report_repository import ReportRepository
+from backend.src.infrastructure.database.repositories import ReportRepository
 
 __all__ = [
     "ReportRepository",

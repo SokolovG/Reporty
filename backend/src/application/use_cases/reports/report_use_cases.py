@@ -18,7 +18,7 @@ from backend.src.presentation.dto import (
 logger = getLogger(__name__)
 
 
-class ReportUseCase:
+class ReportUseCases:
     def __init__(
         self,
         report_repo: ReportRepository,

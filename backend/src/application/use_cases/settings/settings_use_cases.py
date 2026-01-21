@@ -1,44 +1,52 @@
 """
-Settings Service - handles user preferences and configuration.
+Settings Use Cases - handles user preferences and configuration.
 
-TODO: Split into domain-specific services:
-- AIPreferencesService (ai domain)
-- TaskTypeService (records domain)
-- UserProfileService (auth domain)
-- ExternalSystemService (shared domain)
+TODO: Split into domain-specific use cases:
+- AIPreferencesUseCases (ai domain)
+- TaskTypeUseCases (records domain)
+- UserProfileUseCases (auth domain)
+- ExternalSystemUseCases (shared domain)
 """
 
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from backend.src.api.dto import (
-    AIProviderResponse,
-    AIProviderUpdateRequest,
-    ExternalSystemResponse,
-    ExternalSystemUpdateRequest,
+from backend.src.infrastructure.database.models import (
+    AIProvider,
+    AIProviderKey,
+    ExternalSystem,
+    TaskType,
+    User,
 )
-from backend.src.api.dto.auth.requests import UserUpdateRequest
-from backend.src.api.dto.auth.responses import UserResponse
-from backend.src.api.dto.converters import (
-    external_system_to_response,
-    to_ai_preferences_response,
-    user_to_response,
-)
-from backend.src.api.dto.settings.requests import AIPreferencesUpdateRequest
-from backend.src.api.dto.settings.responses import AIModelResponse, AIPreferencesResponse
-from backend.src.core.exceptions import InternalServerError, NotFoundError
-from backend.src.database.models import AIProvider, AIProviderKey, ExternalSystem, TaskType, User
-from backend.src.database.repositories import (
+from backend.src.infrastructure.database.repositories import (
     AIModelRepository,
     AIProviderRepository,
     ExternalSystemRepository,
     UserRepository,
 )
-from backend.src.database.repositories.ai.ai_repository import AIProviderKeyRepository
-from backend.src.services.shared.encryption_service import EncryptionService
+from backend.src.infrastructure.database.repositories.ai.ai_repository import (
+    AIProviderKeyRepository,
+)
+from backend.src.infrastructure.encryption.encryption_service import EncryptionService
+from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError, NotFoundError
+from backend.src.presentation.dto import (
+    AIProviderResponse,
+    AIProviderUpdateRequest,
+    ExternalSystemResponse,
+    ExternalSystemUpdateRequest,
+)
+from backend.src.presentation.dto.auth.requests import UserUpdateRequest
+from backend.src.presentation.dto.auth.responses import UserResponse
+from backend.src.presentation.dto.converters import (
+    external_system_to_response,
+    to_ai_preferences_response,
+    user_to_response,
+)
+from backend.src.presentation.dto.settings.requests import AIPreferencesUpdateRequest
+from backend.src.presentation.dto.settings.responses import AIModelResponse, AIPreferencesResponse
 
 
-class SettingsService:
+class SettingsUseCases:
     """Service for managing user settings and preferences."""
 
     def __init__(
@@ -57,6 +65,7 @@ class SettingsService:
         self.external_system_repository = external_system_repository
         self.api_key_repo = api_key_repo
 
+    async def delete_task_type(self, task_type_id: int, user_id: int) -> None:
         """Delete a task type."""
         try:
             result = await self.user_repository.session.execute(

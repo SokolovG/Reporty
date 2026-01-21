@@ -3,11 +3,11 @@ from collections.abc import Sequence
 from advanced_alchemy import repository
 from sqlalchemy import and_, select
 
-from backend.src.core.exceptions import NotFoundError
-from backend.src.database.models import ExternalTask
+from backend.src.infrastructure.database.models import ExternalTask
+from backend.src.infrastructure.exceptions.api_exceptions import NotFoundError
 
 
-class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTask]):
+class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTask]):  # ty: ignore
     """Repository for managing external tasks."""
 
     model_type: type[ExternalTask] = ExternalTask

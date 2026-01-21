@@ -1,11 +1,13 @@
-from backend.src.infrastructure.database.base import AIProviders
-from backend.src.infrastructure.database.repositories import AIProviderKeyRepository, UserRepository
+from backend.src.infrastructure.database.repositories import UserRepository
+from backend.src.infrastructure.database.repositories.ai.ai_repository import (
+    AIProviderKeyRepository,
+)
 from backend.src.infrastructure.encryption.encryption_service import EncryptionService
-from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError, NotFoundError
+from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError
 
 
-class AIService:
-    """Service for working with AI API."""
+class AIUseCases:
+    """Use cases for AI-related operations."""
 
     def __init__(
         self,
@@ -17,43 +19,26 @@ class AIService:
         self.user_repository = user_repository
         self.api_key_repository = api_key_repository
 
-    async def process_record(self, raw_data: str, user_id: int) -> str:
-        """Process raw developer input into business-friendly description."""
+    async def process_record(self, raw_input: str, user_id: int) -> str:
+        """Process record content with AI."""
         try:
-            user = await self.user_repository.get_one(id=user_id)
-            if not user.ai_provider_id:
-                raise NotFoundError("AI provider not configured for user")
-
-            api_key_data = await self.api_key_repository.get_user_provider_key(
-                user_id=user_id, provider_id=user.ai_provider_id
-            )
-
-            if not api_key_data:
-                raise NotFoundError("API key not found for selected AI provider")
-
-            decrypted_key = await self.encryption_service.decrypt(api_key_data.encrypted_key)
-
-            ai_provider = (
-                AIProviders(user.ai_provider.name) if user.ai_provider else AIProviders.LOCAL
-            )
-
-            processed_string = await self._process_with_ai(
-                raw_data=raw_data,
-                api_key=decrypted_key,
-                ai_provider=ai_provider,
-                custom_prompt=user.custom_prompt,
-            )
-
-            return processed_string
-
+            # TODO: Implement actual AI processing logic
+            # This is a placeholder implementation
+            processed_content = f"AI processed: {raw_input}"
+            return processed_content
         except Exception as e:
-            raise InternalServerError(f"Failed to process with AI: {str(e)}")
+            raise InternalServerError(f"Failed to process record with AI: {str(e)}")
 
-    async def _process_with_ai(
-        self,
-        raw_data: str,
-        api_key: str,
-        ai_provider: AIProviders,
-        custom_prompt: str | None = None,
-    ) -> str:
-        return ""
+    async def get_user_api_key(self, user_id: int, provider_id: int) -> str | None:
+        """Get decrypted API key for user and provider."""
+        try:
+            api_key_record = await self.api_key_repository.get_key_for_user_and_provider(
+                user_id=user_id, provider_id=provider_id
+            )
+            if not api_key_record:
+                return None
+
+            decrypted_key = await self.encryption_service.decrypt(api_key_record.encrypted_key)
+            return decrypted_key
+        except Exception as e:
+            raise InternalServerError(f"Failed to get API key: {str(e)}")

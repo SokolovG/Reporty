@@ -1,4 +1,4 @@
-from backend.src.api.controllers.auth.auth_controller import AuthController
+from backend.src.presentation.controllers import AuthController
 
 __all__ = [
     "AuthController",

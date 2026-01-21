@@ -1,6 +1,7 @@
 from litestar.dto import DTOConfig
-from backend.src.api.dto.base import BaseMsgspecDTO
-from backend.src.api.dto.reports.requests import (
+
+from backend.src.presentation.dto.base import BaseMsgspecDTO
+from backend.src.presentation.dto.reports.requests import (
     DailyReportRequest,
     DailyReportRequestUpdate,
 )

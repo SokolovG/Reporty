@@ -1,8 +1,8 @@
 from advanced_alchemy.extensions.litestar import SQLAlchemyDTO, SQLAlchemyDTOConfig
 from msgspec import Struct
 
-from backend.src.api.dto.base import BaseMsgspecDTO
-from backend.src.database.models import User
+from backend.src.infrastructure.database.models import User
+from backend.src.presentation.dto.base import BaseMsgspecDTO
 
 
 class UserRegistrationSchema(Struct):

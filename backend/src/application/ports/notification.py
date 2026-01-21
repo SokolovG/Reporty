@@ -1,19 +1,29 @@
 from abc import ABC, abstractmethod
 
 
-class NotificationPort(ABC):
+class NotificationService(ABC):
+    """Abstract notification service interface."""
+
     @abstractmethod
     async def send_register_notification(self) -> None:
         """Send registration notification."""
+        pass
 
     @abstractmethod
-    async def send_reset_password_notification(self) -> None:
+    async def send_password_reset_notification(self, email: str) -> None:
         """Send password reset notification."""
+        pass
 
-    @abstractmethod
-    async def send_ai_processing_complete(self, user_id: int, record_id: int) -> None:
-        """Notify user when AI processing is complete."""
 
-    @abstractmethod
-    async def send_report_generated(self, user_id: int, report_id: int) -> None:
-        """Notify user when report is generated."""
+class DefaultNotificationService(NotificationService):
+    """Default implementation of notification service."""
+
+    async def send_register_notification(self) -> None:
+        """Send registration notification."""
+        # TODO: Implement actual notification logic
+        pass
+
+    async def send_password_reset_notification(self, email: str) -> None:
+        """Send password reset notification."""
+        # TODO: Implement actual notification logic
+        pass

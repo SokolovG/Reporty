@@ -4,7 +4,8 @@ from dishka.integrations.litestar import inject
 from litestar import Controller, delete, get, post, patch, Request
 from litestar.params import Parameter
 
-from backend.src.api.dto.records import (
+from backend.src.application.use_cases.records.record_use_cases import RecordUseCases
+from backend.src.presentation.dto.records import (
     DailyRecordRequest,
     DailyRecordRequestDTO,
     RecordStatusUpdateRequest,
@@ -16,8 +17,7 @@ from backend.src.api.dto.records import (
     AppendToRecordRequestDTO,
     AppendToRecordRequest,
 )
-from backend.src.services import RecordService
-from backend.src.api.responses.base_responses import SuccessResponse, SuccessResponseDTO
+from backend.src.presentation.responses.base_responses import SuccessResponse, SuccessResponseDTO
 
 
 class RecordController(Controller):
@@ -27,31 +27,31 @@ class RecordController(Controller):
         self,
         data: DailyRecordRequest,
         request: Request,
-        record_service: FromDishka[RecordService],
+        record_service: FromDishka[RecordUseCases],
     ) -> SuccessResponse:
         """Create a new daily record."""
         user_id = request.user.id
-        result = await record_service.create_record(data=data, user_id=user_id)
+        result = await record_service.create(data=data, user_id=user_id)
         return SuccessResponse(message="Record created successfully", data=result)
 
     @get("/{record_id:int}", return_dto=SuccessResponseDTO)
     @inject
     async def get_record(
         self,
-        record_service: FromDishka[RecordService],
+        record_service: FromDishka[RecordUseCases],
         record_id: int,
         request: Request,
     ) -> SuccessResponse:
         """Get a specific record by ID."""
         user_id = request.user.id
-        result = await record_service.get_record(record_id=record_id, user_id=user_id)
+        result = await record_service.get(record_id=record_id, user_id=user_id)
         return SuccessResponse(message="Record retrieved successfully", data=result)
 
     @get(return_dto=SuccessResponseDTO)
     @inject
     async def get_records(
         self,
-        record_service: FromDishka[RecordService],
+        record_service: FromDishka[RecordUseCases],
         request: Request,
         date: datetime | None = Parameter(
             query="date", default=None, description="Filter records by date (YYYY-MM-DD format)"
@@ -59,7 +59,7 @@ class RecordController(Controller):
     ) -> SuccessResponse:
         """Get all records for user."""
         user_id = request.user.id
-        result = await record_service.get_records(target_date=date, user_id=user_id)
+        result = await record_service.get_many(target_date=date, user_id=user_id)
         return SuccessResponse(message="Records retrieved successfully", data=result)
 
     @patch(
@@ -70,7 +70,7 @@ class RecordController(Controller):
     @inject
     async def update_record_status(
         self,
-        record_service: FromDishka[RecordService],
+        record_service: FromDishka[RecordUseCases],
         record_id: int,
         request: Request,
         data: RecordStatusUpdateRequest,
@@ -91,13 +91,11 @@ class RecordController(Controller):
         data: AppendToRecordRequest,
         record_id: int,
         request: Request,
-        record_service: FromDishka[RecordService],
+        record_service: FromDishka[RecordUseCases],
     ) -> SuccessResponse:
         """Append content to existing record."""
         user_id = request.user.id
-        result = await record_service.append_to_record(
-            record_id=record_id, data=data, user_id=user_id
-        )
+        result = await record_service.append(record_id=record_id, data=data, user_id=user_id)
         return SuccessResponse(message="Content appended to record successfully", data=result)
 
     @patch(
@@ -111,21 +109,21 @@ class RecordController(Controller):
         data: DailyRecordUpdateRequest,
         record_id: int,
         request: Request,
-        record_service: FromDishka[RecordService],
+        record_service: FromDishka[RecordUseCases],
     ) -> SuccessResponse:
         """Update an existing record."""
         user_id = request.user.id
-        result = await record_service.update_record(record_id=record_id, data=data, user_id=user_id)
+        result = await record_service.update(record_id=record_id, data=data, user_id=user_id)
         return SuccessResponse(message="Record updated successfully", data=result)
 
     @get("/{record_id:int}/with-task", return_dto=SuccessResponseDTO)
     @inject
     async def get_record_with_task(
-        self, record_service: FromDishka[RecordService], record_id: int, request: Request
+        self, record_service: FromDishka[RecordUseCases], record_id: int, request: Request
     ) -> SuccessResponse:
         """Get record with external task information."""
         user_id = request.user.id
-        result = await record_service.get_record_with_task(record_id=record_id, user_id=user_id)
+        result = await record_service.get_with_task(record_id=record_id, user_id=user_id)
         return SuccessResponse(message="Record with task retrieved successfully", data=result)
 
     @post(
@@ -136,14 +134,14 @@ class RecordController(Controller):
     @inject
     async def link_external_task(
         self,
-        record_service: FromDishka[RecordService],
+        record_service: FromDishka[RecordUseCases],
         record_id: int,
         request: Request,
         data: LinkTaskRequest,
     ) -> SuccessResponse:
         """Link record to external task."""
         user_id = request.user.id
-        result = await record_service.link_to_external_task(
+        result = await record_service.link_task(
             record_id=record_id, external_task_id=data.external_task_id, user_id=user_id
         )
         return SuccessResponse(message="Record linked to external task successfully", data=result)
@@ -155,7 +153,7 @@ class RecordController(Controller):
     )
     @inject
     async def unlink_external_task(
-        self, record_service: FromDishka[RecordService], record_id: int, request: Request
+        self, record_service: FromDishka[RecordUseCases], record_id: int, request: Request
     ) -> SuccessResponse:
         """Unlink external task from record."""
         user_id = request.user.id
@@ -167,16 +165,16 @@ class RecordController(Controller):
     @delete("/{record_id:int}")
     @inject
     async def delete_record(
-        self, record_service: FromDishka[RecordService], record_id: int, request: Request
+        self, record_service: FromDishka[RecordUseCases], record_id: int, request: Request
     ) -> None:
         """Delete a record."""
         user_id = request.user.id
-        await record_service.delete_record(record_id=record_id, user_id=user_id)
+        await record_service.delete(record_id=record_id, user_id=user_id)
 
     @post("/{record_id:int}/process", return_dto=SuccessResponseDTO)
     @inject
     async def process_record_with_ai(
-        self, record_service: FromDishka[RecordService], record_id: int, request: Request
+        self, record_service: FromDishka[RecordUseCases], record_id: int, request: Request
     ) -> SuccessResponse:
         """Process record with AI."""
         user_id = request.user.id
@@ -186,9 +184,9 @@ class RecordController(Controller):
     @post("/{record_id: int}/approve", return_dto=SuccessResponseDTO)
     @inject
     async def approve_record(
-        self, record_service: FromDishka[RecordService], record_id: int, request: Request
+        self, record_service: FromDishka[RecordUseCases], record_id: int, request: Request
     ) -> SuccessResponse:
         """Approve processed record."""
         user_id = request.user.id
-        result = await record_service.approve_record(record_id=record_id, user_id=user_id)
+        result = await record_service.approve(record_id=record_id, user_id=user_id)
         return SuccessResponse(message="Record approved successfully", data=result)

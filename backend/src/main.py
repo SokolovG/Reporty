@@ -1,30 +1,29 @@
 import uvicorn
 from dishka import make_async_container
-from dishka.integrations.litestar import setup_dishka, LitestarProvider
-from litestar import Litestar, Request
-from litestar.types import ASGIApp
+from dishka.integrations.litestar import LitestarProvider, setup_dishka
+from litestar import Litestar, Request, Response
 from litestar.middleware import DefineMiddleware
-from litestar import Response
+from litestar.types import ASGIApp
 
-from backend.src.api.middleware import ErrorHandlerMiddleware, JWTAuthenticationMiddleware
-from backend.src.core.exceptions import ApiException
-from backend.src.core.plugins import get_sqlalchemy_plugin, admin_plugin
-from backend.src.api.responses.base_responses import ErrorResponse
-from backend.src.api.routes import (
-    record_router,
-    report_router,
-    task_router,
-    profile_router,
-    auth_router,
-)
-from backend.src.core.configs import (
+from backend.src.infrastructure.config.configs import (
+    cors_config,
     get_sqlalchemy_config,
     logging_config,
     openapi_config,
-    cors_config,
 )
-from backend.src.core.dependencies import MyProvider
-
+from backend.src.infrastructure.config.plugins import admin_plugin, get_sqlalchemy_plugin
+from backend.src.infrastructure.di.dependencies import MyProvider
+from backend.src.infrastructure.exceptions.api_exceptions import ApiException
+from backend.src.presentation.middleware.authentication import JWTAuthenticationMiddleware
+from backend.src.presentation.middleware.error_handler import ErrorHandlerMiddleware
+from backend.src.presentation.responses.base_responses import ErrorResponse
+from backend.src.presentation.routes import (
+    auth_router,
+    profile_router,
+    record_router,
+    report_router,
+    task_router,
+)
 
 sqlalchemy_plugin = get_sqlalchemy_plugin()
 sqlalchemy_config = get_sqlalchemy_config()
@@ -56,7 +55,8 @@ def create_app() -> ASGIApp:
         ],
         middleware=[ErrorHandlerMiddleware, DefineMiddleware(JWTAuthenticationMiddleware)],
         plugins=[sqlalchemy_plugin, admin_plugin],
-        exception_handlers={ApiException: api_exception_handler},
+        # exception_handlers: ExceptionHandlersMap | None = None, ExceptionHandlersMap: TypeAlias = "MutableMapping[Union[int, Type[Exception]], ExceptionHandler]"
+        exception_handlers={ApiException: api_exception_handler},  # ty: ignore
         debug=True,
         logging_config=logging_config,
         cors_config=cors_config,

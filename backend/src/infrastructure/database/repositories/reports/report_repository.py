@@ -4,12 +4,12 @@ from datetime import date
 from advanced_alchemy import repository
 from sqlalchemy import and_, select
 
-from backend.src.api.dto.reports.requests import DailyReportRequestUpdate
-from backend.src.core.exceptions import NotFoundError
-from backend.src.database.models import Report
+from backend.src.infrastructure.database.models import Report
+from backend.src.infrastructure.exceptions.api_exceptions import NotFoundError
+from backend.src.presentation.dto import DailyReportRequestUpdate
 
 
-class ReportRepository(repository.SQLAlchemyAsyncRepository[Report]):
+class ReportRepository(repository.SQLAlchemyAsyncRepository[Report]):  # ty: ignore
     model_type: type[Report] = Report
 
     async def get_latest_report(self, user_id: int) -> Report | None:

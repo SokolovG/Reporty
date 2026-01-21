@@ -1,10 +1,11 @@
 from litestar.dto import DTOConfig
-from backend.src.api.dto.base import BaseMsgspecDTO
-from backend.src.api.dto.auth.requests import (
+
+from backend.src.presentation.dto.auth.requests import (
     LoginRequest,
     RegisterRequest,
     UserUpdateRequest,
 )
+from backend.src.presentation.dto.base import BaseMsgspecDTO
 
 
 class LoginRequestDTO(BaseMsgspecDTO[LoginRequest]):

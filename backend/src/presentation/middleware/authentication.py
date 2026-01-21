@@ -5,9 +5,9 @@ from litestar.connection import ASGIConnection
 from litestar.middleware import AbstractAuthenticationMiddleware, AuthenticationResult
 from litestar.types import ASGIApp
 
-from backend.src.core.exceptions import AuthenticationError
-from backend.src.database.repositories import UserRepository
-from backend.src.services import JWTService
+from backend.src.infrastructure.exceptions.api_exceptions import AuthenticationError
+from backend.src.infrastructure.database.repositories import UserRepository
+from backend.src.infrastructure.encryption.jwt_service import JWTService
 
 logger = getLogger(__name__)
 
@@ -46,6 +46,6 @@ class JWTAuthenticationMiddleware(AbstractAuthenticationMiddleware):
             if not payload:
                 raise AuthenticationError("Invalid token")
 
-            user = await user_repo.get(int(payload["sub"]))
+            user = await user_repo.get_one(int(payload["sub"]))
 
         return AuthenticationResult(user=user, auth=access_token)
