@@ -1,4 +1,5 @@
-from backend.src.infrastructure.database.models import UserModel
+from backend.src.domain.entities.user import User
+from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.repositories import (
     AIModelRepository,
     AIProviderKeyRepository,
@@ -22,6 +23,7 @@ class UserUseCases:
         external_system_repository: ExternalSystemRepository,
         encryption_service: EncryptionService,
         api_key_repo: AIProviderKeyRepository,
+        converter: Converter,
     ) -> None:
         self.encryption_service = encryption_service
         self.ai_provider_repository = ai_provider_repository
@@ -29,16 +31,18 @@ class UserUseCases:
         self.user_repository = user_repository
         self.external_system_repository = external_system_repository
         self.api_key_repo = api_key_repo
+        self.converter = converter
 
-    async def get(self, user_id: int) -> UserModel:
+    async def get(self, user_id: int) -> User:
         """Get user with all information."""
         try:
             user = await self.user_repository.get_one(id=user_id)
-            return user
+            return self.converter.convert(user, User)
+
         except Exception as e:
             raise InternalServerError(f"Failed to get user: {str(e)}", {"user_id": user_id})
 
-    async def update(self, user_id: int, data: UserUpdateRequest) -> UserModel:
+    async def update(self, user_id: int, data: UserUpdateRequest) -> User:
         """Update user information."""
         try:
             user = await self.user_repository.update_profile(
@@ -48,6 +52,7 @@ class UserUseCases:
                 position=data.position,
                 email=data.email,
             )
-            return user
+            return self.converter.convert(user, User)
+
         except Exception as e:
             raise InternalServerError(f"Failed to update user: {str(e)}", {"user_id": user_id})

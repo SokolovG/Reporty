@@ -1,6 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
+from backend.src.domain.entities.task_type import TaskType
+from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.models import TaskTypeModel, UserModel
 from backend.src.infrastructure.database.repositories import (
     ExternalSystemRepository,
@@ -17,12 +19,14 @@ class TaskTypeUseCases:
         external_task_repo: ExternalTaskRepository,
         external_system_repo: ExternalSystemRepository,
         user_repository: UserRepository,
+        converter: Converter,
     ):
         self.user_repository = user_repository
         self.external_task_repo = external_task_repo
         self.external_system_repo = external_system_repo
+        self.converter = converter
 
-    async def get_many(self, user_id: int) -> list[TaskTypeModel]:
+    async def get_many(self, user_id: int) -> list[TaskType]:
         """Get all task types for a user."""
         try:
             result = await self.user_repository.session.execute(
@@ -35,11 +39,11 @@ class TaskTypeUseCases:
             if not user:
                 return []
 
-            return list(user.task_types)
+            return [self.converter.convert(tt, TaskType) for tt in user.task_types]
         except Exception as e:
             raise InternalServerError(f"Failed to get task types: {str(e)}", {"user_id": user_id})
 
-    async def create(self, user_id: int, data: TaskTypeRequest) -> TaskTypeModel:
+    async def create(self, user_id: int, data: TaskTypeRequest) -> TaskType:
         """Create a new task type for a user."""
         try:
             result = await self.user_repository.session.execute(
@@ -59,7 +63,8 @@ class TaskTypeUseCases:
             )
             user.task_types.append(task_type)
             await self.user_repository.session.commit()
-            return task_type
+            return self.converter.convert(task_type, TaskType)
+
         except NotFoundError:
             raise
         except Exception as e:
@@ -67,7 +72,7 @@ class TaskTypeUseCases:
 
     async def update(
         self, task_type_id: int, data: TaskTypeUpdateRequest, user_id: int
-    ) -> TaskTypeModel:
+    ) -> TaskType:
         """Update an existing task type."""
         try:
             result = await self.user_repository.session.execute(
@@ -94,7 +99,8 @@ class TaskTypeUseCases:
                 task_type.is_active = data.is_active
 
             await self.user_repository.session.commit()
-            return task_type
+            return self.converter.convert(task_type, TaskType)
+
         except NotFoundError:
             raise
         except Exception as e:

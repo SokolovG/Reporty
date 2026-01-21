@@ -42,7 +42,7 @@ class AIPreferencesUseCases:
 
     async def update_user_preferences(
         self, user_id: int, data: AIPreferencesUpdateRequest
-    ) -> AIPreferencesResponse:
+    ) -> AIPreferencesResponse:  # TODO: change to domain entity
         """Update user's AI preferences (provider selection, auto-processing)."""
         try:
             user = await self.user_repository.get_one_or_none(id=user_id)

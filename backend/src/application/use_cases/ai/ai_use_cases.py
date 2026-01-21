@@ -19,13 +19,16 @@ class AIUseCases:
         self.user_repository = user_repository
         self.api_key_repository = api_key_repository
 
-    async def process_record(self, raw_input: str, user_id: int) -> str:
+    async def process_record(
+        self, raw_input: str, user_id: int
+    ) -> str:  # TODO: change return type tp domain entity
         """Process record content with AI."""
         try:
             # TODO: Implement actual AI processing logic
             # This is a placeholder implementation
             processed_content = f"AI processed: {raw_input}"
             return processed_content
+
         except Exception as e:
             raise InternalServerError(f"Failed to process record with AI: {str(e)}")
 

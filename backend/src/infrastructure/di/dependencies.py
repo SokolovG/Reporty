@@ -67,9 +67,13 @@ class MyProvider(Provider):
         record_repo: DailyRecordRepository,
         user_repo: UserRepository,
         ai_use_cases: AIUseCases,
+        converter: Converter,
     ) -> RecordUseCases:
         return RecordUseCases(
-            record_repo=record_repo, user_repository=user_repo, ai_use_cases=ai_use_cases
+            record_repo=record_repo,
+            user_repository=user_repo,
+            ai_use_cases=ai_use_cases,
+            converter=converter,
         )
 
     @provide(scope=Scope.REQUEST)
@@ -111,8 +115,11 @@ class MyProvider(Provider):
         external_task_repo: ExternalTaskRepository,
         external_system_repo: ExternalSystemRepository,
         user_repo: UserRepository,
+        converter: Converter,
     ) -> TasksUseCase:
-        return TasksUseCase(external_task_repo, external_system_repo, user_repo)
+        return TasksUseCase(
+            external_task_repo, external_system_repo, user_repo, converter=converter
+        )
 
     @provide(scope=Scope.REQUEST)
     def settings_use_cases(
@@ -166,6 +173,7 @@ class MyProvider(Provider):
         external_system_repo: ExternalSystemRepository,
         encryption_service: EncryptionService,
         ai_key_repo: AIProviderKeyRepository,
+        converter: Converter,
     ) -> UserUseCases:
         return UserUseCases(
             ai_provider_repository=ai_provider_repo,
@@ -174,6 +182,7 @@ class MyProvider(Provider):
             external_system_repository=external_system_repo,
             encryption_service=encryption_service,
             api_key_repo=ai_key_repo,
+            converter=converter,
         )
 
     @provide(scope=Scope.APP)

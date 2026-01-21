@@ -1,7 +1,8 @@
 from datetime import datetime
 
 from backend.src.application.use_cases.ai.ai_use_cases import AIUseCases
-from backend.src.infrastructure.database.models import DailyRecordModel
+from backend.src.domain.entities.record import DailyRecord
+from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.repositories import DailyRecordRepository, UserRepository
 from backend.src.infrastructure.exceptions.api_exceptions import (
     InternalServerError,
@@ -20,13 +21,17 @@ class RecordUseCases:
         self,
         record_repo: DailyRecordRepository,
         user_repository: UserRepository,
+        converter: Converter,
         ai_use_cases: AIUseCases | None = None,
     ) -> None:
         self.repo = record_repo
         self.user_repository = user_repository
         self.ai_use_cases = ai_use_cases
+        self.convertor = converter
 
-    async def create(self, data: DailyRecordRequest, user_id: int) -> DailyRecordModel:
+    async def create(
+        self, data: DailyRecordRequest, user_id: int, converter: Converter
+    ) -> DailyRecord:
         """Create a new daily record."""
         try:
             saved_record = await self.repo.create_record(data, user_id)
@@ -45,23 +50,25 @@ class RecordUseCases:
                     # If AI processing fails, continue without it
                     pass
 
-            return saved_record
+            domain_record = converter.convert(saved_record, DailyRecord)
+            return domain_record
+
         except ValueError as e:
             raise ValidationError(str(e), {"user_id": user_id})
         except Exception as e:
             raise InternalServerError(f"Failed to create record: {str(e)}", {"user_id": user_id})
 
-    async def get(self, record_id: int, user_id: int) -> DailyRecordModel:
+    async def get(self, record_id: int, user_id: int) -> DailyRecord:
         """Get a specific record by ID."""
         try:
             record = await self.repo.get_record(record_id=record_id, user_id=user_id)
-            return record
+            return self.convertor.convert(record, DailyRecord)
         except Exception as e:
             raise InternalServerError(f"Failed to get record: {str(e)}", {"record_id": record_id})
 
     async def get_many(
         self, user_id: int, target_date: datetime | None = None
-    ) -> list[DailyRecordModel]:
+    ) -> list[DailyRecord]:
         """Get records, optionally filtered by date."""
         try:
             if target_date is not None:
@@ -72,13 +79,14 @@ class RecordUseCases:
             else:
                 records = await self.repo.get_all_records(user_id=user_id)
 
-            return list(records)
+            return [self.convertor.convert(record, DailyRecord) for record in records]
+
         except Exception as e:
             raise InternalServerError(f"Failed to get records: {str(e)}")
 
     async def append(
         self, record_id: int, user_id: int, data: AppendToRecordRequest
-    ) -> DailyRecordModel:
+    ) -> DailyRecord:
         """Append additional content to an existing record."""
         try:
             record = await self.repo.get_record(record_id=record_id, user_id=user_id)
@@ -87,7 +95,7 @@ class RecordUseCases:
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
-            return updated_record
+            return self.convertor.convert(updated_record, DailyRecord)
         except Exception as e:
             raise InternalServerError(
                 f"Failed to append to record: {str(e)}", {"record_id": record_id}
@@ -95,7 +103,7 @@ class RecordUseCases:
 
     async def update(
         self, record_id: int, user_id: int, data: DailyRecordUpdateRequest
-    ) -> DailyRecordModel:
+    ) -> DailyRecord:
         """Update an existing record."""
         try:
             record = await self.repo.get_record(record_id=record_id, user_id=user_id)
@@ -114,25 +122,23 @@ class RecordUseCases:
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
-            return updated_record
+            return self.convertor.convert(updated_record, DailyRecord)
         except Exception as e:
             raise InternalServerError(
                 f"Failed to update record: {str(e)}", {"record_id": record_id}
             )
 
-    async def get_with_task(self, record_id: int, user_id: int) -> DailyRecordModel:
+    async def get_with_task(self, record_id: int, user_id: int) -> DailyRecord:
         """Get record with loaded external task information."""
         try:
             record = await self.repo.get_with_external_task(record_id=record_id, user_id=user_id)
-            return record
+            return self.convertor.convert(record, DailyRecord)
         except Exception as e:
             raise InternalServerError(
                 f"Failed to get record with task: {str(e)}", {"record_id": record_id}
             )
 
-    async def link_task(
-        self, record_id: int, external_task_id: int, user_id: int
-    ) -> DailyRecordModel:
+    async def link_task(self, record_id: int, external_task_id: int, user_id: int) -> DailyRecord:
         """Link daily record to an external task."""
         try:
             record = await self.repo.get_record(record_id=record_id, user_id=user_id)
@@ -140,22 +146,22 @@ class RecordUseCases:
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
-            return updated_record
+            return self.convertor.convert(updated_record, DailyRecord)
         except Exception as e:
             raise InternalServerError(
                 f"Failed to link external task: {str(e)}",
                 {"record_id": record_id, "external_task_id": external_task_id},
             )
 
-    async def unlink_from_external_task(self, record_id: int, user_id: int) -> DailyRecordModel:
+    async def unlink_from_external_task(self, record_id: int, user_id: int) -> DailyRecord:
         """Remove link to external task."""
         try:
             record = await self.repo.get_record(record_id=record_id, user_id=user_id)
             record.external_task_id = None
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
+            return self.convertor.convert(updated_record, DailyRecord)
 
-            return updated_record
         except Exception as e:
             raise InternalServerError(
                 f"Failed to unlink external task: {str(e)}", {"record_id": record_id}
@@ -163,7 +169,7 @@ class RecordUseCases:
 
     async def update_status(
         self, record_id: int, user_id: int, data: RecordStatusUpdateRequest
-    ) -> DailyRecordModel:
+    ) -> DailyRecord:
         """Update record status."""
         try:
             record = await self.repo.get_record(record_id=record_id, user_id=user_id)
@@ -171,7 +177,8 @@ class RecordUseCases:
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
-            return updated_record
+            return self.convertor.convert(updated_record, DailyRecord)
+
         except Exception as e:
             raise InternalServerError(
                 f"Failed to update record status: {str(e)}", {"record_id": record_id}
@@ -190,20 +197,20 @@ class RecordUseCases:
                 f"Failed to delete record: {str(e)}", {"record_id": record_id}
             )
 
-    async def approve(self, record_id: int, user_id: int) -> DailyRecordModel:
+    async def approve(self, record_id: int, user_id: int) -> DailyRecord:
         try:
             record = await self.repo.get_record(record_id=record_id, user_id=user_id)
             record.is_approved = True
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
-            return updated_record
+            return self.convertor.convert(updated_record, DailyRecord)
 
         except Exception as e:
             raise InternalServerError(
                 f"Failed to approve record: {str(e)}", {"record_id": record_id}
             )
 
-    async def process_with_ai(self, record_id: int, user_id: int) -> DailyRecordModel:
+    async def process_with_ai(self, record_id: int, user_id: int) -> DailyRecord:
         """Process record with AI."""
         try:
             record = await self.repo.get_record(record_id=record_id, user_id=user_id)
@@ -219,7 +226,8 @@ class RecordUseCases:
             updated_record = await self.repo.update(record)
             await self.repo.session.commit()
 
-            return updated_record
+            return self.convertor.convert(updated_record, DailyRecord)
+
         except Exception as e:
             raise InternalServerError(
                 f"Failed to process record with AI: {str(e)}",
