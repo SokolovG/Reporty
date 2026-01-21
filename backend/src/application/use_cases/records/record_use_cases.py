@@ -23,11 +23,11 @@ class RecordUseCases:
         self,
         record_repo: DailyRecordRepository,
         user_repository: UserRepository,
-        ai_service: AIUseCases | None = None,
+        ai_use_cases: AIUseCases | None = None,
     ) -> None:
         self.repo = record_repo
         self.user_repository = user_repository
-        self.ai_service = ai_service
+        self.ai_use_cases = ai_use_cases
 
     async def create(self, data: DailyRecordRequest, user_id: int) -> DailyRecordResponse:
         """Create a new daily record."""
@@ -35,9 +35,9 @@ class RecordUseCases:
             saved_record = await self.repo.create_record(data, user_id)
             user = await self.user_repository.get_one(id=user_id)
 
-            if user.ai_auto_process and self.ai_service:
+            if user.ai_auto_process and self.ai_use_cases:
                 try:
-                    ai_processed = await self.ai_service.process_record(data.raw_input, user_id)
+                    ai_processed = await self.ai_use_cases.process_record(data.raw_input, user_id)
                     saved_record.ai_processed = ai_processed
                     saved_record.is_processed = True
                     saved_record.processed_at = datetime.now()
@@ -237,10 +237,10 @@ class RecordUseCases:
         try:
             record = await self.repo.get_record(record_id=record_id, user_id=user_id)
 
-            if not self.ai_service:
+            if not self.ai_use_cases:
                 raise InternalServerError("AI service not available")
 
-            ai_processed = await self.ai_service.process_record(record.raw_input, user_id)
+            ai_processed = await self.ai_use_cases.process_record(record.raw_input, user_id)
             record.ai_processed = ai_processed
             record.processed_at = datetime.now()
             record.is_processed = True

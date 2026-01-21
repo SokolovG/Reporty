@@ -11,20 +11,20 @@ class ProcessRecordWithAIUseCases:
     def __init__(
         self,
         record_repo: DailyRecordRepository,
-        ai_service: AIUseCases | None = None,
+        ai_use_cases: AIUseCases | None = None,
     ) -> None:
         self.repo = record_repo
-        self.ai_service = ai_service
+        self.ai_use_cases = ai_use_cases
 
     async def process_with_ai(self, record_id: int, user_id: int) -> DailyRecordResponse:
         """Process record with AI."""
         try:
             record = await self.repo.get_record(record_id=record_id, user_id=user_id)
 
-            if not self.ai_service:
+            if not self.ai_use_cases:
                 raise InternalServerError("AI service not available")
 
-            ai_processed = await self.ai_service.process_record(record.raw_input, user_id)
+            ai_processed = await self.ai_use_cases.process_record(record.raw_input, user_id)
             record.ai_processed = ai_processed
             record.processed_at = datetime.now()
             record.is_processed = True

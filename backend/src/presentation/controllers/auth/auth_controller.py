@@ -19,19 +19,19 @@ class AuthController(Controller):
     @post("/register", return_dto=SuccessResponseDTO)
     @inject
     async def register(
-        self, service: FromDishka[AuthUseCase], data: RegisterRequest
+        self, auth_use_case: FromDishka[AuthUseCase], data: RegisterRequest
     ) -> SuccessResponse:
         """Register a new user."""
-        user = await service.register(data)
+        user = await auth_use_case.register(data)
         return SuccessResponse(message="User registered successfully", data=user)
 
     @post("/login")
     @inject
     async def login(
-        self, request: Request, service: FromDishka[AuthUseCase], data: LoginRequest
+        self, request: Request, auth_use_case: FromDishka[AuthUseCase], data: LoginRequest
     ) -> Response[SuccessResponse]:
         """Login user and return tokens."""
-        token_info = await service.login(data)
+        token_info = await auth_use_case.login(data)
 
         success_response = SuccessResponse(message="Login successful", data=token_info)
         response = SuccessResponseDTO.create_response_with_cookies(
@@ -90,14 +90,14 @@ class AuthController(Controller):
     @post("/refresh")
     @inject
     async def refresh_token(
-        self, service: FromDishka[AuthUseCase], request: Request
+        self, auth_use_case: FromDishka[AuthUseCase], request: Request
     ) -> Response[SuccessResponse]:
         """Refresh access token."""
         refresh_token: str | None = request.cookies.get("refreshToken")
         if not refresh_token:
             raise AuthenticationError("No refresh token")
 
-        new_access_token = await service.refresh(refresh_token)
+        new_access_token = await auth_use_case.refresh(refresh_token)
         success_response = SuccessResponse(
             message="Token refreshed", data=AccessTokenResponse(access_token=new_access_token)
         )
@@ -120,21 +120,21 @@ class AuthController(Controller):
     @post("/change-password", return_dto=SuccessResponseDTO)
     @inject
     async def change_password(
-        self, service: FromDishka[AuthUseCase], request: Request, data: ChangePasswordRequest
+        self, auth_use_case: FromDishka[AuthUseCase], request: Request, data: ChangePasswordRequest
     ) -> SuccessResponse:
         """Change user password."""
         user_id = request.user.id
-        await service.change_password(data, user_id)
+        await auth_use_case.change_password(data, user_id)
         return SuccessResponse(message="Password changed successfully")
 
     @get("/me", return_dto=SuccessResponseDTO)
     @inject
     async def get_me(
         self,
-        service: FromDishka[AuthUseCase],
+        auth_use_case: FromDishka[AuthUseCase],
         request: Request,
     ) -> SuccessResponse:
         """Get current user profile."""
         user_id = request.user.id
-        user = await service.get_me(user_id)
+        user = await auth_use_case.get_me(user_id)
         return SuccessResponse(message="User profile retrieved", data=user)

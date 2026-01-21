@@ -61,14 +61,14 @@ class MyProvider(Provider):
         return ReportRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
-    def record_service(
+    def record_use_cases(
         self,
         record_repo: DailyRecordRepository,
         user_repo: UserRepository,
-        ai_service: AIUseCases,
+        ai_use_cases: AIUseCases,
     ) -> RecordUseCases:
         return RecordUseCases(
-            record_repo=record_repo, user_repository=user_repo, ai_service=ai_service
+            record_repo=record_repo, user_repository=user_repo, ai_use_cases=ai_use_cases
         )
 
     @provide(scope=Scope.REQUEST)
@@ -145,7 +145,7 @@ class MyProvider(Provider):
         return DefaultNotificationService()
 
     @provide(scope=Scope.REQUEST)
-    def auth_service(
+    def auth_use_case(
         self,
         user_repo: UserRepository,
         jwt_service: JWTService,
@@ -154,11 +154,11 @@ class MyProvider(Provider):
         return AuthUseCase(user_repo, jwt_service, notification_service)
 
     @provide(scope=Scope.REQUEST)
-    def user_service(self, user_repo: UserRepository) -> UserUseCases:
+    def user_use_cases(self, user_repo: UserRepository) -> UserUseCases:
         return UserUseCases(user_repo)
 
     @provide(scope=Scope.REQUEST)
-    def ai_service(
+    def ai_use_cases(
         self,
         encryption_service: EncryptionService,
         user_repo: UserRepository,
