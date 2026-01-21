@@ -5,10 +5,12 @@
     import { on } from 'svelte/events';
 
     const userContext = getContext("user")
-    let user = $state({ ...userContext })
+    let user = $state(userContext)
 
     $effect(() => {
-        user = { ...userContext }
+        if (userContext) {
+            user = userContext;
+        }
     })
 
     let { data, form } = $props();

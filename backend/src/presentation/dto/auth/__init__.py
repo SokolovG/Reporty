@@ -1,17 +1,13 @@
-from backend.src.api.dto.auth.requests import (
+from backend.src.presentation.dto import (
+    AccessTokenResponse,
     ChangePasswordRequest,
     LoginRequest,
+    LoginRequestDTO,
     RegisterRequest,
-    UserUpdateRequest,
-)
-from backend.src.api.dto.auth.responses import (
-    AccessTokenResponse,
+    RegisterRequestDTO,
     TokenInfo,
     UserResponse,
-)
-from backend.src.api.dto.auth.dto_classes import (
-    LoginRequestDTO,
-    RegisterRequestDTO,
+    UserUpdateRequest,
     UserUpdateRequestDTO,
 )
 

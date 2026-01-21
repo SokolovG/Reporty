@@ -1,68 +1,62 @@
-# Domain-based imports for backward compatibility
-from backend.src.api.dto.auth import (
+from backend.src.presentation.dto.auth import (
+    AccessTokenResponse,
     ChangePasswordRequest,
     LoginRequest,
+    LoginRequestDTO,
     RegisterRequest,
-    UserUpdateRequest,
-    AccessTokenResponse,
+    RegisterRequestDTO,
     TokenInfo,
     UserResponse,
-    LoginRequestDTO,
-    RegisterRequestDTO,
+    UserUpdateRequest,
     UserUpdateRequestDTO,
 )
-from backend.src.api.dto.records import (
-    DailyRecordRequest,
-    DailyRecordUpdateRequest,
+from backend.src.presentation.dto.records import (
     AppendToRecordRequest,
-    RecordStatusUpdateRequest,
-    DailyRecordResponse,
-    DailyRecordWithTaskResponse,
-    ExternalTaskInfo,
-    DailyRecordRequestDTO,
-    DailyRecordUpdateRequestDTO,
     AppendToRecordRequestDTO,
-    RecordStatusUpdateRequestDTO,
+    DailyRecordRequest,
+    DailyRecordRequestDTO,
+    DailyRecordResponse,
+    DailyRecordUpdateRequest,
+    DailyRecordUpdateRequestDTO,
+    DailyRecordWithTaskResponse,
+    ExternalTaskCreateRequest,
+    ExternalTaskCreateRequestDTO,
+    ExternalTaskInfo,
+    ExternalTaskResponse,
+    ExternalTaskUpdateRequest,
+    ExternalTaskUpdateRequestDTO,
     LinkTaskRequest,
     LinkTaskRequestDTO,
-    ExternalTaskCreateRequest,
-    ExternalTaskUpdateRequest,
-    ExternalTaskCreateRequestDTO,
-    ExternalTaskUpdateRequestDTO,
-    ExternalTaskResponse,
+    RecordStatusUpdateRequest,
+    RecordStatusUpdateRequestDTO,
 )
-from backend.src.api.dto.reports import (
+from backend.src.presentation.dto.reports import (
     DailyReportRequest,
-    DailyReportRequestUpdate,
-    DailyReportResponse,
     DailyReportRequestDTO,
+    DailyReportRequestUpdate,
     DailyReportRequestUpdateDTO,
+    DailyReportResponse,
 )
-from backend.src.api.dto.settings import (
-    TaskTypeRequest,
-    TaskTypeUpdateRequest,
-    AIPreferencesUpdateRequest,
-    AIProviderUpdateRequest,
-    ExternalSystemUpdateRequest,
-    TaskTypeResponse,
-    AIPreferencesResponse,
+from backend.src.presentation.dto.settings import (
     AIModelResponse,
+    AIPreferencesResponse,
+    AIPreferencesUpdateRequest,
+    AIPreferencesUpdateRequestDTO,
     AIProviderResponse,
+    AIProviderUpdateRequest,
+    AIProviderUpdateRequestDTO,
     AISettingsUpdateResponse,
     ExternalSystemResponse,
-    TaskTypeRequestDTO,
-    TaskTypeUpdateRequestDTO,
-    AIPreferencesUpdateRequestDTO,
-    AIProviderUpdateRequestDTO,
+    ExternalSystemUpdateRequest,
     ExternalSystemUpdateRequestDTO,
+    TaskTypeRequest,
+    TaskTypeRequestDTO,
+    TaskTypeResponse,
+    TaskTypeUpdateRequest,
+    TaskTypeUpdateRequestDTO,
 )
-from backend.src.api.dto.shared import (
-    UserReadDTO,
-    UserRegistrationDTO,
-    UserUpdateDTO,
-)
+from backend.src.presentation.dto.shared import UserReadDTO, UserRegistrationDTO, UserUpdateDTO
 
-# Re-export everything for backward compatibility
 __all__ = [
     # Auth domain
     "ChangePasswordRequest",

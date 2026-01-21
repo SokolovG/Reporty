@@ -2,34 +2,33 @@ from typing import AsyncGenerator, Type, TypeVar
 
 from dishka import Scope, provide
 from dishka.provider import Provider
-from litestar import Request, Litestar
-from starlette.requests import Request as StarletteRequest
+from litestar import Litestar, Request
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.requests import Request as StarletteRequest
 
 from backend.src.core.configs import get_sqlalchemy_config
 from backend.src.database.repositories import (
-    DailyRecordRepository,
-    ReportRepository,
-    ExternalSystemRepository,
-    ExternalTaskRepository,
-    UserRepository,
-    AIProviderRepository,
     AIModelRepository,
     AIProviderKeyRepository,
+    AIProviderRepository,
+    DailyRecordRepository,
+    ExternalSystemRepository,
+    ExternalTaskRepository,
+    ReportRepository,
+    UserRepository,
 )
 from backend.src.services import (
-    AuthService,
-    JWTService,
-    UserService,
-    RecordService,
-    TaskService,
-    ReportService,
     AIService,
+    AuthService,
     EncryptionService,
+    JWTService,
     NotificationService,
+    RecordService,
+    ReportService,
     SettingsService,
+    TaskService,
+    UserService,
 )
-
 
 T = TypeVar("T")
 
