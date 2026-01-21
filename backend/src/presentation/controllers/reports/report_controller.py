@@ -24,7 +24,8 @@ class ReportController(Controller):
     ) -> SuccessResponse:
         """Create a new report."""
         user_id = request.user.id
-        result = await report_use_cases.create(data=data, user_id=user_id)
+        report = await report_use_cases.create(data=data, user_id=user_id)
+        result = report_to_response(report)
         return SuccessResponse(message="Report created successfully", data=result)
 
     @get("/{report_id:int}", return_dto=SuccessResponseDTO)
@@ -34,7 +35,8 @@ class ReportController(Controller):
     ) -> SuccessResponse:
         """Get a specific report."""
         user_id = request.user.id
-        result = await report_use_cases.get(report_id=report_id, user_id=user_id)
+        report = await report_use_cases.get(report_id=report_id, user_id=user_id)
+        result = report_to_response(report)
         return SuccessResponse(message="Report retrieved successfully", data=result)
 
     @get(return_dto=SuccessResponseDTO)
@@ -47,7 +49,8 @@ class ReportController(Controller):
     ) -> SuccessResponse:
         """Get all reports."""
         user_id = request.user.id
-        result = await report_use_cases.get_many(user_id=user_id)
+        reports = await report_use_cases.get_many(user_id=user_id)
+        result = [report_to_response(report) for report in reports]
         return SuccessResponse(message="Reports retrieved successfully", data=result)
 
     @delete("/{report_id:int}", status_code=204)
@@ -69,5 +72,6 @@ class ReportController(Controller):
     ) -> SuccessResponse:
         """Update a report."""
         user_id = request.user.id
-        result = await report_use_cases.update(update_data=update_data, user_id=user_id)
+        report = await report_use_cases.update(update_data=update_data, user_id=user_id)
+        result = report_to_response(report)
         return SuccessResponse(message="Report updated successfully", data=result)

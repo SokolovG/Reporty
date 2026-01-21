@@ -23,7 +23,8 @@ class TaskController(Controller):
     ) -> SuccessResponse:
         """Create a new external task."""
         user_id = request.user.id
-        result = await task_use_casess.create_external(data=data, user_id=user_id)
+        task = await task_use_casess.create_external(data=data, user_id=user_id)
+        result = external_task_to_response(task)
         return SuccessResponse(message="External task created successfully", data=result)
 
     @put(
@@ -41,7 +42,8 @@ class TaskController(Controller):
     ) -> SuccessResponse:
         """Update an external task."""
         user_id = request.user.id
-        result = await task_use_casess.update_external(task_id=task_id, data=data, user_id=user_id)
+        task = await task_use_casess.update_external(task_id=task_id, data=data, user_id=user_id)
+        result = external_task_to_response(task)
         return SuccessResponse(message="External task updated successfully", data=result)
 
     @delete("/external-tasks/{task_id:int}", status_code=204)

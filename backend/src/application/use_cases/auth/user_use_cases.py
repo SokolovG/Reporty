@@ -1,3 +1,4 @@
+from backend.src.infrastructure.database.models import UserModel
 from backend.src.infrastructure.database.repositories import (
     AIModelRepository,
     AIProviderKeyRepository,
@@ -7,8 +8,7 @@ from backend.src.infrastructure.database.repositories import (
 )
 from backend.src.infrastructure.encryption.encryption_service import EncryptionService
 from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError
-from backend.src.presentation.dto import UserResponse, UserUpdateRequest
-from backend.src.presentation.dto.converters import user_to_response
+from backend.src.presentation.dto import UserUpdateRequest
 
 
 class UserUseCases:
@@ -30,15 +30,15 @@ class UserUseCases:
         self.external_system_repository = external_system_repository
         self.api_key_repo = api_key_repo
 
-    async def get(self, user_id: int) -> UserResponse:
+    async def get(self, user_id: int) -> UserModel:
         """Get user with all information."""
         try:
             user = await self.user_repository.get_one(id=user_id)
-            return user_to_response(user)
+            return user
         except Exception as e:
             raise InternalServerError(f"Failed to get user: {str(e)}", {"user_id": user_id})
 
-    async def update(self, user_id: int, data: UserUpdateRequest) -> UserResponse:
+    async def update(self, user_id: int, data: UserUpdateRequest) -> UserModel:
         """Update user information."""
         try:
             user = await self.user_repository.update_profile(
@@ -48,6 +48,6 @@ class UserUseCases:
                 position=data.position,
                 email=data.email,
             )
-            return user_to_response(user)
+            return user
         except Exception as e:
             raise InternalServerError(f"Failed to update user: {str(e)}", {"user_id": user_id})

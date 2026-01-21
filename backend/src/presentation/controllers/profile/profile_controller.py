@@ -33,7 +33,8 @@ class ProfileController(Controller):
     ) -> SuccessResponse:
         """Update user profile information."""
         user_id = request.user.id
-        updated_user = await user_use_cases.update(user_id=user_id, data=data)
+        user = await user_use_cases.update(user_id=user_id, data=data)
+        updated_user = user_to_response(user)
         return SuccessResponse(message="User updated successfully", data=updated_user)
 
     @patch("/ai-preferences", dto=AIPreferencesUpdateRequestDTO, return_dto=SuccessResponseDTO)
@@ -75,7 +76,9 @@ class ProfileController(Controller):
     ) -> SuccessResponse:
         """Get user's task types."""
         user_id = request.user.id
-        task_types = await task_types_use_case.get_many(user_id=user_id)
+        task_types_models = await task_types_use_case.get_many(user_id=user_id)
+
+        task_types = [task_type_to_response(tt) for tt in task_types_models]
         return SuccessResponse(message="Task types retrieved successfully", data=task_types)
 
     @post("/task-types", dto=TaskTypeRequestDTO, return_dto=SuccessResponseDTO)
@@ -89,7 +92,9 @@ class ProfileController(Controller):
     ) -> SuccessResponse:
         """Create new task type for user."""
         user_id = request.user.id
-        task_type = await task_types_use_case.create(user_id=user_id, data=data)
+        task_type_model = await task_types_use_case.create(user_id=user_id, data=data)
+
+        task_type = task_type_to_response(task_type_model)
         return SuccessResponse(message="Task type created successfully", data=task_type)
 
     @patch(
@@ -108,9 +113,11 @@ class ProfileController(Controller):
     ) -> SuccessResponse:
         """Update user's task type."""
         user_id = request.user.id
-        task_type = await task_types_use_case.update(
+        task_type_model = await task_types_use_case.update(
             task_type_id=task_type_id, data=data, user_id=user_id
         )
+
+        task_type = task_type_to_response(task_type_model)
         return SuccessResponse(message="Task type updated successfully", data=task_type)
 
     @delete("/task-types/{task_type_id:int}")

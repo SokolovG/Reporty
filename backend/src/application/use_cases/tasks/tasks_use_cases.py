@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 
 from sqlalchemy import select
 
-from backend.src.infrastructure.database.models import ExternalTask
+from backend.src.infrastructure.database.models import ExternalTaskModel
 from backend.src.infrastructure.database.repositories import (
     ExternalSystemRepository,
     ExternalTaskRepository,
@@ -11,7 +11,6 @@ from backend.src.infrastructure.database.repositories import (
 from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError, NotFoundError
 from backend.src.presentation.dto import (
     ExternalTaskCreateRequest,
-    ExternalTaskResponse,
     ExternalTaskUpdateRequest,
 )
 
@@ -29,7 +28,7 @@ class TasksUseCase:
 
     async def create_external(
         self, data: ExternalTaskCreateRequest, user_id: int
-    ) -> ExternalTaskResponse:
+    ) -> ExternalTaskModel:
         """Create a new external task."""
         try:
             result = await self.external_system_repo.session.execute(
@@ -46,7 +45,7 @@ class TasksUseCase:
                 )
 
             now = datetime.now(timezone.utc)
-            task = ExternalTask(
+            task = ExternalTaskModel(
                 external_id=data.external_id if data.external_id is not None else None,
                 external_system_id=system.id,
                 title=data.title,
@@ -60,20 +59,7 @@ class TasksUseCase:
             await self.external_task_repo.session.commit()
             await self.external_task_repo.session.refresh(task)
 
-            return ExternalTaskResponse(
-                id=task.id,
-                external_id=task.external_id,
-                external_system_id=task.external_system_id,
-                title=task.title,
-                description=task.description,
-                status=task.status,
-                url=task.url,
-                external_created_at=task.external_created_at,
-                external_updated_at=task.external_updated_at,
-                completed_at=task.completed_at,
-                last_sync=task.last_sync,
-                user_id=user_id,
-            )
+            return task
         except Exception as e:
             if isinstance(e, (NotFoundError,)):
                 raise
@@ -81,7 +67,7 @@ class TasksUseCase:
 
     async def update_external(
         self, task_id: int, data: ExternalTaskUpdateRequest, user_id: int
-    ) -> ExternalTaskResponse:
+    ) -> ExternalTaskModel:
         """Update an external task."""
         try:
             task = await self.external_task_repo.get_task(system_id=task_id, user_id=user_id)
@@ -103,20 +89,7 @@ class TasksUseCase:
             await self.external_task_repo.session.commit()
             await self.external_task_repo.session.refresh(task)
 
-            return ExternalTaskResponse(
-                id=task.id,
-                external_id=task.external_id,
-                external_system_id=task.external_system_id,
-                title=task.title,
-                description=task.description,
-                status=task.status,
-                url=task.url,
-                external_created_at=task.external_created_at,
-                external_updated_at=task.external_updated_at,
-                completed_at=task.completed_at,
-                last_sync=task.last_sync,
-                user_id=user_id,
-            )
+            return task
         except Exception as e:
             raise InternalServerError(
                 f"Failed to update task: {str(e)}", {"task_id": task_id, "error": str(e)}

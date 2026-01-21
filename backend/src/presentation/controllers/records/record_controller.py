@@ -13,6 +13,8 @@ from backend.src.presentation.dto.records import (
     DailyRecordRequestDTO,
     DailyRecordUpdateRequest,
     DailyRecordUpdateRequestDTO,
+    DailyRecordWithTaskResponse,
+    ExternalTaskInfo,
     LinkTaskRequest,
     LinkTaskRequestDTO,
     RecordStatusUpdateRequest,
@@ -32,7 +34,8 @@ class RecordController(Controller):
     ) -> SuccessResponse:
         """Create a new daily record."""
         user_id = request.user.id
-        result = await record_use_cases.create(data=data, user_id=user_id)
+        record = await record_use_cases.create(data=data, user_id=user_id)
+        result = record_to_response(record)
         return SuccessResponse(message="Record created successfully", data=result)
 
     @get("/{record_id:int}", return_dto=SuccessResponseDTO)
@@ -45,7 +48,8 @@ class RecordController(Controller):
     ) -> SuccessResponse:
         """Get a specific record by ID."""
         user_id = request.user.id
-        result = await record_use_cases.get(record_id=record_id, user_id=user_id)
+        record = await record_use_cases.get(record_id=record_id, user_id=user_id)
+        result = record_to_response(record)
         return SuccessResponse(message="Record retrieved successfully", data=result)
 
     @get(return_dto=SuccessResponseDTO)
@@ -60,7 +64,8 @@ class RecordController(Controller):
     ) -> SuccessResponse:
         """Get all records for user."""
         user_id = request.user.id
-        result = await record_use_cases.get_many(target_date=date, user_id=user_id)
+        records = await record_use_cases.get_many(target_date=date, user_id=user_id)
+        result = [record_to_response(record) for record in records]
         return SuccessResponse(message="Records retrieved successfully", data=result)
 
     @patch(
@@ -78,9 +83,10 @@ class RecordController(Controller):
     ) -> SuccessResponse:
         """Update record status."""
         user_id = request.user.id
-        result = await record_use_cases.update_status(
+        record = await record_use_cases.update_status(
             record_id=record_id, data=data, user_id=user_id
         )
+        result = record_to_response(record)
         return SuccessResponse(message="Record status updated successfully", data=result)
 
     @post(
@@ -98,7 +104,8 @@ class RecordController(Controller):
     ) -> SuccessResponse:
         """Append content to existing record."""
         user_id = request.user.id
-        result = await record_use_cases.append(record_id=record_id, data=data, user_id=user_id)
+        record = await record_use_cases.append(record_id=record_id, data=data, user_id=user_id)
+        result = record_to_response(record)
         return SuccessResponse(message="Content appended to record successfully", data=result)
 
     @patch(
@@ -116,7 +123,8 @@ class RecordController(Controller):
     ) -> SuccessResponse:
         """Update an existing record."""
         user_id = request.user.id
-        result = await record_use_cases.update(record_id=record_id, data=data, user_id=user_id)
+        record = await record_use_cases.update(record_id=record_id, data=data, user_id=user_id)
+        result = record_to_response(record)
         return SuccessResponse(message="Record updated successfully", data=result)
 
     @get("/{record_id:int}/with-task", return_dto=SuccessResponseDTO)
@@ -126,7 +134,34 @@ class RecordController(Controller):
     ) -> SuccessResponse:
         """Get record with external task information."""
         user_id = request.user.id
-        result = await record_use_cases.get_with_task(record_id=record_id, user_id=user_id)
+        record = await record_use_cases.get_with_task(record_id=record_id, user_id=user_id)
+
+        external_task_info = None
+        if record.external_task:
+            external_task_info = ExternalTaskInfo(
+                id=record.external_task.id,
+                external_id=record.external_task.external_id,
+                title=record.external_task.title or "",
+                status=record.external_task.status,
+                system_name=record.external_task.system.name,
+                system_display_name=record.external_task.system.display_name,
+                url=record.external_task.url,
+            )
+
+        result = DailyRecordWithTaskResponse(
+            id=record.id,
+            title=record.title,
+            raw_input=record.raw_input,
+            ai_processed=record.ai_processed,
+            final_description=record.final_description,
+            created_at=record.created_at,
+            processed_at=record.processed_at,
+            is_processed=record.is_processed,
+            is_approved=record.is_approved,
+            external_task_id=record.external_task_id,
+            external_task=external_task_info,
+            user_id=record.user_id,
+        )
         return SuccessResponse(message="Record with task retrieved successfully", data=result)
 
     @post(
@@ -144,9 +179,10 @@ class RecordController(Controller):
     ) -> SuccessResponse:
         """Link record to external task."""
         user_id = request.user.id
-        result = await record_use_cases.link_task(
+        record = await record_use_cases.link_task(
             record_id=record_id, external_task_id=data.external_task_id, user_id=user_id
         )
+        result = record_to_response(record)
         return SuccessResponse(message="Record linked to external task successfully", data=result)
 
     @delete(
@@ -160,9 +196,10 @@ class RecordController(Controller):
     ) -> SuccessResponse:
         """Unlink external task from record."""
         user_id = request.user.id
-        result = await record_use_cases.unlink_from_external_task(
+        record = await record_use_cases.unlink_from_external_task(
             record_id=record_id, user_id=user_id
         )
+        result = record_to_response(record)
         return SuccessResponse(message="External task unlinked successfully", data=result)
 
     @delete("/{record_id:int}")
@@ -181,7 +218,8 @@ class RecordController(Controller):
     ) -> SuccessResponse:
         """Process record with AI."""
         user_id = request.user.id
-        result = await record_use_cases.process_with_ai(record_id=record_id, user_id=user_id)
+        record = await record_use_cases.process_with_ai(record_id=record_id, user_id=user_id)
+        result = record_to_response(record)
         return SuccessResponse(message="Record processed with AI successfully", data=result)
 
     @post("/{record_id: int}/approve", return_dto=SuccessResponseDTO)
@@ -191,5 +229,6 @@ class RecordController(Controller):
     ) -> SuccessResponse:
         """Approve processed record."""
         user_id = request.user.id
-        result = await record_use_cases.approve(record_id=record_id, user_id=user_id)
+        record = await record_use_cases.approve(record_id=record_id, user_id=user_id)
+        result = record_to_response(record)
         return SuccessResponse(message="Record approved successfully", data=result)

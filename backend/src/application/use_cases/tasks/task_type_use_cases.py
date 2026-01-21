@@ -1,15 +1,14 @@
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
-from backend.src.infrastructure.database.models import TaskType, User
+from backend.src.infrastructure.database.models import TaskTypeModel, UserModel
 from backend.src.infrastructure.database.repositories import (
     ExternalSystemRepository,
     ExternalTaskRepository,
     UserRepository,
 )
 from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError, NotFoundError
-from backend.src.presentation.dto import TaskTypeRequest, TaskTypeResponse, TaskTypeUpdateRequest
-from backend.src.presentation.dto.converters import task_type_to_response
+from backend.src.presentation.dto import TaskTypeRequest, TaskTypeUpdateRequest
 
 
 class TaskTypeUseCases:
@@ -23,40 +22,44 @@ class TaskTypeUseCases:
         self.external_task_repo = external_task_repo
         self.external_system_repo = external_system_repo
 
-    async def get_many(self, user_id: int) -> list[TaskTypeResponse]:
+    async def get_many(self, user_id: int) -> list[TaskTypeModel]:
         """Get all task types for a user."""
         try:
             result = await self.user_repository.session.execute(
-                select(User).options(selectinload(User.task_types)).where(User.id == user_id)
+                select(UserModel)
+                .options(selectinload(UserModel.task_types))
+                .where(UserModel.id == user_id)
             )
             user = result.scalar_one_or_none()
 
             if not user:
                 return []
 
-            return [task_type_to_response(task_type) for task_type in user.task_types]
+            return list(user.task_types)
         except Exception as e:
             raise InternalServerError(f"Failed to get task types: {str(e)}", {"user_id": user_id})
 
-    async def create(self, user_id: int, data: TaskTypeRequest) -> TaskTypeResponse:
+    async def create(self, user_id: int, data: TaskTypeRequest) -> TaskTypeModel:
         """Create a new task type for a user."""
         try:
             result = await self.user_repository.session.execute(
-                select(User).options(selectinload(User.task_types)).where(User.id == user_id)
+                select(UserModel)
+                .options(selectinload(UserModel.task_types))
+                .where(UserModel.id == user_id)
             )
             user = result.scalar_one_or_none()
 
             if not user:
                 raise NotFoundError("User", details={"user_id": user_id})
 
-            task_type = TaskType(
+            task_type = TaskTypeModel(
                 user_id=user.id,
                 title=data.title,
                 color=data.color,
             )
             user.task_types.append(task_type)
             await self.user_repository.session.commit()
-            return task_type_to_response(task_type)
+            return task_type
         except NotFoundError:
             raise
         except Exception as e:
@@ -64,15 +67,15 @@ class TaskTypeUseCases:
 
     async def update(
         self, task_type_id: int, data: TaskTypeUpdateRequest, user_id: int
-    ) -> TaskTypeResponse:
+    ) -> TaskTypeModel:
         """Update an existing task type."""
         try:
             result = await self.user_repository.session.execute(
-                select(User)
-                .options(selectinload(User.task_types))
-                .join(TaskType, User.id == TaskType.user_id)
-                .where(TaskType.id == task_type_id)
-                .where(User.id == user_id)
+                select(UserModel)
+                .options(selectinload(UserModel.task_types))
+                .join(TaskTypeModel, UserModel.id == TaskTypeModel.user_id)
+                .where(TaskTypeModel.id == task_type_id)
+                .where(UserModel.id == user_id)
             )
             user = result.scalar_one_or_none()
 
@@ -91,7 +94,7 @@ class TaskTypeUseCases:
                 task_type.is_active = data.is_active
 
             await self.user_repository.session.commit()
-            return task_type_to_response(task_type)
+            return task_type
         except NotFoundError:
             raise
         except Exception as e:
@@ -103,11 +106,11 @@ class TaskTypeUseCases:
         """Delete a task type."""
         try:
             result = await self.user_repository.session.execute(
-                select(User)
-                .options(selectinload(User.task_types))
-                .join(TaskType, User.id == TaskType.user_id)
-                .where(TaskType.id == task_type_id)
-                .where(User.id == user_id)
+                select(UserModel)
+                .options(selectinload(UserModel.task_types))
+                .join(TaskTypeModel, UserModel.id == TaskTypeModel.user_id)
+                .where(TaskTypeModel.id == task_type_id)
+                .where(UserModel.id == user_id)
             )
             user = result.scalar_one_or_none()
 

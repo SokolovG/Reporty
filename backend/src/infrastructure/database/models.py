@@ -16,7 +16,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.src.infrastructure.database.base import Base, RecordStatus
 
 
-class DailyRecord(Base):
+class DailyRecordModel(Base):
     """Daily developer record."""
 
     __tablename__ = "daily_records"
@@ -60,8 +60,8 @@ class DailyRecord(Base):
     )
 
     # Relationship
-    external_task: Mapped["ExternalTask | None"] = relationship(
-        "ExternalTask", back_populates="daily_records", lazy="joined"
+    external_task: Mapped["ExternalTaskModel | None"] = relationship(
+        "ExternalTaskModel", back_populates="daily_records", lazy="joined"
     )
 
     def __repr__(self) -> str:
@@ -74,7 +74,7 @@ class DailyRecord(Base):
         return str(self.title)
 
 
-class ExternalSystem(Base):
+class ExternalSystemModel(Base):
     """External task management system (Jira, Asana, etc.)."""
 
     __tablename__ = "external_systems"
@@ -98,8 +98,8 @@ class ExternalSystem(Base):
     )
 
     # Relationships
-    tasks: Mapped[list["ExternalTask"]] = relationship(
-        "ExternalTask", back_populates="system", cascade="all, delete-orphan"
+    tasks: Mapped[list["ExternalTaskModel"]] = relationship(
+        "ExternalTaskModel", back_populates="system", cascade="all, delete-orphan"
     )
 
     def __repr__(self) -> str:
@@ -112,7 +112,7 @@ class ExternalSystem(Base):
         return str(self.name)
 
 
-class ExternalTask(Base):
+class ExternalTaskModel(Base):
     """Task from external task management system."""
 
     __tablename__ = "external_tasks"
@@ -152,9 +152,9 @@ class ExternalTask(Base):
     )
 
     # Relationships
-    system: Mapped["ExternalSystem"] = relationship("ExternalSystem", back_populates="tasks")
-    daily_records: Mapped[list["DailyRecord"]] = relationship(
-        "DailyRecord", back_populates="external_task"
+    system: Mapped["ExternalSystemModel"] = relationship("ExternalSystem", back_populates="tasks")
+    daily_records: Mapped[list["DailyRecordModel"]] = relationship(
+        "DailyRecordModel", back_populates="external_task"
     )
 
     # Constraints
@@ -175,7 +175,7 @@ class ExternalTask(Base):
         return self.title if self.title else f"External task {self.external_id}"
 
 
-class Report(Base):
+class ReportModel(Base):
     """Generated a daily/weekly report."""
 
     __tablename__ = "reports"
@@ -209,7 +209,7 @@ class Report(Base):
         return str(self.content[:10])
 
 
-class AIProvider(Base):
+class AIProviderModel(Base):
     __tablename__ = "ai_providers"
 
     name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
@@ -239,7 +239,7 @@ class AIModel(Base):
     ai_provider_id: Mapped[int] = mapped_column(ForeignKey("ai_providers.id"))
     name: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    provider: Mapped["AIProvider"] = relationship("AIProvider", back_populates="models")
+    provider: Mapped["AIProviderModel"] = relationship("AIProviderModel", back_populates="models")
 
     __table_args__ = (UniqueConstraint("ai_provider_id", "name", name="uk_provider_model"),)
 
@@ -247,7 +247,7 @@ class AIModel(Base):
         return str(self.name[:10])
 
 
-class User(Base):
+class UserModel(Base):
     """Application user."""
 
     __tablename__ = "users"
@@ -269,8 +269,8 @@ class User(Base):
     ai_provider_id: Mapped[int] = mapped_column(ForeignKey("ai_providers.id"), nullable=True)
     ai_model_id: Mapped[int | None] = mapped_column(ForeignKey("ai_models.id"))
 
-    ai_provider: Mapped["AIProvider | None"] = relationship("AIProvider")
-    task_types: Mapped[list["TaskType"]] = relationship(
+    ai_provider: Mapped["AIProviderModel | None"] = relationship("AIProviderModel")
+    task_types: Mapped[list["TaskTypeModel"]] = relationship(
         "TaskType", back_populates="user", cascade="all, delete-orphan"
     )
     ai_model: Mapped["AIModel | None"] = relationship("AIModel")
@@ -281,7 +281,7 @@ class User(Base):
         return str(self.name)
 
 
-class TaskType(Base):
+class TaskTypeModel(Base):
     __tablename__ = "task_types"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -290,7 +290,7 @@ class TaskType(Base):
     color: Mapped[str | None] = mapped_column(String(7), nullable=True)
     is_active: Mapped[bool] = mapped_column(default=True)
 
-    user: Mapped["User"] = relationship("User", back_populates="task_types")
+    user: Mapped["UserModel"] = relationship("UserModel", back_populates="task_types")
 
     # Indexes for performance
     __table_args__ = (
@@ -302,7 +302,7 @@ class TaskType(Base):
         return str(self.title)
 
 
-class AIProviderKey(Base):
+class AIProviderKeyModel(Base):
     __tablename__ = "ai_provider_keys"
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False)
@@ -311,8 +311,8 @@ class AIProviderKey(Base):
     is_active: Mapped[bool] = mapped_column(default=True)
     last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
-    user: Mapped["User"] = relationship("User")
-    provider: Mapped["AIProvider"] = relationship("AIProvider")
+    user: Mapped["UserModel"] = relationship("UserModel")
+    provider: Mapped["AIProviderModel"] = relationship("AIProviderModel")
 
     __table_args__ = (
         UniqueConstraint("user_id", "ai_provider_id", name="uk_user_provider_key"),

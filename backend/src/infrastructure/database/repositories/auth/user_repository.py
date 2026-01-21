@@ -1,10 +1,10 @@
 from advanced_alchemy import repository
 
-from backend.src.infrastructure.database.models import User
+from backend.src.infrastructure.database.models import UserModel
 
 
-class UserRepository(repository.SQLAlchemyAsyncRepository[User]):  # ty: ignore
-    model_type: type[User] = User
+class UserRepository(repository.SQLAlchemyAsyncRepository[UserModel]):  # ty: ignore  # noqa: F821
+    model_type: type[UserModel] = UserModel
 
     async def create_user(
         self,
@@ -16,9 +16,9 @@ class UserRepository(repository.SQLAlchemyAsyncRepository[User]):  # ty: ignore
         position: str | None = None,
         ai_auto_process: bool = False,
         is_admin: bool = False,
-    ) -> User:
+    ) -> UserModel:
         """Create a new user with profile information."""
-        user = User(
+        user = UserModel(
             email=email,
             password_hash=password_hash,
             name=name,
@@ -39,7 +39,7 @@ class UserRepository(repository.SQLAlchemyAsyncRepository[User]):  # ty: ignore
         department: str | None = None,
         position: str | None = None,
         email: str | None = None,
-    ) -> User:
+    ) -> UserModel:
         """Update user profile information."""
         user = await self.get_one(id=user_id)
 

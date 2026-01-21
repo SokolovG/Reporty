@@ -2,7 +2,7 @@ from datetime import datetime
 from logging import getLogger
 
 from backend.src.infrastructure.database.base import RecordStatus
-from backend.src.infrastructure.database.models import DailyRecord, Report
+from backend.src.infrastructure.database.models import DailyRecordModel, ReportModel
 from backend.src.infrastructure.database.repositories import (
     DailyRecordRepository,
     ReportRepository,
@@ -12,7 +12,6 @@ from backend.src.infrastructure.exceptions.api_exceptions import InternalServerE
 from backend.src.presentation.dto import (
     DailyReportRequest,
     DailyReportRequestUpdate,
-    DailyReportResponse,
 )
 
 logger = getLogger(__name__)
@@ -29,7 +28,7 @@ class ReportUseCases:
         self.record_repo = record_repo
         self.user_repository = user_repository
 
-    async def create(self, data: DailyReportRequest, user_id: int) -> DailyReportResponse:
+    async def create(self, data: DailyReportRequest, user_id: int) -> ReportModel:
         """Create a new daily report."""
         try:
             today_records = await self.record_repo.get_records_by_date(
@@ -51,7 +50,7 @@ class ReportUseCases:
             report_content = self._format_records_to_text(unique_records, data.date)
 
             report = await self.repo.add(
-                Report(
+                ReportModel(
                     report_date=data.date,
                     content=report_content,
                     entries_count=len(unique_records),
@@ -60,27 +59,15 @@ class ReportUseCases:
             )
             await self.repo.session.commit()
 
-            return DailyReportResponse(
-                id=report.id,
-                report_date=report.report_date,
-                content=report.content,
-                entries_count=report.entries_count,
-                generated_at=report.generated_at,
-            )
+            return report
         except Exception as e:
             raise InternalServerError(f"Failed to create report: {str(e)}", {"user_id": user_id})
 
-    async def get(self, report_id: int, user_id: int) -> DailyReportResponse:
+    async def get(self, report_id: int, user_id: int) -> ReportModel:
         """Get a specific report by ID."""
         try:
             report = await self.repo.get_report(report_id=report_id, user_id=user_id)
-            return DailyReportResponse(
-                id=report.id,
-                report_date=report.report_date,
-                content=report.content,
-                entries_count=report.entries_count,
-                generated_at=report.generated_at,
-            )
+            return report
         except Exception as e:
             raise InternalServerError(f"Failed to get report: {str(e)}", {"report_id": report_id})
 
@@ -97,9 +84,7 @@ class ReportUseCases:
                 f"Failed to delete report: {str(e)}", {"report_id": report_id}
             )
 
-    async def update(
-        self, update_data: DailyReportRequestUpdate, user_id: int
-    ) -> DailyReportResponse:
+    async def update(self, update_data: DailyReportRequestUpdate, user_id: int) -> ReportModel:
         """Update a report."""
         try:
             report = await self.repo.get_report(report_id=update_data.report_id, user_id=user_id)
@@ -107,19 +92,13 @@ class ReportUseCases:
             updated_report = await self.repo.update(report)
             await self.repo.session.commit()
 
-            return DailyReportResponse(
-                id=updated_report.id,
-                report_date=updated_report.report_date,
-                content=updated_report.content,
-                entries_count=updated_report.entries_count,
-                generated_at=updated_report.generated_at,
-            )
+            return updated_report
         except Exception as e:
             raise InternalServerError(
                 f"Failed to update report: {str(e)}", {"report_id": update_data.report_id}
             )
 
-    async def get_many(self, user_id: int) -> list[DailyReportResponse]:
+    async def get_many(self, user_id: int) -> list[ReportModel]:
         """Get all reports."""
         try:
             reports = await self.repo.list(user_id=user_id)
@@ -127,21 +106,13 @@ class ReportUseCases:
             if not reports:
                 raise NotFoundError("Report")
 
-            response_list = []
-            for report in reports:
-                rep = DailyReportResponse(
-                    id=report.id,
-                    report_date=report.report_date,
-                    content=report.content,
-                    entries_count=report.entries_count,
-                    generated_at=report.generated_at,
-                )
-                response_list.append(rep)
-            return response_list
+            return list(reports)
         except Exception as e:
             raise InternalServerError(f"Failed to get reports: {str(e)}")
 
-    def _format_records_to_text(self, records: list[DailyRecord], report_date: datetime) -> str:
+    def _format_records_to_text(
+        self, records: list[DailyRecordModel], report_date: datetime
+    ) -> str:
         """Format records into a readable text report."""
         date_str = report_date.strftime("%d.%m.%Y")
 

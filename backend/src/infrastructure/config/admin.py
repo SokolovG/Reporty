@@ -3,156 +3,161 @@ from sqladmin import ModelView
 
 from backend.src.infrastructure.database.models import (
     AIModel,
-    DailyRecord,
-    ExternalSystem,
-    ExternalTask,
-    Report,
-    User,
-    TaskType,
-    AIProvider,
+    AIProviderModel,
+    DailyRecordModel,
+    ExternalSystemModel,
+    ExternalTaskModel,
+    ReportModel,
+    TaskTypeModel,
+    UserModel,
 )
 
 
-class ReportAdmin(ModelView, model=Report):
+class ReportAdmin(ModelView, model=ReportModel):
     name = "Report"
     name_plural = "Reports"
     icon = "fa-solid fa-file-lines"
-    column_list = [Report.id, Report.report_date, Report.content, Report.generated_at]
+    column_list = [
+        ReportModel.id,
+        ReportModel.report_date,
+        ReportModel.content,
+        ReportModel.generated_at,
+    ]
     column_formatters = {"content": lambda m, a: Markup(m.content.replace("\n", "<br>"))}
 
 
-class UserAdmin(ModelView, model=User):
+class UserAdmin(ModelView, model=UserModel):
     name = "User"
     name_plural = "Users"
     icon = "fa-solid fa-user"
     form_include_pk = True
     column_list = [
-        User.id,
-        User.name,
-        User.email,
-        User.display_name,
-        User.department,
-        User.position,
-        User.ai_auto_process,
-        User.ai_provider_id,
-        User.task_types,
-        User.is_active,
-        User.ai_model_id,
-        User.custom_prompt,
-        User.is_verify,
-        User.is_admin,
+        UserModel.id,
+        UserModel.name,
+        UserModel.email,
+        UserModel.display_name,
+        UserModel.department,
+        UserModel.position,
+        UserModel.ai_auto_process,
+        UserModel.ai_provider_id,
+        UserModel.task_types,
+        UserModel.is_active,
+        UserModel.ai_model_id,
+        UserModel.custom_prompt,
+        UserModel.is_verify,
+        UserModel.is_admin,
     ]
 
     form_columns = [
-        User.name,
-        User.email,
-        User.display_name,
-        User.department,
-        User.position,
-        User.ai_auto_process,
-        User.ai_provider_id,
-        User.ai_model_id,
-        User.custom_prompt,
-        User.task_types,
-        User.is_active,
-        User.is_verify,
-        User.is_admin,
+        UserModel.name,
+        UserModel.email,
+        UserModel.display_name,
+        UserModel.department,
+        UserModel.position,
+        UserModel.ai_auto_process,
+        UserModel.ai_provider_id,
+        UserModel.ai_model_id,
+        UserModel.custom_prompt,
+        UserModel.task_types,
+        UserModel.is_active,
+        UserModel.is_verify,
+        UserModel.is_admin,
     ]
 
 
-class DailyRecordAdmin(ModelView, model=DailyRecord):
+class DailyRecordAdmin(ModelView, model=DailyRecordModel):
     name = "Daily Record"
     name_plural = "Daily Records"
     icon = "fa-solid fa-book"
     form_include_pk = True
     column_list = [
-        DailyRecord.id,
-        DailyRecord.user_id,
-        DailyRecord.title,
-        DailyRecord.status,
-        DailyRecord.raw_input,
-        DailyRecord.ai_processed,
-        DailyRecord.final_description,
-        DailyRecord.is_processed,
-        DailyRecord.is_approved,
-        DailyRecord.external_url,
+        DailyRecordModel.id,
+        DailyRecordModel.user_id,
+        DailyRecordModel.title,
+        DailyRecordModel.status,
+        DailyRecordModel.raw_input,
+        DailyRecordModel.ai_processed,
+        DailyRecordModel.final_description,
+        DailyRecordModel.is_processed,
+        DailyRecordModel.is_approved,
+        DailyRecordModel.external_url,
         "external_task.url",
     ]
 
     form_columns = [
-        DailyRecord.user_id,
-        DailyRecord.title,
-        DailyRecord.status,
-        DailyRecord.raw_input,
-        DailyRecord.ai_processed,
-        DailyRecord.final_description,
-        DailyRecord.is_processed,
-        DailyRecord.is_approved,
+        DailyRecordModel.user_id,
+        DailyRecordModel.title,
+        DailyRecordModel.status,
+        DailyRecordModel.raw_input,
+        DailyRecordModel.ai_processed,
+        DailyRecordModel.final_description,
+        DailyRecordModel.is_processed,
+        DailyRecordModel.is_approved,
     ]
 
 
-class ExternalSystemAdmin(ModelView, model=ExternalSystem):
+class ExternalSystemAdmin(ModelView, model=ExternalSystemModel):
     name = "External System"
     name_plural = "External Systems"
     icon = "fa-solid fa-plug"
     column_list = [
-        ExternalSystem.name,
-        ExternalSystem.display_name,
-        ExternalSystem.api_config,
-        ExternalSystem.is_active,
+        ExternalSystemModel.name,
+        ExternalSystemModel.display_name,
+        ExternalSystemModel.api_config,
+        ExternalSystemModel.is_active,
     ]
 
 
-class ExternalTaskAdmin(ModelView, model=ExternalTask):
+class ExternalTaskAdmin(ModelView, model=ExternalTaskModel):
     name = "External Task"
     name_plural = "External Tasks"
     icon = "fa-solid fa-tasks"
     column_list = [
-        ExternalTask.id,
-        ExternalTask.external_id,
-        ExternalTask.external_system_id,
-        ExternalTask.title,
-        ExternalTask.description,
-        ExternalTask.status,
-        ExternalTask.external_created_at,
-        ExternalTask.external_updated_at,
-        ExternalTask.completed_at,
-        ExternalTask.last_sync,
-        ExternalTask.system,
-        ExternalTask.url,
+        ExternalTaskModel.id,
+        ExternalTaskModel.external_id,
+        ExternalTaskModel.external_system_id,
+        ExternalTaskModel.title,
+        ExternalTaskModel.description,
+        ExternalTaskModel.status,
+        ExternalTaskModel.external_created_at,
+        ExternalTaskModel.external_updated_at,
+        ExternalTaskModel.completed_at,
+        ExternalTaskModel.last_sync,
+        ExternalTaskModel.system,
+        ExternalTaskModel.url,
     ]
 
 
-class TaskTypeAdmin(ModelView, model=TaskType):
+class TaskTypeAdmin(ModelView, model=TaskTypeModel):
     name = "Task type"
     name_plural = "Task types"
     form_include_pk = True
     column_list = [
-        TaskType.id,
-        TaskType.user_id,
-        TaskType.title,
-        TaskType.color,
-        TaskType.is_active,
+        TaskTypeModel.id,
+        TaskTypeModel.user_id,
+        TaskTypeModel.title,
+        TaskTypeModel.color,
+        TaskTypeModel.is_active,
     ]
     form_columns = [
-        TaskType.user_id,
-        TaskType.title,
-        TaskType.color,
-        TaskType.is_active,
+        TaskTypeModel.user_id,
+        TaskTypeModel.title,
+        TaskTypeModel.color,
+        TaskTypeModel.is_active,
     ]
 
 
-class AIProviderAdmin(ModelView, model=AIProvider):
+class AIProviderAdmin(ModelView, model=AIProviderModel):
     name = "AI provider"
     name_plural = "AI providers"
 
     column_list = [
-        AIProvider.id,
-        AIProvider.name,
-        AIProvider.base_prompt,
-        AIProvider.requires_api_key,
-        AIProvider.is_active,
-        AIProvider.models,
+        AIProviderModel.id,
+        AIProviderModel.name,
+        AIProviderModel.base_prompt,
+        AIProviderModel.requires_api_key,
+        AIProviderModel.is_active,
+        AIProviderModel.models,
     ]
 
 

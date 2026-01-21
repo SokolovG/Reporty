@@ -1,7 +1,7 @@
 from advanced_alchemy.extensions.litestar import SQLAlchemyDTO, SQLAlchemyDTOConfig
 from msgspec import Struct
 
-from backend.src.infrastructure.database.models import User
+from backend.src.infrastructure.database.models import UserModel
 from backend.src.presentation.dto.base import BaseMsgspecDTO
 
 
@@ -36,9 +36,9 @@ class UserRegistrationDTO(BaseMsgspecDTO[UserRegistrationSchema]):
     """User registration DTO with profile fields."""
 
 
-class UserReadDTO(SQLAlchemyDTO[User]):
+class UserReadDTO(SQLAlchemyDTO[UserModel]):
     config = SQLAlchemyDTOConfig(exclude={"password_hash"}, rename_strategy="camel")
 
 
-class UserUpdateDTO(SQLAlchemyDTO[User]):
+class UserUpdateDTO(SQLAlchemyDTO[UserModel]):
     config = SQLAlchemyDTOConfig(exclude={"password_hash"}, partial=True, rename_strategy="camel")

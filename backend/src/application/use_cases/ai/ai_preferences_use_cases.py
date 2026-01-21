@@ -2,7 +2,8 @@ from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
 from backend.src.application.use_cases.ai.ai_use_cases import AIUseCases
-from backend.src.infrastructure.database.models import AIProvider, AIProviderKey
+from backend.src.infrastructure.database.mappers import Converter
+from backend.src.infrastructure.database.models import AIProviderKeyModel, AIProviderModel
 from backend.src.infrastructure.database.repositories import (
     AIProviderKeyRepository,
     AIProviderRepository,
@@ -18,7 +19,6 @@ from backend.src.presentation.dto import (
     AIProviderResponse,
     AIProviderUpdateRequest,
 )
-from backend.src.presentation.dto.converters import to_ai_preferences_response
 
 
 class AIPreferencesUseCases:
@@ -30,6 +30,7 @@ class AIPreferencesUseCases:
         ai_use_cases: AIUseCases,
         ai_provider_repository: AIProviderRepository,
         ai_key_repo: AIProviderKeyRepository,
+        converter: Converter,
     ) -> None:
         self.repo = record_repo
         self.user_repository = user_repository
@@ -37,6 +38,7 @@ class AIPreferencesUseCases:
         self.api_key_repo = ai_key_repo
         self.ai_provider_repository = ai_provider_repository
         self.encryption_service = encryption_service
+        self.converter = converter
 
     async def update_user_preferences(
         self, user_id: int, data: AIPreferencesUpdateRequest
@@ -53,7 +55,7 @@ class AIPreferencesUseCases:
             if data.custom_prompt is not None:
                 user.custom_prompt = data.custom_prompt
             await self.user_repository.session.commit()
-            return to_ai_preferences_response(user)
+            return self.converter.convert(user, AIPreferencesResponse)
 
         except Exception as e:
             raise InternalServerError(f"Failed to update AI preferences: {str(e)}")
@@ -62,9 +64,9 @@ class AIPreferencesUseCases:
         """Get only active AI providers."""
         try:
             result = await self.ai_provider_repository.session.execute(
-                select(AIProvider)
-                .where(AIProvider.is_active)
-                .options(selectinload(AIProvider.models))
+                select(AIProviderModel)
+                .where(AIProviderModel.is_active)
+                .options(selectinload(AIProviderModel.models))
             )
             providers = result.scalars().all()
             response_list = []
@@ -93,9 +95,9 @@ class AIPreferencesUseCases:
         """Update an AI provider."""
         try:
             result = await self.ai_provider_repository.session.execute(
-                select(AIProvider)
-                .options(selectinload(AIProvider.models))
-                .where(AIProvider.id == ai_provider_id)
+                select(AIProviderModel)
+                .options(selectinload(AIProviderModel.models))
+                .where(AIProviderModel.id == ai_provider_id)
             )
             ai_provider = result.scalar_one_or_none()
             user = await self.user_repository.get_one_or_none(id=user_id)
@@ -110,7 +112,7 @@ class AIPreferencesUseCases:
                 user.ai_model_id = data.ai_model_id
             if data.api_key:
                 encrypted_api_key = await self.encryption_service.encrypt(data.api_key)
-                api_key = AIProviderKey(
+                api_key = AIProviderKeyModel(
                     user_id=user_id,
                     ai_provider_id=ai_provider_id,
                     encrypted_key=encrypted_api_key,

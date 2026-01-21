@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 from backend.src.database.models import (
-    DailyRecord,
+    DailyRecordModel,
     ExternalSystem,
     ExternalTask,
     Report,

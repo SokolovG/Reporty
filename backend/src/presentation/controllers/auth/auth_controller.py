@@ -3,13 +3,21 @@ from dishka.integrations.litestar import inject
 from litestar import Controller, Request, Response, get, post
 from litestar.datastructures.cookie import Cookie
 
-from backend.src.application.use_cases.auth.auth_use_cases import AuthUseCase
+from backend.src.application.use_cases.auth.auth_use_cases import (
+    AuthUseCase,
+    ChangePasswordData,
+    LoginData,
+    RegisterData,
+)
+from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.exceptions.api_exceptions import AuthenticationError
 from backend.src.presentation.dto import (
     AccessTokenResponse,
     ChangePasswordRequest,
     LoginRequest,
     RegisterRequest,
+    TokenInfo,
+    UserResponse,
 )
 from backend.src.presentation.responses import SuccessResponse
 from backend.src.presentation.responses.base_responses import SuccessResponseDTO
@@ -19,11 +27,20 @@ class AuthController(Controller):
     @post("/register", return_dto=SuccessResponseDTO)
     @inject
     async def register(
-        self, auth_use_case: FromDishka[AuthUseCase], data: RegisterRequest
+        self,
+        data: RegisterRequest,
+        auth_use_case: FromDishka[AuthUseCase],
+        converter: FromDishka[Converter],
     ) -> SuccessResponse:
         """Register a new user."""
-        user = await auth_use_case.register(data)
-        return SuccessResponse(message="User registered successfully", data=user)
+        register_data = RegisterData(
+            name=data.name,
+            email=data.email,
+            password=data.password,
+        )
+        domain_user = await auth_use_case.register(register_data)
+        user_response = converter.convert(domain_user, UserResponse)
+        return SuccessResponse(message="User registered successfully", data=user_response)
 
     @post("/login")
     @inject
@@ -31,9 +48,16 @@ class AuthController(Controller):
         self, request: Request, auth_use_case: FromDishka[AuthUseCase], data: LoginRequest
     ) -> Response[SuccessResponse]:
         """Login user and return tokens."""
-        token_info = await auth_use_case.login(data)
+        login_data = LoginData(email=data.email, password=data.password)
+        token_info: TokenInfo = await auth_use_case.login(login_data)
 
-        success_response = SuccessResponse(message="Login successful", data=token_info)
+        presentation_token_info = TokenInfo(
+            access=token_info.access,
+            refresh=token_info.refresh,
+            token_type=token_info.token_type,
+        )
+
+        success_response = SuccessResponse(message="Login successful", data=presentation_token_info)
         response = SuccessResponseDTO.create_response_with_cookies(
             request=request,
             success_response=success_response,
@@ -124,17 +148,24 @@ class AuthController(Controller):
     ) -> SuccessResponse:
         """Change user password."""
         user_id = request.user.id
-        await auth_use_case.change_password(data, user_id)
+        change_password_data = ChangePasswordData(
+            old_password=data.old_password,
+            new_password=data.new_password,
+        )
+        await auth_use_case.change_password(change_password_data, user_id)
         return SuccessResponse(message="Password changed successfully")
 
     @get("/me", return_dto=SuccessResponseDTO)
     @inject
     async def get_me(
         self,
-        auth_use_case: FromDishka[AuthUseCase],
         request: Request,
+        auth_use_case: FromDishka[AuthUseCase],
+        converter: FromDishka[Converter],
     ) -> SuccessResponse:
         """Get current user profile."""
         user_id = request.user.id
-        user = await auth_use_case.get_me(user_id)
-        return SuccessResponse(message="User profile retrieved", data=user)
+        domain_user = await auth_use_case.get_me(user_id)
+
+        user_response = converter.convert(domain_user, UserResponse)
+        return SuccessResponse(message="User profile retrieved", data=user_response)

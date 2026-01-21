@@ -18,6 +18,7 @@ from backend.src.application.use_cases.reports.report_use_cases import ReportUse
 from backend.src.application.use_cases.settings.settings_use_cases import SettingsUseCases
 from backend.src.application.use_cases.tasks.tasks_use_cases import TasksUseCase
 from backend.src.infrastructure.config.configs import get_sqlalchemy_config
+from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.repositories import (
     AIModelRepository,
     AIProviderKeyRepository,
@@ -122,6 +123,7 @@ class MyProvider(Provider):
         user_repo: UserRepository,
         encryption_service: EncryptionService,
         api_key_repo: AIProviderKeyRepository,
+        converter: Converter,
     ) -> SettingsUseCases:
         return SettingsUseCases(
             ai_provider_repository=ai_provider_repo,
@@ -130,6 +132,7 @@ class MyProvider(Provider):
             user_repository=user_repo,
             encryption_service=encryption_service,
             api_key_repo=api_key_repo,
+            converter=converter,
         )
 
     @provide(scope=Scope.REQUEST)
@@ -150,8 +153,9 @@ class MyProvider(Provider):
         user_repo: UserRepository,
         jwt_service: JWTService,
         notification_service: NotificationService,
+        converter: Converter,
     ) -> AuthUseCase:
-        return AuthUseCase(user_repo, jwt_service, notification_service)
+        return AuthUseCase(user_repo, jwt_service, notification_service, converter)
 
     @provide(scope=Scope.REQUEST)
     def user_use_cases(
@@ -171,6 +175,10 @@ class MyProvider(Provider):
             encryption_service=encryption_service,
             api_key_repo=ai_key_repo,
         )
+
+    @provide(scope=Scope.APP)
+    def converter() -> Converter:
+        return Converter()
 
     @provide(scope=Scope.REQUEST)
     def ai_use_cases(
