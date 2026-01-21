@@ -1,17 +1,17 @@
 from dishka import FromDishka
 from dishka.integrations.litestar import inject
-from litestar import Controller, get, post, Request, Response
+from litestar import Controller, Request, Response, get, post
 from litestar.datastructures.cookie import Cookie
 
-from backend.src.api.dto.auth import (
+from backend.src.infrastructure.exceptions.api_exceptions import AuthenticationError
+from backend.src.presentation.dto import (
+    AccessTokenResponse,
     ChangePasswordRequest,
     LoginRequest,
     RegisterRequest,
-    AccessTokenResponse,
 )
-from backend.src.api.responses.base_responses import SuccessResponse, SuccessResponseDTO
-from backend.src.core.exceptions import AuthenticationError
-from backend.src.services import AuthService
+from backend.src.presentation.responses import SuccessResponse
+from backend.src.presentation.responses.base_responses import SuccessResponseDTO
 
 
 class AuthController(Controller):

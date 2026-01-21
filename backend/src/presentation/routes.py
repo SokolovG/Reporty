@@ -1,11 +1,11 @@
 from litestar import Router
 
-from backend.src.api.controllers import (
+from backend.src.presentation.controllers import (
+    AuthController,
+    ProfileController,
     RecordController,
     ReportController,
     TaskController,
-    ProfileController,
-    AuthController,
 )
 
 report_router = Router(path="api/v1/reports", route_handlers=[ReportController])

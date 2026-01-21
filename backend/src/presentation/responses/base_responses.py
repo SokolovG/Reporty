@@ -1,8 +1,9 @@
-from litestar.datastructures.cookie import Cookie
 from typing import Any, Collection, Sequence
-from litestar import Request, Response
+
 import msgspec
-from litestar.dto import MsgspecDTO, DTOConfig
+from litestar import Request, Response
+from litestar.datastructures.cookie import Cookie
+from litestar.dto import DTOConfig, MsgspecDTO
 
 
 class SuccessResponse(msgspec.Struct):
@@ -26,11 +27,11 @@ class SuccessResponseDTO(MsgspecDTO[SuccessResponse]):
             return {"items": [self._process_single_response(item) for item in data]}
 
         raw_dict = msgspec.to_builtins(data)
-        return self._apply_camel_case_recursive(raw_dict)  # type: ignore
+        return self._apply_camel_case_recursive(raw_dict)
 
     def _process_single_response(self, data: SuccessResponse) -> dict[str, Any]:
         raw_dict = msgspec.to_builtins(data)
-        return self._apply_camel_case_recursive(raw_dict)  # type: ignore
+        return self._apply_camel_case_recursive(raw_dict)
 
     def _apply_camel_case_recursive(self, obj: Any) -> Any:
         if isinstance(obj, dict):
