@@ -5,21 +5,23 @@ from dishka.integrations.litestar import inject
 from litestar import Controller, Request, delete, get, patch, post
 from litestar.params import Parameter
 
+from backend.src.application.dto.records import (
+    AppendToRecordData,
+    DailyRecordData,
+    DailyRecordUpdateData,
+    LinkTaskData,
+    RecordStatusUpdateData,
+)
 from backend.src.application.use_cases.records.record_use_cases import RecordUseCases
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.presentation.dto import DailyRecordResponse
 from backend.src.presentation.dto.records import (
-    AppendToRecordRequest,
     AppendToRecordRequestDTO,
-    DailyRecordRequest,
     DailyRecordRequestDTO,
-    DailyRecordUpdateRequest,
     DailyRecordUpdateRequestDTO,
     DailyRecordWithTaskResponse,
     ExternalTaskInfo,
-    LinkTaskRequest,
     LinkTaskRequestDTO,
-    RecordStatusUpdateRequest,
     RecordStatusUpdateRequestDTO,
 )
 from backend.src.presentation.responses.base_responses import SuccessResponse, SuccessResponseDTO
@@ -31,7 +33,7 @@ class RecordController(Controller):
     async def create_record(
         self,
         request: Request,
-        data: DailyRecordRequest,
+        data: DailyRecordData,
         record_use_cases: FromDishka[RecordUseCases],
         converter: FromDishka[Converter],
     ) -> SuccessResponse:
@@ -83,7 +85,7 @@ class RecordController(Controller):
         self,
         request: Request,
         record_id: int,
-        data: RecordStatusUpdateRequest,
+        data: RecordStatusUpdateData,
         record_use_cases: FromDishka[RecordUseCases],
         converter: FromDishka[Converter],
     ) -> SuccessResponse:
@@ -104,7 +106,7 @@ class RecordController(Controller):
     async def append_to_record(
         self,
         request: Request,
-        data: AppendToRecordRequest,
+        data: AppendToRecordData,
         record_id: int,
         record_use_cases: FromDishka[RecordUseCases],
         converter: FromDishka[Converter],
@@ -124,7 +126,7 @@ class RecordController(Controller):
     async def update_record(
         self,
         request: Request,
-        data: DailyRecordUpdateRequest,
+        data: DailyRecordUpdateData,
         record_id: int,
         record_use_cases: FromDishka[RecordUseCases],
         converter: FromDishka[Converter],
@@ -185,7 +187,7 @@ class RecordController(Controller):
         self,
         request: Request,
         record_id: int,
-        data: LinkTaskRequest,
+        data: LinkTaskData,
         record_use_cases: FromDishka[RecordUseCases],
         converter: FromDishka[Converter],
     ) -> SuccessResponse:

@@ -1,6 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
+from backend.src.application.dto.settings import AIPreferencesUpdateData, AIProviderUpdateData
 from backend.src.application.use_cases.ai.ai_use_cases import AIUseCases
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.models import AIProviderKeyModel, AIProviderModel
@@ -15,9 +16,7 @@ from backend.src.infrastructure.exceptions.api_exceptions import InternalServerE
 from backend.src.presentation.dto import (
     AIModelResponse,
     AIPreferencesResponse,
-    AIPreferencesUpdateRequest,
     AIProviderResponse,
-    AIProviderUpdateRequest,
 )
 
 
@@ -41,7 +40,7 @@ class AIPreferencesUseCases:
         self.converter = converter
 
     async def update_user_preferences(
-        self, user_id: int, data: AIPreferencesUpdateRequest
+        self, user_id: int, data: AIPreferencesUpdateData
     ) -> AIPreferencesResponse:  # TODO: change to domain entity
         """Update user's AI preferences (provider selection, auto-processing)."""
         try:
@@ -90,7 +89,7 @@ class AIPreferencesUseCases:
             raise InternalServerError(f"Failed to get active AI providers: {str(e)}")
 
     async def update_provider(
-        self, ai_provider_id: int, data: AIProviderUpdateRequest, user_id: int
+        self, ai_provider_id: int, data: AIProviderUpdateData, user_id: int
     ) -> AIProviderResponse:
         """Update an AI provider."""
         try:

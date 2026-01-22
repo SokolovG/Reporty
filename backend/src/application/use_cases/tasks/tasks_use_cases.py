@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 
 from sqlalchemy import select
 
+from backend.src.application.dto.records import ExternalTaskCreateData, ExternalTaskUpdateData
 from backend.src.domain.entities.external_task import ExternalTask
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.models import ExternalTaskModel
@@ -11,10 +12,6 @@ from backend.src.infrastructure.database.repositories import (
     UserRepository,
 )
 from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError, NotFoundError
-from backend.src.presentation.dto import (
-    ExternalTaskCreateRequest,
-    ExternalTaskUpdateRequest,
-)
 
 
 class TasksUseCase:
@@ -30,7 +27,7 @@ class TasksUseCase:
         self.external_system_repo = external_system_repo
         self.converter = converter
 
-    async def create_external(self, data: ExternalTaskCreateRequest, user_id: int) -> ExternalTask:
+    async def create_external(self, data: ExternalTaskCreateData, user_id: int) -> ExternalTask:
         """Create a new external task."""
         try:
             result = await self.external_system_repo.session.execute(
@@ -69,7 +66,7 @@ class TasksUseCase:
             raise InternalServerError(f"Failed to create task: {str(e)}", {"error": str(e)})
 
     async def update_external(
-        self, task_id: int, data: ExternalTaskUpdateRequest, user_id: int
+        self, task_id: int, data: ExternalTaskUpdateData, user_id: int
     ) -> ExternalTask:
         """Update an external task."""
         try:

@@ -13,6 +13,7 @@ class DailyRecord:
     is_processed: bool = False
     is_approved: bool = False
     processed_at: datetime | None = None
+    external_task: ...
 
     def process_with_ai(self, ai_result: str) -> None:
         if self.is_approved:

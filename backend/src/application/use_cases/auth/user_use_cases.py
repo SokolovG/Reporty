@@ -1,3 +1,4 @@
+from backend.src.application.dto.auth import UpdateUserData
 from backend.src.domain.entities.user import User
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.repositories import (
@@ -9,7 +10,6 @@ from backend.src.infrastructure.database.repositories import (
 )
 from backend.src.infrastructure.encryption.encryption_service import EncryptionService
 from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError
-from backend.src.presentation.dto import UserUpdateRequest
 
 
 class UserUseCases:
@@ -42,7 +42,7 @@ class UserUseCases:
         except Exception as e:
             raise InternalServerError(f"Failed to get user: {str(e)}", {"user_id": user_id})
 
-    async def update(self, user_id: int, data: UserUpdateRequest) -> User:
+    async def update(self, user_id: int, data: UpdateUserData) -> User:  # noqa: F821
         """Update user information."""
         try:
             user = await self.user_repository.update_profile(

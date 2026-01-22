@@ -1,46 +1,46 @@
 from litestar.dto import DTOConfig
 
-from backend.src.presentation.dto.base import BaseMsgspecDTO
-from backend.src.presentation.dto.records.requests import (
-    AppendToRecordRequest,
-    DailyRecordRequest,
-    DailyRecordUpdateRequest,
-    ExternalTaskCreateRequest,
-    ExternalTaskUpdateRequest,
-    LinkTaskRequest,
-    RecordStatusUpdateRequest,
+from backend.src.application.dto.records import (
+    AppendToRecordData,
+    DailyRecordData,
+    DailyRecordUpdateData,
+    ExternalTaskCreateData,
+    ExternalTaskUpdateData,
+    LinkTaskData,
+    RecordStatusUpdateData,
 )
+from backend.src.presentation.dto.base import BaseMsgspecDTO
 from backend.src.presentation.dto.records.responses import (
     DailyRecordWithTaskResponse,
     ExternalTaskResponse,
 )
 
 
-class DailyRecordRequestDTO(BaseMsgspecDTO[DailyRecordRequest]):
+class DailyRecordRequestDTO(BaseMsgspecDTO[DailyRecordData]):
     pass
 
 
-class DailyRecordUpdateRequestDTO(BaseMsgspecDTO[DailyRecordUpdateRequest]):
+class DailyRecordUpdateRequestDTO(BaseMsgspecDTO[DailyRecordUpdateData]):
     pass
 
 
-class AppendToRecordRequestDTO(BaseMsgspecDTO[AppendToRecordRequest]):
+class AppendToRecordRequestDTO(BaseMsgspecDTO[AppendToRecordData]):
     pass
 
 
-class LinkTaskRequestDTO(BaseMsgspecDTO[LinkTaskRequest]):
+class LinkTaskRequestDTO(BaseMsgspecDTO[LinkTaskData]):
     pass
 
 
-class RecordStatusUpdateRequestDTO(BaseMsgspecDTO[RecordStatusUpdateRequest]):
+class RecordStatusUpdateRequestDTO(BaseMsgspecDTO[RecordStatusUpdateData]):
     pass
 
 
-class ExternalTaskCreateRequestDTO(BaseMsgspecDTO[ExternalTaskCreateRequest]):
+class ExternalTaskCreateRequestDTO(BaseMsgspecDTO[ExternalTaskCreateData]):
     pass
 
 
-class ExternalTaskUpdateRequestDTO(BaseMsgspecDTO[ExternalTaskUpdateRequest]):
+class ExternalTaskUpdateRequestDTO(BaseMsgspecDTO[ExternalTaskUpdateData]):
     config = DTOConfig(partial=True, rename_strategy="camel")
 
 

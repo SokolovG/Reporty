@@ -3,11 +3,11 @@ import asyncio
 import click
 from dishka import make_async_container
 
+from backend.src.application.dto.auth import RegisterData
 from backend.src.application.use_cases.auth.auth_use_cases import AuthUseCase
 from backend.src.infrastructure.di.dependencies import MyProvider
 from backend.src.infrastructure.exceptions.api_exceptions import ValidationError
 from backend.src.infrastructure.validators.validators import EmailValidator, PasswordValidator
-from backend.src.presentation.dto import RegisterRequest
 
 
 async def _create_admin_async(email: str, password: str, name: str) -> None:
@@ -16,7 +16,7 @@ async def _create_admin_async(email: str, password: str, name: str) -> None:
         container = make_async_container(MyProvider())
         async with container() as request_container:
             auth_use_case = await request_container.get(AuthUseCase)
-            data = RegisterRequest(name=name, password=password, email=email)
+            data = RegisterData(name=name, password=password, email=email)
             user = await auth_use_case.register(data=data, is_admin=True)
 
             click.secho("✓ Admin created successfully!", fg="green")

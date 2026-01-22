@@ -3,20 +3,12 @@ from dishka.integrations.litestar import inject
 from litestar import Controller, Request, Response, get, post
 from litestar.datastructures.cookie import Cookie
 
-from backend.src.application.use_cases.auth.auth_use_cases import (
-    AuthUseCase,
-    ChangePasswordData,
-    LoginData,
-    RegisterData,
-)
+from backend.src.application.dto.auth import ChangePasswordData, LoginData, RegisterData, TokenInfo
+from backend.src.application.use_cases.auth.auth_use_cases import AuthUseCase
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.exceptions.api_exceptions import AuthenticationError
 from backend.src.presentation.dto import (
     AccessTokenResponse,
-    ChangePasswordRequest,
-    LoginRequest,
-    RegisterRequest,
-    TokenInfo,
     UserResponse,
 )
 from backend.src.presentation.responses import SuccessResponse
@@ -28,7 +20,7 @@ class AuthController(Controller):
     @inject
     async def register(
         self,
-        data: RegisterRequest,
+        data: RegisterData,
         auth_use_case: FromDishka[AuthUseCase],
         converter: FromDishka[Converter],
     ) -> SuccessResponse:
@@ -45,7 +37,7 @@ class AuthController(Controller):
     @post("/login")
     @inject
     async def login(
-        self, request: Request, auth_use_case: FromDishka[AuthUseCase], data: LoginRequest
+        self, request: Request, auth_use_case: FromDishka[AuthUseCase], data: LoginData
     ) -> Response[SuccessResponse]:
         """Login user and return tokens."""
         login_data = LoginData(email=data.email, password=data.password)
@@ -144,7 +136,7 @@ class AuthController(Controller):
     @post("/change-password", return_dto=SuccessResponseDTO)
     @inject
     async def change_password(
-        self, auth_use_case: FromDishka[AuthUseCase], request: Request, data: ChangePasswordRequest
+        self, auth_use_case: FromDishka[AuthUseCase], request: Request, data: ChangePasswordData
     ) -> SuccessResponse:
         """Change user password."""
         user_id = request.user.id

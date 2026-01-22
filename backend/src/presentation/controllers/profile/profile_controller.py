@@ -2,21 +2,29 @@ from dishka import FromDishka
 from dishka.integrations.litestar import inject
 from litestar import Controller, Request, delete, get, patch, post
 
+from backend.src.application.dto.auth import UpdateUserData
+from backend.src.application.dto.settings import (
+    AIPreferencesUpdateData,
+    AIProviderUpdateData,
+    TaskTypeData,
+    TaskTypeUpdateData,
+)
 from backend.src.application.use_cases.ai.ai_preferences_use_cases import AIPreferencesUseCases
 from backend.src.application.use_cases.auth.user_use_cases import UserUseCases
 from backend.src.application.use_cases.settings.settings_use_cases import SettingsUseCases
 from backend.src.application.use_cases.tasks.task_type_use_cases import TaskTypeUseCases
 from backend.src.infrastructure.database.mappers import Converter
-from backend.src.presentation.dto import AIPreferencesResponse, AIProviderResponse, TaskTypeResponse
-from backend.src.presentation.dto.auth import UserResponse, UserUpdateRequest, UserUpdateRequestDTO
+from backend.src.presentation.dto import (
+    AIPreferencesResponse,
+    AIProviderResponse,
+    TaskTypeResponse,
+    UserResponse,
+)
+from backend.src.presentation.dto.auth.dto_classes import UserUpdateRequestDTO
 from backend.src.presentation.dto.settings import (
-    AIPreferencesUpdateRequest,
     AIPreferencesUpdateRequestDTO,
-    AIProviderUpdateRequest,
     AIProviderUpdateRequestDTO,
-    TaskTypeRequest,
     TaskTypeRequestDTO,
-    TaskTypeUpdateRequest,
     TaskTypeUpdateRequestDTO,
 )
 from backend.src.presentation.responses.base_responses import SuccessResponse, SuccessResponseDTO
@@ -30,7 +38,7 @@ class ProfileController(Controller):
     async def update_user_info(
         self,
         request: Request,
-        data: UserUpdateRequest,
+        data: UpdateUserData,
         user_use_cases: FromDishka[UserUseCases],
         converter: FromDishka[Converter],
     ) -> SuccessResponse:
@@ -45,7 +53,7 @@ class ProfileController(Controller):
     async def update_ai_preferences(
         self,
         request: Request,
-        data: AIPreferencesUpdateRequest,
+        data: AIPreferencesUpdateData,
         ai_preferences_use_cases: FromDishka[AIPreferencesUseCases],
         converter: FromDishka[Converter],
     ) -> SuccessResponse:
@@ -92,7 +100,7 @@ class ProfileController(Controller):
     async def create_task_type(
         self,
         request: Request,
-        data: TaskTypeRequest,
+        data: TaskTypeData,
         settings_use_cases: FromDishka[SettingsUseCases],
         task_types_use_case: FromDishka[TaskTypeUseCases],
         converter: FromDishka[Converter],
@@ -114,7 +122,7 @@ class ProfileController(Controller):
         self,
         request: Request,
         task_type_id: int,
-        data: TaskTypeUpdateRequest,
+        data: TaskTypeUpdateData,
         settings_use_cases: FromDishka[SettingsUseCases],
         task_types_use_case: FromDishka[TaskTypeUseCases],
         converter: FromDishka[Converter],
@@ -150,7 +158,7 @@ class ProfileController(Controller):
         self,
         request: Request,
         ai_provider_id: int,
-        data: AIProviderUpdateRequest,
+        data: AIProviderUpdateData,
         settings_use_cases: FromDishka[SettingsUseCases],
         ai_preferences_use_case: FromDishka[AIPreferencesUseCases],
         converter: FromDishka[Converter],

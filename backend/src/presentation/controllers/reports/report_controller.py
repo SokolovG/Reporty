@@ -4,12 +4,11 @@ from dishka import FromDishka
 from dishka.integrations.litestar import inject
 from litestar import Controller, Request, delete, get, patch, post
 
+from backend.src.application.dto.reports import ReportData, ReportUpdateData
 from backend.src.application.use_cases.reports.report_use_cases import ReportUseCases
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.presentation.dto.reports import (
-    ReportRequest,
     ReportRequestDTO,
-    ReportRequestUpdate,
     ReportResponse,
 )
 from backend.src.presentation.responses.base_responses import SuccessResponse, SuccessResponseDTO
@@ -21,7 +20,7 @@ class ReportController(Controller):
     async def create_report(
         self,
         request: Request,
-        data: ReportRequest,
+        data: ReportData,
         report_use_cases: FromDishka[ReportUseCases],
         converter: FromDishka[Converter],
     ) -> SuccessResponse:
@@ -78,7 +77,7 @@ class ReportController(Controller):
     async def update_report(
         self,
         request: Request,
-        update_data: ReportRequestUpdate,
+        update_data: ReportUpdateData,
         report_use_cases: FromDishka[ReportUseCases],
         converter: FromDishka[Converter],
     ) -> SuccessResponse:

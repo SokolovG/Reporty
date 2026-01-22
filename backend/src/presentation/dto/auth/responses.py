@@ -18,13 +18,5 @@ class UserResponse(msgspec.Struct):
     custom_prompt: str | None = None
 
 
-class TokenInfo(msgspec.Struct):
-    """Token information for authentication."""
-
-    access: str
-    refresh: str
-    token_type: str
-
-
 class AccessTokenResponse(msgspec.Struct):
     access_token: str

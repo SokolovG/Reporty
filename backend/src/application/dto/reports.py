@@ -3,10 +3,10 @@ from datetime import datetime
 import msgspec
 
 
-class ReportRequest(msgspec.Struct):
+class ReportData(msgspec.Struct):
     date: datetime = datetime.today()
 
 
-class ReportRequestUpdate(msgspec.Struct):
+class ReportUpdateData(msgspec.Struct):
     report_id: int
     # TODO: report update

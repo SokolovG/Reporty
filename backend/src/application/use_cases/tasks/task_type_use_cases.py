@@ -1,6 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 
+from backend.src.application.dto.settings import TaskTypeData, TaskTypeUpdateData
 from backend.src.domain.entities.task_type import TaskType
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.models import TaskTypeModel, UserModel
@@ -10,7 +11,6 @@ from backend.src.infrastructure.database.repositories import (
     UserRepository,
 )
 from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError, NotFoundError
-from backend.src.presentation.dto import TaskTypeRequest, TaskTypeUpdateRequest
 
 
 class TaskTypeUseCases:
@@ -43,7 +43,7 @@ class TaskTypeUseCases:
         except Exception as e:
             raise InternalServerError(f"Failed to get task types: {str(e)}", {"user_id": user_id})
 
-    async def create(self, user_id: int, data: TaskTypeRequest) -> TaskType:
+    async def create(self, user_id: int, data: TaskTypeData) -> TaskType:
         """Create a new task type for a user."""
         try:
             result = await self.user_repository.session.execute(
@@ -70,9 +70,7 @@ class TaskTypeUseCases:
         except Exception as e:
             raise InternalServerError(f"Failed to create task type: {str(e)}", {"user_id": user_id})
 
-    async def update(
-        self, task_type_id: int, data: TaskTypeUpdateRequest, user_id: int
-    ) -> TaskType:
+    async def update(self, task_type_id: int, data: TaskTypeUpdateData, user_id: int) -> TaskType:
         """Update an existing task type."""
         try:
             result = await self.user_repository.session.execute(

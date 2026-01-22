@@ -1,6 +1,6 @@
 from logging import getLogger
 
-from backend.src.application.dto.user import ChangePasswordData, LoginData, RegisterData
+from backend.src.application.dto.auth import ChangePasswordData, LoginData, RegisterData, TokenInfo
 from backend.src.application.ports.notification import NotificationService
 from backend.src.domain.entities.user import User
 from backend.src.infrastructure.database.mappers import Converter
@@ -12,7 +12,6 @@ from backend.src.infrastructure.exceptions.api_exceptions import (
     NotFoundError,
 )
 from backend.src.infrastructure.validators.validators import EmailValidator, PasswordValidator
-from backend.src.presentation.dto import TokenInfo
 
 logger = getLogger(__name__)
 

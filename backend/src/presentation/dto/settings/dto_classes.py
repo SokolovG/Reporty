@@ -1,30 +1,30 @@
 from litestar.dto import DTOConfig
 
-from backend.src.presentation.dto.base import BaseMsgspecDTO
-from backend.src.presentation.dto.settings.requests import (
-    AIPreferencesUpdateRequest,
-    AIProviderUpdateRequest,
-    ExternalSystemUpdateRequest,
-    TaskTypeRequest,
-    TaskTypeUpdateRequest,
+from backend.src.application.dto.settings import (
+    AIPreferencesUpdateData,
+    AIProviderUpdateData,
+    ExternalSystemUpdateData,
+    TaskTypeData,
+    TaskTypeUpdateData,
 )
+from backend.src.presentation.dto.base import BaseMsgspecDTO
 
 
-class TaskTypeRequestDTO(BaseMsgspecDTO[TaskTypeRequest]):
+class TaskTypeRequestDTO(BaseMsgspecDTO[TaskTypeData]):
     pass
 
 
-class TaskTypeUpdateRequestDTO(BaseMsgspecDTO[TaskTypeUpdateRequest]):
+class TaskTypeUpdateRequestDTO(BaseMsgspecDTO[TaskTypeUpdateData]):
     config = DTOConfig(partial=True, rename_strategy="camel")
 
 
-class AIPreferencesUpdateRequestDTO(BaseMsgspecDTO[AIPreferencesUpdateRequest]):
+class AIPreferencesUpdateRequestDTO(BaseMsgspecDTO[AIPreferencesUpdateData]):
     config = DTOConfig(partial=True, rename_strategy="camel")
 
 
-class AIProviderUpdateRequestDTO(BaseMsgspecDTO[AIProviderUpdateRequest]):
+class AIProviderUpdateRequestDTO(BaseMsgspecDTO[AIProviderUpdateData]):
     config = DTOConfig(partial=True, rename_strategy="camel")
 
 
-class ExternalSystemUpdateRequestDTO(BaseMsgspecDTO[ExternalSystemUpdateRequest]):
+class ExternalSystemUpdateRequestDTO(BaseMsgspecDTO[ExternalSystemUpdateData]):
     config = DTOConfig(partial=True, rename_strategy="camel")

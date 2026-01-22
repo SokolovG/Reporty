@@ -1,65 +1,39 @@
-from backend.src.presentation.dto.auth import (
-    AccessTokenResponse,
-    ChangePasswordRequest,
-    LoginRequest,
-    LoginRequestDTO,
-    RegisterRequest,
-    RegisterRequestDTO,
-    TokenInfo,
-    UserResponse,
-    UserUpdateRequest,
-    UserUpdateRequestDTO,
-)
+from backend.src.presentation.dto.auth.responses import AccessTokenResponse, UserResponse
 from backend.src.presentation.dto.records import (
-    AppendToRecordRequest,
     AppendToRecordRequestDTO,
-    DailyRecordRequest,
     DailyRecordRequestDTO,
     DailyRecordResponse,
-    DailyRecordUpdateRequest,
     DailyRecordUpdateRequestDTO,
     DailyRecordWithTaskResponse,
-    ExternalTaskCreateRequest,
     ExternalTaskCreateRequestDTO,
     ExternalTaskInfo,
     ExternalTaskResponse,
-    ExternalTaskUpdateRequest,
     ExternalTaskUpdateRequestDTO,
-    LinkTaskRequest,
     LinkTaskRequestDTO,
-    RecordStatusUpdateRequest,
     RecordStatusUpdateRequestDTO,
 )
 from backend.src.presentation.dto.reports import (
-    ReportRequest,
     ReportRequestDTO,
-    ReportRequestUpdate,
     ReportRequestUpdateDTO,
     ReportResponse,
 )
 from backend.src.presentation.dto.settings import (
     AIModelResponse,
     AIPreferencesResponse,
-    AIPreferencesUpdateRequest,
     AIPreferencesUpdateRequestDTO,
     AIProviderResponse,
-    AIProviderUpdateRequest,
     AIProviderUpdateRequestDTO,
     AISettingsUpdateResponse,
     ExternalSystemResponse,
-    ExternalSystemUpdateRequest,
     ExternalSystemUpdateRequestDTO,
-    TaskTypeRequest,
     TaskTypeRequestDTO,
     TaskTypeResponse,
-    TaskTypeUpdateRequest,
     TaskTypeUpdateRequestDTO,
 )
 from backend.src.presentation.dto.shared import UserReadDTO, UserRegistrationDTO, UserUpdateDTO
 
 __all__ = [
     # Auth domain
-    "ChangePasswordRequest",
     "LoginRequest",
     "RegisterRequest",
     "UserUpdateRequest",
@@ -70,10 +44,6 @@ __all__ = [
     "RegisterRequestDTO",
     "UserUpdateRequestDTO",
     # Records domain
-    "DailyRecordRequest",
-    "DailyRecordUpdateRequest",
-    "AppendToRecordRequest",
-    "RecordStatusUpdateRequest",
     "DailyRecordResponse",
     "DailyRecordWithTaskResponse",
     "ExternalTaskInfo",
@@ -89,8 +59,6 @@ __all__ = [
     "ExternalTaskUpdateRequestDTO",
     "ExternalTaskResponse",
     # Reports domain
-    "ReportRequest",
-    "ReportRequestUpdate",
     "ReportResponse",
     "ReportRequestDTO",
     "ReportRequestUpdateDTO",

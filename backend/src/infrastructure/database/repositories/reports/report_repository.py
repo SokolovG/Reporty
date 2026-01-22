@@ -4,9 +4,9 @@ from datetime import date
 from advanced_alchemy import repository
 from sqlalchemy import and_, select
 
+from backend.src.application.dto.reports import ReportUpdateData
 from backend.src.infrastructure.database.models import ReportModel
 from backend.src.infrastructure.exceptions.api_exceptions import NotFoundError
-from backend.src.presentation.dto import ReportRequestUpdate
 
 
 class ReportRepository(repository.SQLAlchemyAsyncRepository[ReportModel]):  # ty: ignore
@@ -34,7 +34,7 @@ class ReportRepository(repository.SQLAlchemyAsyncRepository[ReportModel]):  # ty
         )
         return result.scalars().all()
 
-    async def update_report(self, update_data: ReportRequestUpdate, user_id: int) -> ReportModel:
+    async def update_report(self, update_data: ReportUpdateData, user_id: int) -> ReportModel:
         report = await self.get_report(report_id=update_data.report_id, user_id=user_id)
         updated_report = await self.update(report)
         return updated_report

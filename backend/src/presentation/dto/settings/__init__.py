@@ -1,10 +1,3 @@
-from backend.src.presentation.dto import (
-    AIPreferencesUpdateRequest,
-    AIProviderUpdateRequest,
-    ExternalSystemUpdateRequest,
-    TaskTypeRequest,
-    TaskTypeUpdateRequest,
-)
 from backend.src.presentation.dto.settings.dto_classes import (
     AIPreferencesUpdateRequestDTO,
     AIProviderUpdateRequestDTO,

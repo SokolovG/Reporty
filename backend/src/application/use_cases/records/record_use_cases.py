@@ -1,5 +1,11 @@
 from datetime import datetime
 
+from backend.src.application.dto.records import (
+    AppendToRecordData,
+    DailyRecordData,
+    DailyRecordUpdateData,
+    RecordStatusUpdateData,
+)
 from backend.src.application.use_cases.ai.ai_use_cases import AIUseCases
 from backend.src.domain.entities.record import DailyRecord
 from backend.src.infrastructure.database.mappers import Converter
@@ -7,12 +13,6 @@ from backend.src.infrastructure.database.repositories import DailyRecordReposito
 from backend.src.infrastructure.exceptions.api_exceptions import (
     InternalServerError,
     ValidationError,
-)
-from backend.src.presentation.dto import (
-    AppendToRecordRequest,
-    DailyRecordRequest,
-    DailyRecordUpdateRequest,
-    RecordStatusUpdateRequest,
 )
 
 
@@ -30,7 +30,7 @@ class RecordUseCases:
         self.convertor = converter
 
     async def create(
-        self, data: DailyRecordRequest, user_id: int, converter: Converter
+        self, data: DailyRecordData, user_id: int, converter: Converter
     ) -> DailyRecord:
         """Create a new daily record."""
         try:
@@ -84,9 +84,7 @@ class RecordUseCases:
         except Exception as e:
             raise InternalServerError(f"Failed to get records: {str(e)}")
 
-    async def append(
-        self, record_id: int, user_id: int, data: AppendToRecordRequest
-    ) -> DailyRecord:
+    async def append(self, record_id: int, user_id: int, data: AppendToRecordData) -> DailyRecord:
         """Append additional content to an existing record."""
         try:
             record = await self.repo.get_record(record_id=record_id, user_id=user_id)
@@ -102,7 +100,7 @@ class RecordUseCases:
             )
 
     async def update(
-        self, record_id: int, user_id: int, data: DailyRecordUpdateRequest
+        self, record_id: int, user_id: int, data: DailyRecordUpdateData
     ) -> DailyRecord:
         """Update an existing record."""
         try:
@@ -168,7 +166,7 @@ class RecordUseCases:
             )
 
     async def update_status(
-        self, record_id: int, user_id: int, data: RecordStatusUpdateRequest
+        self, record_id: int, user_id: int, data: RecordStatusUpdateData
     ) -> DailyRecord:
         """Update record status."""
         try:

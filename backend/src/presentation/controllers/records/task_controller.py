@@ -2,13 +2,12 @@ from dishka import FromDishka
 from dishka.integrations.litestar import inject
 from litestar import Controller, Request, delete, post, put
 
+from backend.src.application.dto.records import ExternalTaskCreateData, ExternalTaskUpdateData
 from backend.src.application.use_cases.tasks.tasks_use_cases import TasksUseCase
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.presentation.dto import ExternalTaskResponse
 from backend.src.presentation.dto.records import (
-    ExternalTaskCreateRequest,
     ExternalTaskCreateRequestDTO,
-    ExternalTaskUpdateRequest,
     ExternalTaskUpdateRequestDTO,
 )
 from backend.src.presentation.responses.base_responses import SuccessResponse, SuccessResponseDTO
@@ -20,7 +19,7 @@ class TaskController(Controller):
     async def create_external_task(
         self,
         request: Request,
-        data: ExternalTaskCreateRequest,
+        data: ExternalTaskCreateData,
         task_use_casess: FromDishka[TasksUseCase],
         converter: FromDishka[Converter],
     ) -> SuccessResponse:
@@ -40,7 +39,7 @@ class TaskController(Controller):
         self,
         request: Request,
         task_id: int,
-        data: ExternalTaskUpdateRequest,
+        data: ExternalTaskUpdateData,
         task_use_casess: FromDishka[TasksUseCase],
         converter: FromDishka[Converter],
     ) -> SuccessResponse:

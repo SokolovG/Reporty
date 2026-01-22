@@ -1,5 +1,6 @@
 from sqlalchemy import select
 
+from backend.src.application.dto.settings import ExternalSystemUpdateData
 from backend.src.domain.entities.external_system import ExternalSystem
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.models import ExternalSystemModel
@@ -14,9 +15,6 @@ from backend.src.infrastructure.database.repositories.ai.ai_repository import (
 )
 from backend.src.infrastructure.encryption.encryption_service import EncryptionService
 from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError
-from backend.src.presentation.dto import (
-    ExternalSystemUpdateRequest,
-)
 
 
 class SettingsUseCases:
@@ -73,7 +71,7 @@ class SettingsUseCases:
             raise InternalServerError(f"Failed to get active external systems: {str(e)}")
 
     async def update_external_system(
-        self, system_id: int, data: ExternalSystemUpdateRequest
+        self, system_id: int, data: ExternalSystemUpdateData
     ) -> ExternalSystem:
         """Update an external system."""
         try:

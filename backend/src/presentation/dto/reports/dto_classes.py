@@ -1,12 +1,12 @@
 from litestar.dto import DTOConfig
 
+from backend.src.application.dto.reports import ReportData
 from backend.src.presentation.dto.base import BaseMsgspecDTO
-from backend.src.presentation.dto.reports.requests import ReportRequest, ReportRequestUpdate
 
 
-class ReportRequestDTO(BaseMsgspecDTO[ReportRequest]):
+class ReportRequestDTO(BaseMsgspecDTO[ReportData]):
     config = DTOConfig()
 
 
-class ReportRequestUpdateDTO(BaseMsgspecDTO[ReportRequestUpdate]):
+class ReportRequestUpdateDTO(BaseMsgspecDTO[ReportData]):
     config = DTOConfig(partial=True, exclude={"id"})

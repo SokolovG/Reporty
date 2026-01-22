@@ -9,15 +9,6 @@ from backend.src.presentation.dto.records.dto_classes import (
     LinkTaskRequestDTO,
     RecordStatusUpdateRequestDTO,
 )
-from backend.src.presentation.dto.records.requests import (
-    AppendToRecordRequest,
-    DailyRecordRequest,
-    DailyRecordUpdateRequest,
-    ExternalTaskCreateRequest,
-    ExternalTaskUpdateRequest,
-    LinkTaskRequest,
-    RecordStatusUpdateRequest,
-)
 from backend.src.presentation.dto.records.responses import (
     DailyRecordResponse,
     DailyRecordWithTaskResponse,
@@ -26,14 +17,6 @@ from backend.src.presentation.dto.records.responses import (
 )
 
 __all__ = [
-    # Requests
-    "DailyRecordRequest",
-    "DailyRecordUpdateRequest",
-    "AppendToRecordRequest",
-    "LinkTaskRequest",
-    "RecordStatusUpdateRequest",
-    "ExternalTaskCreateRequest",
-    "ExternalTaskUpdateRequest",
     # Responses
     "DailyRecordResponse",
     "DailyRecordWithTaskResponse",
