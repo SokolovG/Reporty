@@ -5,6 +5,7 @@ from advanced_alchemy import repository
 from sqlalchemy import and_, select
 from sqlalchemy.orm import selectinload
 
+from backend.src.application.dto.records import DailyRecordData
 from backend.src.infrastructure.database.base import RecordStatus
 from backend.src.infrastructure.database.models import (
     DailyRecordModel,
@@ -13,12 +14,12 @@ from backend.src.infrastructure.database.models import (
 from backend.src.infrastructure.exceptions.api_exceptions import NotFoundError
 
 
-class DailyRecordModelRepository(
+class DailyRecordRepository(
     repository.SQLAlchemyAsyncRepository[DailyRecordModel]  # ty:ignore[invalid-type-arguments]
 ):
     model_type: type[DailyRecordModel] = DailyRecordModel
 
-    async def create_record(self, data: DailyRecordModel, user_id: int) -> DailyRecordModel:
+    async def create_record(self, data: DailyRecordData, user_id: int) -> DailyRecordModel:
         if data.external_task_id is not None:
             await self._validate_external_task_exists(data.external_task_id)
 
@@ -27,7 +28,7 @@ class DailyRecordModelRepository(
             title=data.title,
             raw_input=data.raw_input,
             external_task_id=data.external_task_id,
-            external_url=data.external_url,
+            external_url=data.external_task_url,
         )
 
         added_record = await self.add(record)

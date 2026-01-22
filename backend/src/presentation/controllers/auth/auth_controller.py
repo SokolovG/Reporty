@@ -3,7 +3,7 @@ from dishka.integrations.litestar import inject
 from litestar import Controller, Request, Response, get, post
 from litestar.datastructures.cookie import Cookie
 
-from backend.src.application.dto.auth import ChangePasswordData, LoginData, RegisterData, TokenInfo
+from backend.src.application.dto.auth import ChangePasswordData, LoginData, RegisterData
 from backend.src.application.use_cases.auth.auth_use_cases import AuthUseCase
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.exceptions.api_exceptions import AuthenticationError
@@ -11,6 +11,7 @@ from backend.src.presentation.dto import (
     AccessTokenResponse,
     UserResponse,
 )
+from backend.src.presentation.dto.auth.responses import TokenInfoResponse
 from backend.src.presentation.responses import SuccessResponse
 from backend.src.presentation.responses.base_responses import SuccessResponseDTO
 
@@ -41,9 +42,9 @@ class AuthController(Controller):
     ) -> Response[SuccessResponse]:
         """Login user and return tokens."""
         login_data = LoginData(email=data.email, password=data.password)
-        token_info: TokenInfo = await auth_use_case.login(login_data)
+        token_info: TokenInfoResponse = await auth_use_case.login(login_data)
 
-        presentation_token_info = TokenInfo(
+        presentation_token_info = TokenInfoResponse(
             access=token_info.access,
             refresh=token_info.refresh,
             token_type=token_info.token_type,

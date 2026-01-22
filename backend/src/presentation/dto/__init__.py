@@ -1,4 +1,8 @@
-from backend.src.presentation.dto.auth.responses import AccessTokenResponse, UserResponse
+from backend.src.presentation.dto.auth.responses import (
+    AccessTokenResponse,
+    TokenInfoResponse,
+    UserResponse,
+)
 from backend.src.presentation.dto.records import (
     AppendToRecordRequestDTO,
     DailyRecordRequestDTO,
@@ -38,7 +42,7 @@ __all__ = [
     "RegisterRequest",
     "UserUpdateRequest",
     "AccessTokenResponse",
-    "TokenInfo",
+    "TokenInfoResponse",
     "UserResponse",
     "LoginRequestDTO",
     "RegisterRequestDTO",

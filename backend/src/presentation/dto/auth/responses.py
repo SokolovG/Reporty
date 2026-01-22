@@ -20,3 +20,11 @@ class UserResponse(msgspec.Struct):
 
 class AccessTokenResponse(msgspec.Struct):
     access_token: str
+
+
+class TokenInfoResponse(msgspec.Struct):
+    """Token information for authentication."""
+
+    access: str
+    refresh: str
+    token_type: str

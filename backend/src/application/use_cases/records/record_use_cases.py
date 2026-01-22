@@ -29,9 +29,7 @@ class RecordUseCases:
         self.ai_use_cases = ai_use_cases
         self.convertor = converter
 
-    async def create(
-        self, data: DailyRecordData, user_id: int, converter: Converter
-    ) -> DailyRecord:
+    async def create(self, data: DailyRecordData, user_id: int) -> DailyRecord:
         """Create a new daily record."""
         try:
             saved_record = await self.repo.create_record(data, user_id)
@@ -50,7 +48,7 @@ class RecordUseCases:
                     # If AI processing fails, continue without it
                     pass
 
-            domain_record = converter.convert(saved_record, DailyRecord)
+            domain_record = self.convertor.convert(saved_record, DailyRecord)
             return domain_record
 
         except ValueError as e:

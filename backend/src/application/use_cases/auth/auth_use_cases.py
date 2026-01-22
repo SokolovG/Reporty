@@ -1,6 +1,6 @@
 from logging import getLogger
 
-from backend.src.application.dto.auth import ChangePasswordData, LoginData, RegisterData, TokenInfo
+from backend.src.application.dto.auth import ChangePasswordData, LoginData, RegisterData
 from backend.src.application.ports.notification import NotificationService
 from backend.src.domain.entities.user import User
 from backend.src.infrastructure.database.mappers import Converter
@@ -12,6 +12,7 @@ from backend.src.infrastructure.exceptions.api_exceptions import (
     NotFoundError,
 )
 from backend.src.infrastructure.validators.validators import EmailValidator, PasswordValidator
+from backend.src.presentation.dto.auth.responses import TokenInfoResponse
 
 logger = getLogger(__name__)
 
@@ -50,7 +51,7 @@ class AuthUseCase:
         await self.notification_service.send_register_notification()
         return domain_user
 
-    async def login(self, data: LoginData) -> TokenInfo:
+    async def login(self, data: LoginData) -> TokenInfoResponse:
         """Authenticate user and return tokens."""
         user_model = await self.repo.get_one_or_none(email=data.email)
         if not user_model:

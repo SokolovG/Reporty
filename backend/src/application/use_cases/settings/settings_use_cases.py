@@ -1,9 +1,6 @@
-from sqlalchemy import select
-
 from backend.src.application.dto.settings import ExternalSystemUpdateData
 from backend.src.domain.entities.external_system import ExternalSystem
 from backend.src.infrastructure.database.mappers import Converter
-from backend.src.infrastructure.database.models import ExternalSystemModel
 from backend.src.infrastructure.database.repositories import (
     AIModelRepository,
     AIProviderRepository,
@@ -42,11 +39,9 @@ class SettingsUseCases:
     async def get_external_systems(self) -> list[ExternalSystem]:
         """Get all external systems."""
         try:
-            result = await self.external_system_repository.session.execute(
-                select(ExternalSystemModel)
-            )
+            result = await self.external_system_repository.get_external_systems()
             domain_systems: list[ExternalSystem] = []
-            for system_model in result.scalars().all():
+            for system_model in result:
                 domain_systems.append(self.converter.convert(system_model, ExternalSystem))
 
             return domain_systems
@@ -57,12 +52,10 @@ class SettingsUseCases:
     async def get_active_external_systems(self) -> list[ExternalSystem]:
         """Get only active external systems."""
         try:
-            result = await self.external_system_repository.session.execute(
-                select(ExternalSystemModel).where(ExternalSystemModel.is_active == True)  # noqa: E712
-            )
+            result = await self.external_system_repository.get_active_external_systems()
 
             domain_systems: list[ExternalSystem] = []
-            for system_model in result.scalars().all():
+            for system_model in result:
                 domain_systems.append(self.converter.convert(system_model, ExternalSystem))
 
             return domain_systems

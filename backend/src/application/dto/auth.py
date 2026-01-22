@@ -30,11 +30,3 @@ class ChangePasswordData(msgspec.Struct):
 
     old_password: str
     new_password: str
-
-
-class TokenInfo(msgspec.Struct):
-    """Token information for authentication."""
-
-    access: str
-    refresh: str
-    token_type: str

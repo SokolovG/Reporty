@@ -21,6 +21,12 @@ class AIProviderKeyRepository(repository.SQLAlchemyAsyncRepository[AIProviderKey
         )
         return set(result.scalars().all())
 
+    async def get_active_providers(self) -> list[AIProviderModel]:
+        result = await self.session.execute(
+            select(AIProviderModel).where(AIProviderModel.is_active)
+        )
+        return result.scalars().all()
+
     async def get_user_provider_key(
         self, user_id: int, provider_id: int
     ) -> AIProviderKeyModel | None:

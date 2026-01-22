@@ -1,4 +1,4 @@
-from backend.src.infrastructure.database.repositories import (
+from backend.src.infrastructure.database.repositories.ai.ai_repository import (
     AIModelRepository,
     AIProviderKeyRepository,
     AIProviderRepository,

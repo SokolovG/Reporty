@@ -3,9 +3,9 @@ from datetime import datetime, timedelta, timezone
 import bcrypt
 import jwt
 
-from backend.src.application.dto.auth import TokenInfo
 from backend.src.infrastructure.config.settings import settings
 from backend.src.infrastructure.exceptions.api_exceptions import AuthenticationError
+from backend.src.presentation.dto.auth.responses import TokenInfoResponse
 
 
 class JWTService:
@@ -61,7 +61,7 @@ class JWTService:
         hash_bytes = hash_password.encode("utf-8")
         return bcrypt.checkpw(password_bytes, hash_bytes)
 
-    async def login(self, user_id: int) -> TokenInfo:
+    async def login(self, user_id: int) -> TokenInfoResponse:
         access = await self.create_access_token(user_id)
         refresh = await self.create_refresh_token(user_id)
-        return TokenInfo(refresh=refresh, access=access, token_type="Bearer")
+        return TokenInfoResponse(refresh=refresh, access=access, token_type="Bearer")
