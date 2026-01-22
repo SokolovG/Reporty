@@ -27,6 +27,7 @@ from backend.src.infrastructure.database.repositories import (
     ExternalSystemRepository,
     ExternalTaskRepository,
     ReportRepository,
+    TaskTypeRepository,
     UserRepository,
 )
 from backend.src.infrastructure.encryption.encryption_service import EncryptionService
@@ -75,6 +76,10 @@ class MyProvider(Provider):
             ai_use_cases=ai_use_cases,
             converter=converter,
         )
+
+    @provide(scope=Scope.REQUEST)
+    def task_type_repo(self, db_session: AsyncSession) -> TaskTypeRepository:
+        return TaskTypeRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
     def ai_provider_repo(self, db_session: AsyncSession) -> AIProviderRepository:

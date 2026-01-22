@@ -7,6 +7,28 @@ from backend.src.infrastructure.database.models import AIModel, AIProviderKeyMod
 class AIProviderRepository(repository.SQLAlchemyAsyncRepository[AIProviderModel]):  # type: ignore[misc]
     model_type: type[AIProviderModel] = AIProviderModel
 
+    async def get_active_providers_with_models(self) -> list[AIProviderModel]:
+        """Get all active AI providers with their models loaded."""
+        from sqlalchemy.orm import selectinload
+
+        result = await self.session.execute(
+            select(AIProviderModel)
+            .where(AIProviderModel.is_active == True)  # noqa: E712
+            .options(selectinload(AIProviderModel.models))
+        )
+        return list(result.scalars().all())
+
+    async def get_by_id_with_models(self, provider_id: int) -> AIProviderModel | None:
+        """Get AI provider by ID with models loaded."""
+        from sqlalchemy.orm import selectinload
+
+        result = await self.session.execute(
+            select(AIProviderModel)
+            .where(AIProviderModel.id == provider_id)
+            .options(selectinload(AIProviderModel.models))
+        )
+        return result.scalar_one_or_none()
+
 
 class AIModelRepository(repository.SQLAlchemyAsyncRepository[AIModel]):  # type: ignore[misc]
     model_type: type[AIModel] = AIModel

@@ -1,10 +1,7 @@
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
-
 from backend.src.application.dto.settings import AIPreferencesUpdateData, AIProviderUpdateData
 from backend.src.application.use_cases.ai.ai_use_cases import AIUseCases
 from backend.src.infrastructure.database.mappers import Converter
-from backend.src.infrastructure.database.models import AIProviderKeyModel, AIProviderModel
+from backend.src.infrastructure.database.models import AIProviderKeyModel
 from backend.src.infrastructure.database.repositories import (
     AIProviderKeyRepository,
     AIProviderRepository,
@@ -21,6 +18,8 @@ from backend.src.presentation.dto import (
 
 
 class AIPreferencesUseCases:
+    """Use cases for AI preferences management."""
+
     def __init__(
         self,
         record_repo: DailyRecordRepository,
@@ -41,37 +40,61 @@ class AIPreferencesUseCases:
 
     async def update_user_preferences(
         self, user_id: int, data: AIPreferencesUpdateData
-    ) -> AIPreferencesResponse:  # TODO: change to domain entity
-        """Update user's AI preferences (provider selection, auto-processing)."""
+    ) -> AIPreferencesResponse:
+        """Update user's AI preferences (provider selection, auto-processing).
+
+        Args:
+            user_id: ID of the user
+            data: AI preferences update data
+
+        Returns:
+            Updated AI preferences
+
+        Raises:
+            NotFoundError: If user not found
+            InternalServerError: If operation fails
+        """
         try:
             user = await self.user_repository.get_one_or_none(id=user_id)
             if not user:
                 raise NotFoundError("User", user_id)
+
             if data.ai_provider_id is not None:
                 user.ai_provider_id = data.ai_provider_id
+
             if data.ai_auto_process is not None:
                 user.ai_auto_process = data.ai_auto_process
+
             if data.custom_prompt is not None:
                 user.custom_prompt = data.custom_prompt
+
             await self.user_repository.session.commit()
+
             return self.converter.convert(user, AIPreferencesResponse)
 
+        except NotFoundError:
+            raise
         except Exception as e:
             raise InternalServerError(f"Failed to update AI preferences: {str(e)}")
 
     async def get_active_providers(self, user_id: int) -> list[AIProviderResponse]:
-        """Get only active AI providers."""
+        """Get only active AI providers with user's API key status.
+
+        Args:
+            user_id: ID of the user
+
+        Returns:
+            List of active AI providers with models
+
+        Raises:
+            InternalServerError: If operation fails
+        """
         try:
-            result = await self.ai_provider_repository.session.execute(
-                select(AIProviderModel)
-                .where(AIProviderModel.is_active)
-                .options(selectinload(AIProviderModel.models))
-            )
-            providers = result.scalars().all()
-            response_list = []
+            providers = await self.ai_provider_repository.get_active_providers_with_models()
 
             user_provider_ids = await self.api_key_repo.get_all_keys_for_user(user_id=user_id)
 
+            response_list = []
             for provider in providers:
                 models_response = [AIModelResponse(id=m.id, name=m.name) for m in provider.models]
                 provider_response = AIProviderResponse(
@@ -83,6 +106,7 @@ class AIPreferencesUseCases:
                     is_key_set=provider.id in user_provider_ids,
                 )
                 response_list.append(provider_response)
+
             return response_list
 
         except Exception as e:
@@ -91,24 +115,34 @@ class AIPreferencesUseCases:
     async def update_provider(
         self, ai_provider_id: int, data: AIProviderUpdateData, user_id: int
     ) -> AIProviderResponse:
-        """Update an AI provider."""
-        try:
-            result = await self.ai_provider_repository.session.execute(
-                select(AIProviderModel)
-                .options(selectinload(AIProviderModel.models))
-                .where(AIProviderModel.id == ai_provider_id)
-            )
-            ai_provider = result.scalar_one_or_none()
-            user = await self.user_repository.get_one_or_none(id=user_id)
+        """Update an AI provider configuration for user.
 
-            if not user:
-                raise NotFoundError("User", user_id)
+        Args:
+            ai_provider_id: ID of the AI provider
+            data: Provider update data (model selection, API key)
+            user_id: ID of the user
+
+        Returns:
+            Updated AI provider information
+
+        Raises:
+            NotFoundError: If user or provider not found
+            InternalServerError: If operation fails
+        """
+        try:
+            ai_provider = await self.ai_provider_repository.get_by_id_with_models(ai_provider_id)
 
             if not ai_provider:
                 raise NotFoundError("AIProvider", ai_provider_id)
 
+            user = await self.user_repository.get_one_or_none(id=user_id)
+            if not user:
+                raise NotFoundError("User", user_id)
+
             if data.ai_model_id:
                 user.ai_model_id = data.ai_model_id
+
+            api_key_model = None
             if data.api_key:
                 encrypted_api_key = await self.encryption_service.encrypt(data.api_key)
                 api_key = AIProviderKeyModel(
@@ -119,7 +153,7 @@ class AIPreferencesUseCases:
                 api_key_model = await self.api_key_repo.add(api_key)
                 await self.api_key_repo.session.commit()
 
-            await self.ai_provider_repository.session.commit()
+            await self.user_repository.session.commit()
 
             models_response = [AIModelResponse(id=m.id, name=m.name) for m in ai_provider.models]
             return AIProviderResponse(

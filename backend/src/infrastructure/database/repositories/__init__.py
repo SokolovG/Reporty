@@ -12,6 +12,7 @@ from backend.src.infrastructure.database.repositories.records import (
     ExternalTaskRepository,
 )
 from backend.src.infrastructure.database.repositories.reports import ReportRepository
+from backend.src.infrastructure.database.repositories.tasks import TaskTypeRepository
 
 __all__ = [
     # Auth
@@ -27,4 +28,6 @@ __all__ = [
     "AIProviderKeyRepository",
     # Shared
     "ExternalSystemRepository",
+    # Tasks
+    "TaskTypeRepository",
 ]
