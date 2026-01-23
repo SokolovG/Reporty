@@ -8,27 +8,6 @@ class TaskTypeResponse(msgspec.Struct):
     color: str | None = None
 
 
-class AIPreferencesResponse(msgspec.Struct):
-    ai_auto_process: bool
-    ai_provider_id: int | None = None
-
-
-class AIModelResponse(msgspec.Struct):
-    """Response for AI model."""
-
-    id: int
-    name: str
-
-
-class AIProviderResponse(msgspec.Struct):
-    id: int
-    name: str
-    requires_api_key: bool
-    is_active: bool
-    is_key_set: bool
-    models: list[AIModelResponse] = []
-
-
 class AISettingsUpdateResponse(msgspec.Struct):
     ai_auto_process: bool
     ai_provider_id: int

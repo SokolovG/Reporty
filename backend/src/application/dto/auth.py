@@ -30,3 +30,16 @@ class ChangePasswordData(msgspec.Struct):
 
     old_password: str
     new_password: str
+
+
+class UserData(msgspec.Struct):
+    """User data transfer object."""
+
+    email: str
+    name: str
+    password_hash: str
+    display_name: str | None = None
+    department: str | None = None
+    position: str | None = None
+    ai_auto_process: bool = False
+    is_admin: bool = False

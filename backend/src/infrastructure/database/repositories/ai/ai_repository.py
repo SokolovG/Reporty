@@ -60,9 +60,3 @@ class AIProviderKeyRepository(repository.SQLAlchemyAsyncRepository[AIProviderKey
             .where(AIProviderKeyModel.is_active == True)  # noqa: E712
         )
         return result.scalar_one_or_none()
-
-    async def get_key_for_user_and_provider(
-        self, user_id: int, provider_id: int
-    ) -> AIProviderKeyModel | None:
-        """Get API key for specific user and provider (alias for compatibility)."""
-        return await self.get_user_provider_key(user_id=user_id, provider_id=provider_id)

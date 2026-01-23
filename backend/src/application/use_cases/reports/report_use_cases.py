@@ -2,7 +2,9 @@ from datetime import datetime
 from logging import getLogger
 
 from backend.src.application.dto.reports import ReportData, ReportUpdateData
+from backend.src.domain.entities import Report
 from backend.src.infrastructure.database.base import RecordStatus
+from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.models import DailyRecordModel, ReportModel
 from backend.src.infrastructure.database.repositories import (
     DailyRecordRepository,
@@ -20,12 +22,14 @@ class ReportUseCases:
         report_repo: ReportRepository,
         record_repo: DailyRecordRepository,
         user_repository: UserRepository,
+        converter: Converter,
     ) -> None:
         self.repo = report_repo
         self.record_repo = record_repo
         self.user_repository = user_repository
+        self.converter = converter
 
-    async def create(self, data: ReportData, user_id: int) -> ReportModel:
+    async def create(self, data: ReportData, user_id: int) -> Report:
         """Create a new daily report."""
         try:
             today_records = await self.record_repo.get_records_by_date(
@@ -55,16 +59,17 @@ class ReportUseCases:
                 )
             )
             await self.repo.session.commit()
+            return self.converter.convert(report, Report)
 
-            return report
         except Exception as e:
             raise InternalServerError(f"Failed to create report: {str(e)}", {"user_id": user_id})
 
-    async def get(self, report_id: int, user_id: int) -> ReportModel:
+    async def get(self, report_id: int, user_id: int) -> Report:
         """Get a specific report by ID."""
         try:
             report = await self.repo.get_report(report_id=report_id, user_id=user_id)
-            return report
+            return self.converter.convert(report, Report)
+
         except Exception as e:
             raise InternalServerError(f"Failed to get report: {str(e)}", {"report_id": report_id})
 
@@ -81,7 +86,7 @@ class ReportUseCases:
                 f"Failed to delete report: {str(e)}", {"report_id": report_id}
             )
 
-    async def update(self, update_data: ReportUpdateData, user_id: int) -> ReportModel:
+    async def update(self, update_data: ReportUpdateData, user_id: int) -> Report:
         """Update a report."""
         try:
             report = await self.repo.get_report(report_id=update_data.report_id, user_id=user_id)
@@ -89,13 +94,14 @@ class ReportUseCases:
             updated_report = await self.repo.update(report)
             await self.repo.session.commit()
 
-            return updated_report
+            return self.converter.convert(updated_report, Report)
+
         except Exception as e:
             raise InternalServerError(
                 f"Failed to update report: {str(e)}", {"report_id": update_data.report_id}
             )
 
-    async def get_many(self, user_id: int) -> list[ReportModel]:
+    async def get_many(self, user_id: int) -> list[Report]:
         """Get all reports."""
         try:
             reports = await self.repo.list(user_id=user_id)
@@ -103,7 +109,8 @@ class ReportUseCases:
             if not reports:
                 raise NotFoundError("Report")
 
-            return list(reports)
+            return [self.converter.convert(report, Report) for report in reports]
+
         except Exception as e:
             raise InternalServerError(f"Failed to get reports: {str(e)}")
 

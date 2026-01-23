@@ -51,7 +51,7 @@ class AuthUseCase:
         await self.notification_service.send_register_notification()
         return domain_user
 
-    async def login(self, data: LoginData) -> TokenInfoResponse:
+    async def login(self, data: LoginData) -> TokenInfoResponse:  # TODO: Domain Value Object
         """Authenticate user and return tokens."""
         user_model = await self.repo.get_one_or_none(email=data.email)
         if not user_model:

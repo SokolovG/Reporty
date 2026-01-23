@@ -35,7 +35,7 @@ class AIUseCases:
     async def get_user_api_key(self, user_id: int, provider_id: int) -> str | None:
         """Get decrypted API key for user and provider."""
         try:
-            api_key_record = await self.api_key_repository.get_key_for_user_and_provider(
+            api_key_record = await self.api_key_repository.get_user_provider_key(
                 user_id=user_id, provider_id=provider_id
             )
             if not api_key_record:

@@ -22,10 +22,7 @@ from backend.src.presentation.dto.reports import (
     ReportResponse,
 )
 from backend.src.presentation.dto.settings import (
-    AIModelResponse,
-    AIPreferencesResponse,
     AIPreferencesUpdateRequestDTO,
-    AIProviderResponse,
     AIProviderUpdateRequestDTO,
     AISettingsUpdateResponse,
     ExternalSystemResponse,
@@ -74,7 +71,6 @@ __all__ = [
     "ExternalSystemUpdateRequest",
     "TaskTypeResponse",
     "AIPreferencesResponse",
-    "AIModelResponse",
     "AIProviderResponse",
     "AISettingsUpdateResponse",
     "ExternalSystemResponse",

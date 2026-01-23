@@ -1,5 +1,6 @@
 from backend.src.application.dto.settings import AIPreferencesUpdateData, AIProviderUpdateData
 from backend.src.application.use_cases.ai.ai_use_cases import AIUseCases
+from backend.src.domain.entities.ai import AIModelData, AIPreferencesData, AIProviderData
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.models import AIProviderKeyModel
 from backend.src.infrastructure.database.repositories import (
@@ -10,11 +11,6 @@ from backend.src.infrastructure.database.repositories import (
 )
 from backend.src.infrastructure.encryption.encryption_service import EncryptionService
 from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError, NotFoundError
-from backend.src.presentation.dto import (
-    AIModelResponse,
-    AIPreferencesResponse,
-    AIProviderResponse,
-)
 
 
 class AIPreferencesUseCases:
@@ -40,7 +36,7 @@ class AIPreferencesUseCases:
 
     async def update_user_preferences(
         self, user_id: int, data: AIPreferencesUpdateData
-    ) -> AIPreferencesResponse:
+    ) -> AIPreferencesData:
         """Update user's AI preferences (provider selection, auto-processing).
 
         Args:
@@ -70,14 +66,14 @@ class AIPreferencesUseCases:
 
             await self.user_repository.session.commit()
 
-            return self.converter.convert(user, AIPreferencesResponse)
+            return self.converter.convert(user, AIPreferencesData)
 
         except NotFoundError:
             raise
         except Exception as e:
             raise InternalServerError(f"Failed to update AI preferences: {str(e)}")
 
-    async def get_active_providers(self, user_id: int) -> list[AIProviderResponse]:
+    async def get_active_providers(self, user_id: int) -> list[AIProviderData]:
         """Get only active AI providers with user's API key status.
 
         Args:
@@ -96,8 +92,8 @@ class AIPreferencesUseCases:
 
             response_list = []
             for provider in providers:
-                models_response = [AIModelResponse(id=m.id, name=m.name) for m in provider.models]
-                provider_response = AIProviderResponse(
+                models_response = [AIModelData(id=m.id, name=m.name) for m in provider.models]
+                provider_response = AIProviderData(
                     id=provider.id,
                     name=provider.name,
                     requires_api_key=provider.requires_api_key,
@@ -114,7 +110,7 @@ class AIPreferencesUseCases:
 
     async def update_provider(
         self, ai_provider_id: int, data: AIProviderUpdateData, user_id: int
-    ) -> AIProviderResponse:
+    ) -> AIProviderData:
         """Update an AI provider configuration for user.
 
         Args:
@@ -155,8 +151,8 @@ class AIPreferencesUseCases:
 
             await self.user_repository.session.commit()
 
-            models_response = [AIModelResponse(id=m.id, name=m.name) for m in ai_provider.models]
-            return AIProviderResponse(
+            models_response = [AIModelData(id=m.id, name=m.name) for m in ai_provider.models]
+            return AIProviderData(
                 id=ai_provider.id,
                 name=ai_provider.name,
                 requires_api_key=ai_provider.requires_api_key,

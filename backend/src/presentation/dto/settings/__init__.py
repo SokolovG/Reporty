@@ -6,9 +6,6 @@ from backend.src.presentation.dto.settings.dto_classes import (
     TaskTypeUpdateRequestDTO,
 )
 from backend.src.presentation.dto.settings.responses import (
-    AIModelResponse,
-    AIPreferencesResponse,
-    AIProviderResponse,
     AISettingsUpdateResponse,
     ExternalSystemResponse,
     TaskTypeResponse,
@@ -24,7 +21,6 @@ __all__ = [
     # Responses
     "TaskTypeResponse",
     "AIPreferencesResponse",
-    "AIModelResponse",
     "AIProviderResponse",
     "AISettingsUpdateResponse",
     "ExternalSystemResponse",

@@ -103,8 +103,14 @@ class MyProvider(Provider):
         report_repo: ReportRepository,
         record_repo: DailyRecordRepository,
         user_repo: UserRepository,
+        converter: Converter,
     ) -> ReportUseCases:
-        return ReportUseCases(report_repo, record_repo, user_repository=user_repo)
+        return ReportUseCases(
+            report_repo,
+            record_repo,
+            user_repository=user_repo,
+            converter=converter,
+        )
 
     @provide(scope=Scope.REQUEST)
     def external_task_repo(self, db_session: AsyncSession) -> ExternalTaskRepository:
