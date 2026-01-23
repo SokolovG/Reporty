@@ -22,8 +22,3 @@ class AIProviders(Enum):
     GEMINI = "gemini"
     GROK = "grok"
     LOCAL = "local"
-
-
-class RecordStatus(Enum):
-    OPEN = "OPEN"
-    CLOSED = "CLOSED"

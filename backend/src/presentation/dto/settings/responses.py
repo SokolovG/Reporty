@@ -22,3 +22,22 @@ class ExternalSystemResponse(msgspec.Struct):
 
 
 class ExternalTaskResponse(msgspec.Struct): ...  # TODO
+
+
+class AIModelResponse(msgspec.Struct):
+    id: int
+    name: str
+
+
+class AIProviderResponse(msgspec.Struct):
+    id: int
+    name: str
+    requires_api_key: bool
+    is_active: bool
+    is_key_set: bool
+    models: list[AIModelResponse] = []
+
+
+class AIPreferencesResponse(msgspec.Struct):
+    ai_auto_process: bool
+    ai_provider_id: int | None = None

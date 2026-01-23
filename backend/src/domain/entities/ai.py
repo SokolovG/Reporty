@@ -2,30 +2,37 @@ from dataclasses import dataclass
 
 
 @dataclass
-class AIPreferencesData:
-    ai_auto_process: bool
-    ai_provider_id: int | None = None
+class AIProvider:
+    """Domain entity representing an AI provider."""
 
-
-@dataclass
-class AIModelData:
-    """Response for AI model."""
-
-    id: int
-    name: str
-
-
-@dataclass
-class AIProviderData:
     id: int
     name: str
     requires_api_key: bool
     is_active: bool
-    is_key_set: bool
-    models: list[AIModelData] = []
+    base_prompt: str | None = None
+
+    def activate(self) -> None:
+        self.is_active = True
+
+    def deactivate(self) -> None:
+        self.is_active = False
 
 
-class AIProvider: ...
+@dataclass
+class AIModel:
+    """Domain entity representing an AI model."""
+
+    id: int
+    name: str
+    ai_provider_id: int
 
 
-class AIProviderKey: ...
+@dataclass
+class AIProviderKey:
+    """Domain entity representing encrypted API key."""
+
+    id: int
+    user_id: int
+    ai_provider_id: int
+    encrypted_key: bytes
+    is_active: bool = True

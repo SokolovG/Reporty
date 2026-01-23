@@ -11,7 +11,7 @@ from backend.src.domain.entities.record import DailyRecord
 from backend.src.domain.entities.report import Report
 from backend.src.domain.entities.task_type import TaskType
 from backend.src.domain.entities.user import User
-from backend.src.infrastructure.database.base import RecordStatus
+from backend.src.domain.value_objects import RecordStatus
 
 
 class IAIProviderRepository(Protocol):
