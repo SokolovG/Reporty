@@ -2,6 +2,7 @@ from sqladmin.authentication import AuthenticationBackend
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
+from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.repositories import UserRepository
 from backend.src.infrastructure.encryption.jwt_service import JWTService
 
@@ -9,6 +10,7 @@ from backend.src.infrastructure.encryption.jwt_service import JWTService
 class AdminMiddleware(AuthenticationBackend):
     def __init__(self, secret_key: str) -> None:
         super().__init__(secret_key)
+        self.converter = Converter()
 
     async def _get_session(self) -> AsyncSession:
         """Get database session."""
@@ -25,7 +27,7 @@ class AdminMiddleware(AuthenticationBackend):
             return False
 
         async with await self._get_session() as session:
-            user_repo = UserRepository(session=session)
+            user_repo = UserRepository(session=session, converter=self.converter)
             jwt_service = JWTService()
 
             user = await user_repo.get_one_or_none(email=email)
@@ -48,7 +50,7 @@ class AdminMiddleware(AuthenticationBackend):
 
         if user_id and is_admin:
             async with await self._get_session() as session:
-                user_repo = UserRepository(session=session)
+                user_repo = UserRepository(session=session, converter=self.converter)
                 user = await user_repo.get_one_or_none(id=user_id)
 
                 if user and user.is_admin:

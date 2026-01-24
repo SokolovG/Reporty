@@ -25,6 +25,11 @@ from backend.src.presentation.dto.settings import (
     TaskTypeRequestDTO,
     TaskTypeUpdateRequestDTO,
 )
+from backend.src.presentation.dto.settings.responses import (
+    AIModelResponse,
+    AIPreferencesResponse,
+    AIProviderResponse,
+)
 from backend.src.presentation.responses.base_responses import SuccessResponse, SuccessResponseDTO
 
 
@@ -57,10 +62,13 @@ class ProfileController(Controller):
     ) -> SuccessResponse:
         """Update user's AI preferences (provider selection, auto-processing)."""
         user_id = request.user.id
-        updated_preferences = await ai_preferences_use_cases.update_user_preferences(
+        updated_user = await ai_preferences_use_cases.update_user_preferences(
             user_id=user_id, data=data
         )
-        result = converter.convert(updated_preferences, AIPreferencesResponse)
+        result = AIPreferencesResponse(
+            ai_auto_process=updated_user.ai_auto_process,
+            ai_provider_id=updated_user.ai_provider_id,
+        )
         return SuccessResponse(message="AI preferences updated successfully", data=result)
 
     @get("/ai-preferences/providers", return_dto=SuccessResponseDTO)
@@ -74,8 +82,19 @@ class ProfileController(Controller):
         """Get available AI providers for user selection."""
         user_id = request.user.id
         providers = await ai_preferences_use_cases.get_active_providers(user_id=user_id)
-        result = converter.convert(providers, AIProviderResponse)
-        return SuccessResponse(message="Available AI providers retrieved successfully", data=result)
+        result = [
+            AIProviderResponse(
+                id=provider.id,
+                name=provider.name,
+                requires_api_key=provider.requires_api_key,
+                is_active=provider.is_active,
+                is_key_set=False,  # TODO: проверить есть ли ключ у юзера
+                models=[AIModelResponse(id=m.id, name=m.name) for m in provider.models],
+            )
+            for provider in providers
+        ]
+
+        return SuccessResponse(data=result)
 
     @get("/task-types", return_dto=SuccessResponseDTO)
     @inject
@@ -105,9 +124,9 @@ class ProfileController(Controller):
     ) -> SuccessResponse:
         """Create new task type for user."""
         user_id = request.user.id
-        task_type_model = await task_types_use_case.create(user_id=user_id, data=data)
+        task_type = await task_types_use_case.create(user_id=user_id, data=data)
 
-        result = converter.convert(task_type_model, TaskTypeResponse)
+        result = converter.convert(task_type, TaskTypeResponse)
         return SuccessResponse(message="Task type created successfully", data=result)
 
     @patch(
@@ -127,11 +146,11 @@ class ProfileController(Controller):
     ) -> SuccessResponse:
         """Update user's task type."""
         user_id = request.user.id
-        task_type_model = await task_types_use_case.update(
+        task_type = await task_types_use_case.update(
             task_type_id=task_type_id, data=data, user_id=user_id
         )
 
-        result = converter.convert(task_type_model, TaskTypeResponse)
+        result = converter.convert(task_type, TaskTypeResponse)
         return SuccessResponse(message="Task type updated successfully", data=result)
 
     @delete("/task-types/{task_type_id:int}")
@@ -163,8 +182,11 @@ class ProfileController(Controller):
     ) -> SuccessResponse:
         """Update AI provider configuration (admin only)."""
         user_id = request.user.id
-        updated_provider = await ai_preferences_use_case.update_provider(
+        updated_user = await ai_preferences_use_case.update_provider(
             ai_provider_id=ai_provider_id, data=data, user_id=user_id
         )
-        result = converter.convert(updated_provider, AIProviderResponse)
+        result = AIPreferencesResponse(
+            ai_auto_process=updated_user.ai_auto_process,
+            ai_provider_id=updated_user.ai_provider_id,
+        )
         return SuccessResponse(message="AI provider updated successfully", data=result)

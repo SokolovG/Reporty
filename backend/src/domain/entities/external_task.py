@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
+from backend.src.domain.entities import ExternalSystem
 from backend.src.domain.exceptions import InvalidExternalTaskError
 
 
@@ -24,6 +25,7 @@ class ExternalTask:
     status: str = "TODO"
     url: str = ""
 
+    system: ExternalSystem
     external_created_at: datetime = datetime.now()
     external_updated_at: datetime | None = None
     completed_at: datetime | None = None

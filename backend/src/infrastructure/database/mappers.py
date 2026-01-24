@@ -30,3 +30,6 @@ class Converter:
             raise ValueError(
                 f"Conversion failed from {source_type.__name__} to {target_type.__name__}: {e}"
             ) from e
+
+    def convert_list(self, source_list: list[SourceT], target_type: Type[TargetT]) -> list[TargetT]:
+        return [self.convert(item, target_type) for item in source_list]

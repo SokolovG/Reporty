@@ -4,6 +4,8 @@ from advanced_alchemy import repository
 from sqlalchemy import select
 
 from backend.src.application.dto.records import ExternalTaskCreateData
+from backend.src.domain.entities.external_system import ExternalSystem
+from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.models import ExternalSystemModel, ExternalTaskModel
 from backend.src.infrastructure.exceptions.api_exceptions import NotFoundError
 
@@ -12,6 +14,10 @@ class ExternalSystemRepository(
     repository.SQLAlchemyAsyncRepository[ExternalSystemModel]  # ty:ignore[invalid-type-arguments]
 ):
     model_type: type[ExternalSystemModel] = ExternalSystemModel
+
+    def __init__(self, converter: Converter, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.converter = converter
 
     async def get_external_systems(self) -> list[ExternalSystemModel]:
         """Get all external systems."""
@@ -49,8 +55,9 @@ class ExternalSystemRepository(
 
         return task
 
-    async def get_active_external_systems(self) -> list[ExternalSystemModel]:
+    async def get_active_external_systems(self) -> list[ExternalSystem]:
         result = await self.session.execute(
             select(ExternalSystemModel).where(ExternalSystemModel.is_active)
         )
-        return result.scalars().all()
+        systems = result.scalars().all()
+        return self.converter.convert_list(list(systems), ExternalSystem)

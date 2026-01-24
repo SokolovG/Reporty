@@ -3,7 +3,7 @@ from logging import getLogger
 
 from backend.src.application.dto.reports import ReportData, ReportUpdateData
 from backend.src.domain.entities import Report
-from backend.src.infrastructure.database.base import RecordStatus
+from backend.src.domain.value_objects import RecordStatus
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.models import DailyRecordModel, ReportModel
 from backend.src.infrastructure.database.repositories import (

@@ -1,4 +1,13 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+
+
+@dataclass
+class AIModel:
+    """Domain entity representing an AI model."""
+
+    id: int
+    name: str
+    ai_provider_id: int
 
 
 @dataclass
@@ -10,21 +19,13 @@ class AIProvider:
     requires_api_key: bool
     is_active: bool
     base_prompt: str | None = None
+    models: list[AIModel] = field(default_factory=list)
 
     def activate(self) -> None:
         self.is_active = True
 
     def deactivate(self) -> None:
         self.is_active = False
-
-
-@dataclass
-class AIModel:
-    """Domain entity representing an AI model."""
-
-    id: int
-    name: str
-    ai_provider_id: int
 
 
 @dataclass

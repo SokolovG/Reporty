@@ -82,20 +82,26 @@ class MyProvider(Provider):
         return TaskTypeRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
-    def ai_provider_repo(self, db_session: AsyncSession) -> AIProviderRepository:
-        return AIProviderRepository(session=db_session)
+    def ai_provider_repo(
+        self, db_session: AsyncSession, converter: Converter
+    ) -> AIProviderRepository:
+        return AIProviderRepository(session=db_session, converter=converter)
 
     @provide(scope=Scope.REQUEST)
     def ai_model_repo(self, db_session: AsyncSession) -> AIModelRepository:
         return AIModelRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
-    def ai_key_repo(self, db_session: AsyncSession) -> AIProviderKeyRepository:
-        return AIProviderKeyRepository(session=db_session)
+    def ai_key_repo(
+        self, db_session: AsyncSession, converter: Converter
+    ) -> AIProviderKeyRepository:
+        return AIProviderKeyRepository(session=db_session, converter=converter)
 
     @provide(scope=Scope.REQUEST)
-    def external_system_repo(self, db_session: AsyncSession) -> ExternalSystemRepository:
-        return ExternalSystemRepository(session=db_session)
+    def external_system_repo(
+        self, db_session: AsyncSession, converter: Converter
+    ) -> ExternalSystemRepository:
+        return ExternalSystemRepository(session=db_session, converter=converter)
 
     @provide(scope=Scope.REQUEST)
     def report_use_cases(
@@ -154,7 +160,7 @@ class MyProvider(Provider):
         )
 
     @provide(scope=Scope.REQUEST)
-    def user_repository(self, db_session: AsyncSession, converter: Converter) -> UserRepository:
+    def user_repo(self, db_session: AsyncSession, converter: Converter) -> UserRepository:
         return UserRepository(session=db_session, converter=converter)
 
     @provide(scope=Scope.REQUEST)

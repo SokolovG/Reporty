@@ -96,9 +96,9 @@ class User:
 
     def configure_ai(
         self,
-        provider_id: int,
+        provider_id: int | None = None,
         model_id: int | None = None,
-        auto_process: bool = False,
+        auto_process: bool | None = None,
         custom_prompt: str | None = None,
     ) -> None:
         """Configure AI settings for user.
@@ -109,9 +109,14 @@ class User:
             auto_process: Whether to automatically process records with AI
             custom_prompt: Optional custom system prompt for AI
         """
-        self.ai_provider_id = provider_id
-        self.ai_model_id = model_id
-        self.ai_auto_process = auto_process
+        if provider_id is not None:
+            self.ai_provider_id = provider_id
+
+        if model_id is not None:
+            self.ai_model_id = model_id
+
+        if auto_process is not None:
+            self.ai_auto_process = auto_process
 
         if custom_prompt is not None:
             self.custom_prompt = custom_prompt

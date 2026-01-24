@@ -6,7 +6,7 @@ from sqlalchemy import and_, select
 from sqlalchemy.orm import selectinload
 
 from backend.src.application.dto.records import DailyRecordData
-from backend.src.infrastructure.database.base import RecordStatus
+from backend.src.domain.value_objects import RecordStatus
 from backend.src.infrastructure.database.models import (
     DailyRecordModel,
     ExternalTaskModel,

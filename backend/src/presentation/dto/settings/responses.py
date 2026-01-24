@@ -39,5 +39,5 @@ class AIProviderResponse(msgspec.Struct):
 
 
 class AIPreferencesResponse(msgspec.Struct):
-    ai_auto_process: bool
+    ai_auto_process: bool = False
     ai_provider_id: int | None = None
