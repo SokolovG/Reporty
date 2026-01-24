@@ -13,9 +13,13 @@ class UpdateUserData(msgspec.Struct):
 class RegisterData(msgspec.Struct):
     """Request to update user registration data."""
 
-    name: str
     email: str
+    name: str
     password: str
+    display_name: str | None = None
+    department: str | None = None
+    position: str | None = None
+    ai_auto_process: bool = False
 
 
 class LoginData(msgspec.Struct):

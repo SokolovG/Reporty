@@ -9,7 +9,7 @@ from backend.src.infrastructure.database.repositories import (
     UserRepository,
 )
 from backend.src.infrastructure.encryption.encryption_service import EncryptionService
-from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError
+from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError, NotFoundError
 
 
 class UserUseCases:
@@ -45,14 +45,12 @@ class UserUseCases:
     async def update(self, user_id: int, data: UpdateUserData) -> User:  # noqa: F821
         """Update user information."""
         try:
-            user = await self.user_repository.update_profile(
-                user_id=user_id,
-                display_name=data.display_name,
-                department=data.department,
-                position=data.position,
-                email=data.email,
-            )
-            return self.converter.convert(user, User)
+            user = await self.user_repository.get_user_by_id(id=user_id)
+            if not user:
+                raise NotFoundError("User", user_id)
+
+            user = await self.user_repository.update_user(user)
+            return user
 
         except Exception as e:
             raise InternalServerError(f"Failed to update user: {str(e)}", {"user_id": user_id})

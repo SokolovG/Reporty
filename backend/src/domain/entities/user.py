@@ -21,6 +21,7 @@ class User:
     id: int
     name: str
     email: str
+    password_hash: str
 
     is_active: bool = False
     is_verify: bool = False

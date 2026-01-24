@@ -154,8 +154,8 @@ class MyProvider(Provider):
         )
 
     @provide(scope=Scope.REQUEST)
-    def user_repository(self, db_session: AsyncSession) -> UserRepository:
-        return UserRepository(session=db_session)
+    def user_repository(self, db_session: AsyncSession, converter: Converter) -> UserRepository:
+        return UserRepository(session=db_session, converter=converter)
 
     @provide(scope=Scope.REQUEST)
     def jwt_service(self) -> JWTService:

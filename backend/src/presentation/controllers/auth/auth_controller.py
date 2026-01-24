@@ -11,6 +11,7 @@ from backend.src.presentation.dto import (
     AccessTokenResponse,
     UserResponse,
 )
+from backend.src.presentation.dto.auth import ChangePasswordRequest, LoginRequest, RegisterRequest
 from backend.src.presentation.dto.auth.responses import TokenInfoResponse
 from backend.src.presentation.responses import SuccessResponse
 from backend.src.presentation.responses.base_responses import SuccessResponseDTO
@@ -21,16 +22,12 @@ class AuthController(Controller):
     @inject
     async def register(
         self,
-        data: RegisterData,
+        data: RegisterRequest,
         auth_use_case: FromDishka[AuthUseCase],
         converter: FromDishka[Converter],
     ) -> SuccessResponse:
         """Register a new user."""
-        register_data = RegisterData(
-            name=data.name,
-            email=data.email,
-            password=data.password,
-        )
+        register_data = RegisterData(name=data.name, email=data.email, password=data.password)
         domain_user = await auth_use_case.register(register_data)
         user_response = converter.convert(domain_user, UserResponse)
         return SuccessResponse(message="User registered successfully", data=user_response)
@@ -38,16 +35,16 @@ class AuthController(Controller):
     @post("/login")
     @inject
     async def login(
-        self, request: Request, auth_use_case: FromDishka[AuthUseCase], data: LoginData
+        self, request: Request, auth_use_case: FromDishka[AuthUseCase], data: LoginRequest
     ) -> Response[SuccessResponse]:
         """Login user and return tokens."""
         login_data = LoginData(email=data.email, password=data.password)
-        token_info: TokenInfoResponse = await auth_use_case.login(login_data)
+        token_pair = await auth_use_case.login(login_data)
 
         presentation_token_info = TokenInfoResponse(
-            access=token_info.access,
-            refresh=token_info.refresh,
-            token_type=token_info.token_type,
+            access=token_pair.access_token,
+            refresh=token_pair.refresh_token,
+            token_type=token_pair.token_type,
         )
 
         success_response = SuccessResponse(message="Login successful", data=presentation_token_info)
@@ -57,7 +54,7 @@ class AuthController(Controller):
             cookies=[
                 Cookie(
                     key="refreshToken",
-                    value=token_info.refresh,
+                    value=token_pair.refresh_token,
                     httponly=True,
                     secure=True,
                     samesite="strict",
@@ -65,7 +62,7 @@ class AuthController(Controller):
                 ),
                 Cookie(
                     key="accessToken",
-                    value=token_info.access,
+                    value=token_pair.access_token,
                     httponly=True,
                     secure=True,
                     samesite="strict",
@@ -137,7 +134,7 @@ class AuthController(Controller):
     @post("/change-password", return_dto=SuccessResponseDTO)
     @inject
     async def change_password(
-        self, auth_use_case: FromDishka[AuthUseCase], request: Request, data: ChangePasswordData
+        self, auth_use_case: FromDishka[AuthUseCase], request: Request, data: ChangePasswordRequest
     ) -> SuccessResponse:
         """Change user password."""
         user_id = request.user.id

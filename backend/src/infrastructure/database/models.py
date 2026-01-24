@@ -13,7 +13,8 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from backend.src.infrastructure.database.base import Base, RecordStatus
+from backend.src.domain.value_objects import RecordStatus
+from backend.src.infrastructure.database.base import Base
 
 
 class DailyRecordModel(Base):

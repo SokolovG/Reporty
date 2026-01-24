@@ -15,8 +15,6 @@ from backend.src.application.use_cases.settings.settings_use_cases import Settin
 from backend.src.application.use_cases.tasks.task_type_use_cases import TaskTypeUseCases
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.presentation.dto import (
-    AIPreferencesResponse,
-    AIProviderResponse,
     TaskTypeResponse,
     UserResponse,
 )
@@ -39,8 +37,8 @@ class ProfileController(Controller):
         self,
         request: Request,
         data: UpdateUserData,
-        user_use_cases: FromDishka[UserUseCases],
         converter: FromDishka[Converter],
+        user_use_cases: FromDishka[UserUseCases],
     ) -> SuccessResponse:
         """Update user profile information."""
         user_id = request.user.id

@@ -1,6 +1,5 @@
 from backend.src.application.dto.settings import AIPreferencesUpdateData, AIProviderUpdateData
 from backend.src.application.use_cases.ai.ai_use_cases import AIUseCases
-from backend.src.domain.entities.ai import AIModelData, AIPreferencesData, AIProviderData
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.models import AIProviderKeyModel
 from backend.src.infrastructure.database.repositories import (
