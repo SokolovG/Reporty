@@ -269,12 +269,14 @@ class UserModel(Base):
     ai_auto_process: Mapped[bool] = mapped_column(default=False)
     ai_provider_id: Mapped[int] = mapped_column(ForeignKey("ai_providers.id"), nullable=True)
     ai_model_id: Mapped[int | None] = mapped_column(ForeignKey("ai_models.id"))
+    external_system_id: Mapped[int | None] = mapped_column(ForeignKey("external_systems.id"))
 
-    ai_provider: Mapped["AIProviderModel | None"] = relationship("AIProviderModel")
+    ai_provider: Mapped["AIProviderModel" | None] = relationship("AIProviderModel")
     task_types: Mapped[list["TaskTypeModel"]] = relationship(
         "TaskType", back_populates="user", cascade="all, delete-orphan"
     )
-    ai_model: Mapped["AIModel | None"] = relationship("AIModel")
+    ai_model: Mapped["AIModel" | None] = relationship("AIModel")
+    external_system: Mapped["ExternalSystemModel | None"] = relationship("ExternalSystemModel")
     custom_prompt: Mapped[str] = mapped_column(String, nullable=True, comment="Custom base prompt")
     is_admin: Mapped[bool] = mapped_column(Boolean, nullable=True, default=False, comment="Role")
 

@@ -19,18 +19,40 @@ class ExternalTask:
     user_id: int
     external_id: int
     external_system_id: int
-
     title: str
-    description: str | None = None
-    status: str = "TODO"
-    url: str = ""
-
+    status: str
+    url: str
     system: ExternalSystem
-    external_created_at: datetime = datetime.now()
+
+    description: str | None = None
+    external_created_at: datetime | None = None
     external_updated_at: datetime | None = None
     completed_at: datetime | None = None
+    last_sync: datetime | None = None
 
-    last_sync: datetime = datetime.now()
+    def update_info(
+        self,
+        title: str | None = None,
+        description: str | None = None,
+        status: str | None = None,
+        url: str | None = None,
+        external_id: int | None = None,
+    ) -> None:
+        """Update task information."""
+        if title is not None:
+            self.title = title
+
+        if description is not None:
+            self.description = description
+
+        if status is not None:
+            self.status = status
+
+        if url is not None:
+            self.url = url
+
+        if external_id is not None:
+            self.external_id = external_id
 
     def __post_init__(self) -> None:
         """Validate external task after initialization."""
@@ -96,5 +118,8 @@ class ExternalTask:
         Returns:
             True if task needs sync, False otherwise
         """
+        if self.last_sync is None:
+            return True
+
         age = datetime.now() - self.last_sync
         return age.total_seconds() > (max_age_hours * 3600)

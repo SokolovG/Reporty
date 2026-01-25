@@ -35,6 +35,7 @@ class User:
     ai_provider_id: int | None = None
     ai_model_id: int | None = None
     custom_prompt: str | None = None
+    external_system_id: int | None = None
 
     def activate(self) -> None:
         """Activate user account.
@@ -48,6 +49,11 @@ class User:
             raise UserAlreadyActiveError(self.id)
 
         self.is_active = True
+
+    @property
+    def have_external_system(self) -> bool:
+        """Check if user has external system configured."""
+        return self.external_system_id is not None
 
     def deactivate(self) -> None:
         """Deactivate user account.

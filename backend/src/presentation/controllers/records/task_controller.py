@@ -20,12 +20,12 @@ class TaskController(Controller):
         self,
         request: Request,
         data: ExternalTaskCreateData,
-        task_use_casess: FromDishka[TasksUseCase],
+        task_use_cases: FromDishka[TasksUseCase],
         converter: FromDishka[Converter],
     ) -> SuccessResponse:
         """Create a new external task."""
         user_id = request.user.id
-        task = await task_use_casess.create_external(data=data, user_id=user_id)
+        task = await task_use_cases.create_external(data=data, user_id=user_id)
         result = converter.convert(task, ExternalTaskResponse)
         return SuccessResponse(message="External task created successfully", data=result)
 
@@ -40,20 +40,23 @@ class TaskController(Controller):
         request: Request,
         task_id: int,
         data: ExternalTaskUpdateData,
-        task_use_casess: FromDishka[TasksUseCase],
+        task_use_cases: FromDishka[TasksUseCase],
         converter: FromDishka[Converter],
     ) -> SuccessResponse:
         """Update an external task."""
         user_id = request.user.id
-        task = await task_use_casess.update_external(task_id=task_id, data=data, user_id=user_id)
+        task = await task_use_cases.update_external(task_id=task_id, data=data, user_id=user_id)
         result = converter.convert(task, ExternalTaskResponse)
         return SuccessResponse(message="External task updated successfully", data=result)
 
     @delete("/external-tasks/{task_id:int}", status_code=204)
     @inject
     async def delete_external_task(
-        self, task_id: int, task_use_casess: FromDishka[TasksUseCase], request: Request
+        self,
+        request: Request,
+        task_id: int,
+        task_use_cases: FromDishka[TasksUseCase],
     ) -> None:
         """Delete an external task."""
         user_id = request.user.id
-        await task_use_casess.delete_external(task_id=task_id, user_id=user_id)
+        await task_use_cases.delete_external(task_id=task_id, user_id=user_id)

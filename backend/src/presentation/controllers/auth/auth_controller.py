@@ -22,6 +22,7 @@ class AuthController(Controller):
     @inject
     async def register(
         self,
+        request: Request,
         data: RegisterRequest,
         auth_use_case: FromDishka[AuthUseCase],
         converter: FromDishka[Converter],
@@ -35,7 +36,10 @@ class AuthController(Controller):
     @post("/login")
     @inject
     async def login(
-        self, request: Request, auth_use_case: FromDishka[AuthUseCase], data: LoginRequest
+        self,
+        request: Request,
+        data: LoginRequest,
+        auth_use_case: FromDishka[AuthUseCase],
     ) -> Response[SuccessResponse]:
         """Login user and return tokens."""
         login_data = LoginData(email=data.email, password=data.password)
@@ -104,7 +108,9 @@ class AuthController(Controller):
     @post("/refresh")
     @inject
     async def refresh_token(
-        self, auth_use_case: FromDishka[AuthUseCase], request: Request
+        self,
+        request: Request,
+        auth_use_case: FromDishka[AuthUseCase],
     ) -> Response[SuccessResponse]:
         """Refresh access token."""
         refresh_token: str | None = request.cookies.get("refreshToken")
@@ -134,7 +140,10 @@ class AuthController(Controller):
     @post("/change-password", return_dto=SuccessResponseDTO)
     @inject
     async def change_password(
-        self, auth_use_case: FromDishka[AuthUseCase], request: Request, data: ChangePasswordRequest
+        self,
+        request: Request,
+        data: ChangePasswordRequest,
+        auth_use_case: FromDishka[AuthUseCase],
     ) -> SuccessResponse:
         """Change user password."""
         user_id = request.user.id

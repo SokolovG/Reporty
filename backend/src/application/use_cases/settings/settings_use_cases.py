@@ -39,7 +39,7 @@ class SettingsUseCases:
     async def get_external_systems(self) -> list[ExternalSystem]:
         """Get all external systems."""
         try:
-            result = await self.external_system_repository.get_external_systems()
+            result = await self.external_system_repository.get_many()
             domain_systems: list[ExternalSystem] = []
             for system_model in result:
                 domain_systems.append(self.converter.convert(system_model, ExternalSystem))
@@ -52,7 +52,7 @@ class SettingsUseCases:
     async def get_active_external_systems(self) -> list[ExternalSystem]:
         """Get only active external systems."""
         try:
-            result = await self.external_system_repository.get_active_external_systems()
+            result = await self.external_system_repository.get_many_active()
 
             domain_systems: list[ExternalSystem] = []
             for system_model in result:

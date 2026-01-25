@@ -36,6 +36,8 @@ class ExternalTaskCreateData(msgspec.Struct):
     url: str
     title: str | None = None
     external_id: int | None = None
+    description: str | None = None
+    status: str | None = None
 
 
 class ExternalTaskUpdateData(msgspec.Struct):

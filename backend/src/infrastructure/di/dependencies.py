@@ -119,15 +119,17 @@ class MyProvider(Provider):
         )
 
     @provide(scope=Scope.REQUEST)
-    def external_task_repo(self, db_session: AsyncSession) -> ExternalTaskRepository:
-        return ExternalTaskRepository(session=db_session)
+    def external_task_repo(
+        self, db_session: AsyncSession, converter: Converter
+    ) -> ExternalTaskRepository:
+        return ExternalTaskRepository(session=db_session, converter=converter)
 
     @provide(scope=Scope.APP)
     def encryption_service(self) -> EncryptionService:
         return EncryptionService()
 
     @provide(scope=Scope.REQUEST)
-    def task_use_casess(
+    def task_use_cases(
         self,
         external_task_repo: ExternalTaskRepository,
         external_system_repo: ExternalSystemRepository,

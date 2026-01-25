@@ -1,13 +1,9 @@
-from datetime import datetime, timezone
-
 from advanced_alchemy import repository
 from sqlalchemy import select
 
-from backend.src.application.dto.records import ExternalTaskCreateData
 from backend.src.domain.entities.external_system import ExternalSystem
 from backend.src.infrastructure.database.mappers import Converter
-from backend.src.infrastructure.database.models import ExternalSystemModel, ExternalTaskModel
-from backend.src.infrastructure.exceptions.api_exceptions import NotFoundError
+from backend.src.infrastructure.database.models import ExternalSystemModel
 
 
 class ExternalSystemRepository(
@@ -19,43 +15,19 @@ class ExternalSystemRepository(
         super().__init__(**kwargs)
         self.converter = converter
 
-    async def get_external_systems(self) -> list[ExternalSystemModel]:
+    async def get_many(self) -> list[ExternalSystem]:
         """Get all external systems."""
         result = await self.list()
-        return result
+        return self.converter.convert_list(result, ExternalSystem)
 
-    async def create_external_system(
-        self, data: ExternalTaskCreateData, user_id: int
-    ) -> ExternalTaskModel:
-        result = await self.session.execute(
-            select(self.model_type).where(self.model_type.name == "manual")
-        )
-
-        system = result.scalar_one_or_none()
-
+    async def get_by_id(self, system_id: int) -> ExternalSystem | None:
+        system = await self.get_one_or_none(id=system_id)
         if not system:
-            raise NotFoundError(
-                "External system 'manual'",
-                details={"system_name": "manual", "help": "Create system via admin panel"},
-            )
+            return None
 
-        now = datetime.now(timezone.utc)
-        task = ExternalTaskModel(
-            external_id=data.external_id if data.external_id is not None else None,
-            external_system_id=system.id,
-            title=data.title,
-            status="OPEN",
-            url=data.url,
-            external_created_at=now,
-            user_id=user_id,
-        )
-        self.session.add(task)
-        await self.session.commit()
-        await self.session.refresh(task)
+        return self.converter.convert(system, ExternalSystem)
 
-        return task
-
-    async def get_active_external_systems(self) -> list[ExternalSystem]:
+    async def get_many_active(self) -> list[ExternalSystem]:
         result = await self.session.execute(
             select(ExternalSystemModel).where(ExternalSystemModel.is_active)
         )
