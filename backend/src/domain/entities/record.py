@@ -1,9 +1,6 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from backend.src.domain.entities.external_task import ExternalTask
+from backend.src.domain.entities.external_task import ExternalTask
 
 from backend.src.domain.exceptions.domain_exceptions import (
     RecordAlreadyApprovedError,
@@ -29,7 +26,7 @@ class DailyRecord:
 
     external_task_id: int | None = None
     external_url: str | None = None
-    external_task: "ExternalTask | None" = None
+    external_task: ExternalTask | None = None
 
     status: str = "OPEN"
 

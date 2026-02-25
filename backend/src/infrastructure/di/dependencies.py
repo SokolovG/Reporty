@@ -10,12 +10,14 @@ from backend.src.application.ports.notification import (
     DefaultNotificationService,
     NotificationService,
 )
+from backend.src.application.use_cases.ai.ai_preferences_use_cases import AIPreferencesUseCases
 from backend.src.application.use_cases.ai.ai_use_cases import AIUseCases
 from backend.src.application.use_cases.auth.auth_use_cases import AuthUseCase
 from backend.src.application.use_cases.auth.user_use_cases import UserUseCases
 from backend.src.application.use_cases.records.record_use_cases import RecordUseCases
 from backend.src.application.use_cases.reports.report_use_cases import ReportUseCases
 from backend.src.application.use_cases.settings.settings_use_cases import SettingsUseCases
+from backend.src.application.use_cases.tasks.task_type_use_cases import TaskTypeUseCases
 from backend.src.application.use_cases.tasks.tasks_use_cases import TasksUseCase
 from backend.src.infrastructure.config.configs import get_sqlalchemy_config
 from backend.src.infrastructure.database.mappers import Converter
@@ -220,3 +222,37 @@ class MyProvider(Provider):
         api_key_repo: AIProviderKeyRepository,
     ) -> AIUseCases:
         return AIUseCases(encryption_service, user_repo, api_key_repo)
+
+    @provide(scope=Scope.REQUEST)
+    def task_type_use_cases(
+        self,
+        task_type_repo: TaskTypeRepository,
+        user_repo: UserRepository,
+        converter: Converter,
+    ) -> TaskTypeUseCases:
+        return TaskTypeUseCases(
+            task_type_repository=task_type_repo,
+            user_repository=user_repo,
+            converter=converter,
+        )
+
+    @provide(scope=Scope.REQUEST)
+    def ai_preferences_use_cases(
+        self,
+        record_repo: DailyRecordRepository,
+        user_repo: UserRepository,
+        encryption_service: EncryptionService,
+        ai_use_cases: AIUseCases,
+        ai_provider_repo: AIProviderRepository,
+        ai_key_repo: AIProviderKeyRepository,
+        converter: Converter,
+    ) -> AIPreferencesUseCases:
+        return AIPreferencesUseCases(
+            record_repo=record_repo,
+            user_repository=user_repo,
+            encryption_service=encryption_service,
+            ai_use_cases=ai_use_cases,
+            ai_provider_repository=ai_provider_repo,
+            ai_key_repo=ai_key_repo,
+            converter=converter,
+        )

@@ -16,6 +16,7 @@ class DailyRecordResponse(msgspec.Struct):
     is_approved: bool
     status: str
     external_task_id: int | None
+    external_url: str | None = None
 
 
 class ExternalTaskInfo(msgspec.Struct):
@@ -45,6 +46,7 @@ class DailyRecordWithTaskResponse(msgspec.Struct):
     is_processed: bool
     is_approved: bool
     external_task_id: int | None
+    external_url: str | None = None
     external_task: "ExternalTaskInfo | None" = None
 
 

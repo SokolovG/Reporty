@@ -119,7 +119,7 @@ class ExternalTaskModel(Base):
     __tablename__ = "external_tasks"
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=False, comment="User ID")
-    external_id: Mapped[int | None] = mapped_column(
+    external_id: Mapped[int] = mapped_column(
         Integer, nullable=False, comment="Task ID in external system"
     )
     external_system_id: Mapped[int] = mapped_column(
@@ -128,7 +128,7 @@ class ExternalTaskModel(Base):
         comment="Link to external system",
     )
 
-    title: Mapped[str | None] = mapped_column(String(500), nullable=False, comment="Task title")
+    title: Mapped[str] = mapped_column(String(500), nullable=False, comment="Task title")
     description: Mapped[str | None] = mapped_column(Text, nullable=True, comment="Task description")
     status: Mapped[str] = mapped_column(String(100), nullable=False, comment="Task status")
     url: Mapped[str] = mapped_column(String(256), nullable=False, comment="Task link")

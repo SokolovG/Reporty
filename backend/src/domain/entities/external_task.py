@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from backend.src.domain.entities import ExternalSystem
+from backend.src.domain.entities.external_system import ExternalSystem
 from backend.src.domain.exceptions.domain_exceptions import InvalidExternalTaskError
 
 
