@@ -1,4 +1,4 @@
-from backend.src.presentation.controllers import ReportController
+from .report_controller import ReportController
 
 __all__ = [
     "ReportController",

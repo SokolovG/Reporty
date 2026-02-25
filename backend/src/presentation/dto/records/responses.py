@@ -22,12 +22,13 @@ class ExternalTaskInfo(msgspec.Struct):
     """Basic external task information for responses."""
 
     id: int
+    external_system_id: int
     title: str
     status: str
-    system_name: str
-    system_display_name: str
     url: str
     external_id: int | None = None
+    system_name: str | None = None
+    system_display_name: str | None = None
 
 
 class DailyRecordWithTaskResponse(msgspec.Struct):

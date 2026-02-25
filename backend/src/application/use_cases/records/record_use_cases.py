@@ -9,6 +9,7 @@ from backend.src.application.dto.records import (
 from backend.src.application.use_cases.ai.ai_use_cases import AIUseCases
 from backend.src.domain.entities.record import DailyRecord
 from backend.src.infrastructure.database.mappers import Converter
+from backend.src.infrastructure.database.models import DailyRecordModel
 from backend.src.infrastructure.database.repositories import DailyRecordRepository, UserRepository
 from backend.src.infrastructure.exceptions.api_exceptions import (
     InternalServerError,
@@ -37,7 +38,6 @@ class RecordUseCases:
             entity = self.converter.convert(model, DailyRecord)
 
             user_model = await self.user_repository.get_one(id=user_id)
-            user_entity = self.converter.convert(user_model, DailyRecord)  # Wait, convert to User
             from backend.src.domain.entities.user import User
 
             user_entity = self.converter.convert(user_model, User)

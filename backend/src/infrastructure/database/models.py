@@ -153,7 +153,9 @@ class ExternalTaskModel(Base):
     )
 
     # Relationships
-    system: Mapped["ExternalSystemModel"] = relationship("ExternalSystem", back_populates="tasks")
+    system: Mapped["ExternalSystemModel"] = relationship(
+        "ExternalSystemModel", back_populates="tasks"
+    )
     daily_records: Mapped[list["DailyRecordModel"]] = relationship(
         "DailyRecordModel", back_populates="external_task"
     )
@@ -271,11 +273,11 @@ class UserModel(Base):
     ai_model_id: Mapped[int | None] = mapped_column(ForeignKey("ai_models.id"))
     external_system_id: Mapped[int | None] = mapped_column(ForeignKey("external_systems.id"))
 
-    ai_provider: Mapped["AIProviderModel" | None] = relationship("AIProviderModel")
+    ai_provider: Mapped[AIProviderModel | None] = relationship("AIProviderModel")
     task_types: Mapped[list["TaskTypeModel"]] = relationship(
-        "TaskType", back_populates="user", cascade="all, delete-orphan"
+        "TaskTypeModel", back_populates="user", cascade="all, delete-orphan"
     )
-    ai_model: Mapped["AIModel" | None] = relationship("AIModel")
+    ai_model: Mapped[AIModel | None] = relationship("AIModel")
     external_system: Mapped["ExternalSystemModel | None"] = relationship("ExternalSystemModel")
     custom_prompt: Mapped[str] = mapped_column(String, nullable=True, comment="Custom base prompt")
     is_admin: Mapped[bool] = mapped_column(Boolean, nullable=True, default=False, comment="Role")

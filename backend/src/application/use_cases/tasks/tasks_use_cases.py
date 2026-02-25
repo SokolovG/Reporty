@@ -33,21 +33,20 @@ class TasksUseCase:
             if not user:
                 raise NotFoundError("User", user_id)
 
-            if not user.have_external_system:
+            external_system_id = user.external_system_id
+            if external_system_id is None:
                 raise ConflictError(
                     "User cannot create external task - user does not have external system configured."
                 )
 
-            system = await self.external_system_repo.get_by_id(
-                user.external_system_id  # type: ignore
-            )
+            system = await self.external_system_repo.get_by_id(external_system_id)
             if not system:
-                raise NotFoundError("ExternalSystem", user.external_system_id)  # type: ignore
+                raise NotFoundError("ExternalSystem", external_system_id)
 
             task = await self.external_task_repo.create_task(
                 data,
                 user_id,
-                user.external_system_id,  # type: ignore
+                external_system_id,
             )
             return task
 

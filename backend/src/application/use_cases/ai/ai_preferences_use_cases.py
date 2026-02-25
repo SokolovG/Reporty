@@ -54,11 +54,16 @@ class AIPreferencesUseCases:
             if not user:
                 raise NotFoundError("User", user_id)
 
-            user.configure_ai(
-                provider_id=data.ai_provider_id,
-                auto_process=data.ai_auto_process,
-                custom_prompt=data.custom_prompt,
-            )
+            if data.ai_provider_id is not None:
+                user.configure_ai(
+                    provider_id=data.ai_provider_id,
+                    auto_process=data.ai_auto_process
+                    if data.ai_auto_process is not None
+                    else user.ai_auto_process,
+                    custom_prompt=data.custom_prompt
+                    if data.custom_prompt is not None
+                    else user.custom_prompt,
+                )
 
             updated_user = await self.user_repository.update_user(user)
 

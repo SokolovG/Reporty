@@ -96,9 +96,12 @@ class ReportUseCases:
             )
 
     async def update(self, update_data: ReportUpdateData, user_id: int) -> Report:
-        """Update a report."""
+        """Update a report content."""
         try:
             model = await self.repo.get_report(report_id=update_data.report_id, user_id=user_id)
+
+            if update_data.content is not None:
+                model.content = update_data.content
 
             updated_model = await self.repo.update(model)
             await self.repo.session.commit()
@@ -106,6 +109,8 @@ class ReportUseCases:
             return self.converter.convert(updated_model, Report)
 
         except Exception as e:
+            if isinstance(e, NotFoundError):
+                raise e
             raise InternalServerError(
                 f"Failed to update report: {str(e)}", {"report_id": update_data.report_id}
             )

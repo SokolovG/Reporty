@@ -14,6 +14,9 @@ class User:
     name: str
     email: str
 
+    # Security
+    password_hash: str = ""
+
     # Status
     is_active: bool = False
     is_verify: bool = False
@@ -28,6 +31,7 @@ class User:
     ai_auto_process: bool = False
     ai_provider_id: int | None = None
     ai_model_id: int | None = None
+    custom_prompt: str | None = None
     # External systems
     external_system_id: int | None = None
 

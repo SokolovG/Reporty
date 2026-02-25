@@ -9,4 +9,4 @@ class ReportData(msgspec.Struct):
 
 class ReportUpdateData(msgspec.Struct):
     report_id: int
-    # TODO: report update
+    content: str | None = None

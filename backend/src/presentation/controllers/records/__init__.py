@@ -1,4 +1,5 @@
-from backend.src.presentation.controllers import RecordController, TaskController
+from .record_controller import RecordController
+from .task_controller import TaskController
 
 __all__ = [
     "RecordController",

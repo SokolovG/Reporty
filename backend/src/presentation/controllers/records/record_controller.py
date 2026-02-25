@@ -20,7 +20,6 @@ from backend.src.presentation.dto.records import (
     DailyRecordRequestDTO,
     DailyRecordUpdateRequestDTO,
     DailyRecordWithTaskResponse,
-    ExternalTaskInfo,
     LinkTaskRequestDTO,
     RecordStatusUpdateRequestDTO,
 )
@@ -143,38 +142,14 @@ class RecordController(Controller):
         self,
         request: Request,
         record_use_cases: FromDishka[RecordUseCases],
+        converter: FromDishka[Converter],
         record_id: int,
     ) -> SuccessResponse:
         """Get record with external task information."""
         user_id = request.user.id
         record = await record_use_cases.get_with_task(record_id=record_id, user_id=user_id)
 
-        external_task_info = None
-        if record.external_task:
-            external_task_info = ExternalTaskInfo(
-                id=record.external_task.id,
-                external_id=record.external_task.external_id,
-                title=record.external_task.title or "",
-                status=record.external_task.status,
-                system_name=record.external_task.system.name,
-                system_display_name=record.external_task.system.display_name,
-                url=record.external_task.url,
-            )
-
-        result = DailyRecordWithTaskResponse(
-            id=record.id,
-            title=record.title,
-            raw_input=record.raw_input,
-            ai_processed=record.ai_processed,
-            final_description=record.final_description,
-            created_at=record.created_at,
-            processed_at=record.processed_at,
-            is_processed=record.is_processed,
-            is_approved=record.is_approved,
-            external_task_id=record.external_task_id,
-            external_task=external_task_info,
-            user_id=record.user_id,
-        )
+        result = converter.convert(record, DailyRecordWithTaskResponse)
         return SuccessResponse(message="Record with task retrieved successfully", data=result)
 
     @post(

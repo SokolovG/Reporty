@@ -205,7 +205,7 @@ class MyProvider(Provider):
         )
 
     @provide(scope=Scope.APP)
-    def converter() -> Converter:
+    def converter(self) -> Converter:
         return Converter()
 
     @provide(scope=Scope.REQUEST)
