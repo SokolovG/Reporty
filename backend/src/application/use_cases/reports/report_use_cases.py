@@ -3,6 +3,7 @@ from logging import getLogger
 
 from backend.src.application.dto.reports import ReportData, ReportUpdateData
 from backend.src.domain.entities import Report
+from backend.src.domain.exceptions import NoRecordsForReportError, ReportGenerationError
 from backend.src.domain.value_objects import RecordStatus
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.models import DailyRecordModel, ReportModel
@@ -32,43 +33,51 @@ class ReportUseCases:
     async def create(self, data: ReportData, user_id: int) -> Report:
         """Create a new daily report."""
         try:
-            today_records = await self.record_repo.get_records_by_date(
+            today_records_models = await self.record_repo.get_records_by_date(
                 target_date=data.date, user_id=user_id
             )
-            open_records = await self.record_repo.get_records_by_status(
+            open_records_models = await self.record_repo.get_records_by_status(
                 status=RecordStatus.OPEN, user_id=user_id
             )
 
-            # TODO: make better SQL, not N+1
-
             set_ids = set()
-            unique_records = []
-            for record in list(open_records) + list(today_records):
+            unique_records_models = []
+            for record in list(open_records_models) + list(today_records_models):
                 if record.id not in set_ids:
                     set_ids.add(record.id)
-                    unique_records.append(record)
+                    unique_records_models.append(record)
 
-            report_content = self._format_records_to_text(unique_records, data.date)
+            report_content = self._format_records_to_text(unique_records_models, data.date)
 
-            report = await self.repo.add(
-                ReportModel(
-                    report_date=data.date,
-                    content=report_content,
-                    entries_count=len(unique_records),
-                    user_id=user_id,
-                )
+            report_entity = Report.create(
+                user_id=user_id,
+                report_date=data.date,
+                content=report_content,
+                entries_count=len(unique_records_models),
             )
+
+            report_model = ReportModel(
+                report_date=report_entity.report_date,
+                content=report_entity.content,
+                entries_count=report_entity.entries_count,
+                user_id=report_entity.user_id,
+            )
+
+            saved_report = await self.repo.add(report_model)
             await self.repo.session.commit()
-            return self.converter.convert(report, Report)
+
+            return self.converter.convert(saved_report, Report)
 
         except Exception as e:
+            if isinstance(e, (NoRecordsForReportError, ReportGenerationError)):
+                raise e
             raise InternalServerError(f"Failed to create report: {str(e)}", {"user_id": user_id})
 
     async def get(self, report_id: int, user_id: int) -> Report:
         """Get a specific report by ID."""
         try:
-            report = await self.repo.get_report(report_id=report_id, user_id=user_id)
-            return self.converter.convert(report, Report)
+            model = await self.repo.get_report(report_id=report_id, user_id=user_id)
+            return self.converter.convert(model, Report)
 
         except Exception as e:
             raise InternalServerError(f"Failed to get report: {str(e)}", {"report_id": report_id})
@@ -76,8 +85,8 @@ class ReportUseCases:
     async def delete(self, report_id: int, user_id: int) -> None:
         """Delete a report."""
         try:
-            report = await self.repo.get_report(report_id=report_id, user_id=user_id)
-            await self.repo.delete(report.id)
+            model = await self.repo.get_report(report_id=report_id, user_id=user_id)
+            await self.repo.delete(model.id)
             await self.repo.session.commit()
         except NotFoundError:
             raise
@@ -89,12 +98,12 @@ class ReportUseCases:
     async def update(self, update_data: ReportUpdateData, user_id: int) -> Report:
         """Update a report."""
         try:
-            report = await self.repo.get_report(report_id=update_data.report_id, user_id=user_id)
-            # TODO: Implement actual update logic
-            updated_report = await self.repo.update(report)
+            model = await self.repo.get_report(report_id=update_data.report_id, user_id=user_id)
+
+            updated_model = await self.repo.update(model)
             await self.repo.session.commit()
 
-            return self.converter.convert(updated_report, Report)
+            return self.converter.convert(updated_model, Report)
 
         except Exception as e:
             raise InternalServerError(
@@ -104,12 +113,8 @@ class ReportUseCases:
     async def get_many(self, user_id: int) -> list[Report]:
         """Get all reports."""
         try:
-            reports = await self.repo.list(user_id=user_id)
-
-            if not reports:
-                raise NotFoundError("Report")
-
-            return [self.converter.convert(report, Report) for report in reports]
+            models = await self.repo.list(user_id=user_id)
+            return [self.converter.convert(model, Report) for model in models]
 
         except Exception as e:
             raise InternalServerError(f"Failed to get reports: {str(e)}")

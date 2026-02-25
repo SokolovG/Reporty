@@ -42,15 +42,31 @@ class UserUseCases:
         except Exception as e:
             raise InternalServerError(f"Failed to get user: {str(e)}", {"user_id": user_id})
 
-    async def update(self, user_id: int, data: UpdateUserData) -> User:  # noqa: F821
-        """Update user information."""
+    async def update(self, user_id: int, data: UpdateUserData) -> User:
+        """Update user profile information."""
         try:
-            user = await self.user_repository.get_user_by_id(id=user_id)
+            user = await self.user_repository.get_user_by_id(user_id)
             if not user:
                 raise NotFoundError("User", user_id)
 
-            user = await self.user_repository.update_user(user)
-            return user
+            if (
+                data.display_name is not None
+                or data.department is not None
+                or data.position is not None
+            ):
+                user.update_profile(
+                    display_name=data.display_name,
+                    department=data.department,
+                    position=data.position,
+                )
+
+            if data.email is not None:
+                user.email = data.email
+
+            updated_user = await self.user_repository.update_user(user)
+            return updated_user
 
         except Exception as e:
+            if isinstance(e, NotFoundError):
+                raise e
             raise InternalServerError(f"Failed to update user: {str(e)}", {"user_id": user_id})

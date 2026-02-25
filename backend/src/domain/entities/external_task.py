@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from backend.src.domain.entities import ExternalSystem
-from backend.src.domain.exceptions import InvalidExternalTaskError
+from backend.src.domain.exceptions.domain_exceptions import InvalidExternalTaskError
 
 
 @dataclass
@@ -57,14 +57,10 @@ class ExternalTask:
     def __post_init__(self) -> None:
         """Validate external task after initialization."""
         if not self.url or self.url.strip() == "":
-            raise InvalidExternalTaskError(
-                "URL is required", details={"external_id": self.external_id}
-            )
+            raise InvalidExternalTaskError("URL is required")
 
         if not self.title or self.title.strip() == "":
-            raise InvalidExternalTaskError(
-                "Title is required", details={"external_id": self.external_id}
-            )
+            raise InvalidExternalTaskError("Title is required")
 
     def mark_as_synced(self) -> None:
         """Mark task as synchronized with external system."""

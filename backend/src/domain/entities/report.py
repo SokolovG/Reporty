@@ -1,7 +1,10 @@
 from dataclasses import dataclass, field
 from datetime import datetime
 
-from backend.src.domain.exceptions import NoRecordsForReportError, ReportGenerationError
+from backend.src.domain.exceptions.domain_exceptions import (
+    NoRecordsForReportError,
+    ReportGenerationError,
+)
 
 
 @dataclass
