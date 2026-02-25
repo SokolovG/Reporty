@@ -2,6 +2,7 @@ from sqladmin.authentication import AuthenticationBackend
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 
+from backend.src.infrastructure.config.configs import get_sqlalchemy_config
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.repositories import UserRepository
 from backend.src.infrastructure.encryption.jwt_service import JWTService
@@ -14,7 +15,7 @@ class AdminMiddleware(AuthenticationBackend):
 
     async def _get_session(self) -> AsyncSession:
         """Get database session."""
-        sqlalchemy_config = get_sqlalchemy_config()  # noqa: F821  # ty:ignore[unresolved-reference]
+        sqlalchemy_config = get_sqlalchemy_config()  # noqa: F821
         session_maker = sqlalchemy_config.create_session_maker()
         return session_maker()
 

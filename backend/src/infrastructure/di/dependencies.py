@@ -52,7 +52,11 @@ class MyProvider(Provider):
         sqlalchemy_config = get_sqlalchemy_config()
         session_maker = sqlalchemy_config.create_session_maker()
         async with session_maker() as session:
-            yield session
+            try:
+                yield session
+            except Exception:
+                await session.rollback()
+                raise
 
     @provide(scope=Scope.REQUEST)
     def record_repo(self, db_session: AsyncSession) -> DailyRecordRepository:

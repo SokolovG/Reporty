@@ -15,7 +15,17 @@ class ErrorHandlerMiddleware(AbstractMiddleware):
         try:
             await self.app(scope, receive, send)
         except Exception as exc:
-            logging.exception(f"Unhandled exception in {scope.get('path', 'unknown')}: {exc}")
+            is_serious = True
+            if isinstance(exc, ApiException):
+                is_serious = exc.status_code >= 500
+            elif isinstance(exc, HTTPException):
+                is_serious = exc.status_code >= 500
+
+            if is_serious:
+                logging.exception(f"Critical error in {scope.get('path', 'unknown')}: {exc}")
+            else:
+                logging.warning(f"Request error in {scope.get('path', 'unknown')}: {exc}")
+
             if isinstance(exc, ApiException):
                 error_response = ErrorResponse(
                     error_code=exc.error_code,

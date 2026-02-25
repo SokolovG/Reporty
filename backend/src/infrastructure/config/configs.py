@@ -50,7 +50,7 @@ logging_config = LoggingConfig(
     handlers={
         "rich_console": {
             "class": "rich.logging.RichHandler",
-            "level": "DEBUG",
+            "level": "INFO",
             "rich_tracebacks": True,
             "show_path": False,
             "show_time": True,

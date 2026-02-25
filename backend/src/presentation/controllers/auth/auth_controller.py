@@ -7,7 +7,7 @@ from backend.src.application.dto.auth import ChangePasswordData, LoginData, Regi
 from backend.src.application.use_cases.auth.auth_use_cases import AuthUseCase
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.exceptions.api_exceptions import AuthenticationError
-from backend.src.presentation.dto import (
+from backend.src.presentation.dto.auth.responses import (
     AccessTokenResponse,
     UserResponse,
 )

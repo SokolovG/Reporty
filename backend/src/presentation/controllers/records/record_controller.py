@@ -14,14 +14,16 @@ from backend.src.application.dto.records import (
 )
 from backend.src.application.use_cases.records.record_use_cases import RecordUseCases
 from backend.src.infrastructure.database.mappers import Converter
-from backend.src.presentation.dto import DailyRecordResponse
 from backend.src.presentation.dto.records import (
     AppendToRecordRequestDTO,
     DailyRecordRequestDTO,
     DailyRecordUpdateRequestDTO,
-    DailyRecordWithTaskResponse,
     LinkTaskRequestDTO,
     RecordStatusUpdateRequestDTO,
+)
+from backend.src.presentation.dto.records.responses import (
+    DailyRecordResponse,
+    DailyRecordWithTaskResponse,
 )
 from backend.src.presentation.responses.base_responses import SuccessResponse, SuccessResponseDTO
 
