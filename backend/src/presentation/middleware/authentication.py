@@ -6,7 +6,7 @@ from litestar.middleware import AbstractAuthenticationMiddleware, Authentication
 from litestar.types import ASGIApp
 
 from backend.src.infrastructure.exceptions.api_exceptions import AuthenticationError
-from backend.src.infrastructure.database.repositories import UserRepository
+from backend.src.application.ports.repositories import IUserRepository
 from backend.src.infrastructure.encryption.jwt_service import JWTService
 
 logger = getLogger(__name__)
@@ -40,7 +40,7 @@ class JWTAuthenticationMiddleware(AbstractAuthenticationMiddleware):
 
         async with container() as request_container:
             jwt_service = await request_container.get(JWTService)
-            user_repo = await request_container.get(UserRepository)
+            user_repo = await request_container.get(IUserRepository)
 
             payload = await jwt_service.verify_token(access_token)
             if not payload:

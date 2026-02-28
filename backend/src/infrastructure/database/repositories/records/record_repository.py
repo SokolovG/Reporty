@@ -39,12 +39,15 @@ class DailyRecordRepository(
 
         added_record = await self.add(record)
         await self.session.commit()
-        await self.session.refresh(added_record)
+        await self.session.refresh(added_record, attribute_names=["external_task"])
         return self.converter.convert(added_record, DailyRecord)
 
     async def get_record(self, record_id: int, user_id: int) -> DailyRecord:
         query = await self.session.execute(
             select(DailyRecordModel)
+            .options(
+                selectinload(DailyRecordModel.external_task).selectinload(ExternalTaskModel.system)
+            )
             .where(DailyRecordModel.id == record_id)
             .where(DailyRecordModel.user_id == user_id)
         )
@@ -61,6 +64,9 @@ class DailyRecordRepository(
         end = datetime.combine(day, datetime.max.time())
         result = await self.session.execute(
             select(DailyRecordModel)
+            .options(
+                selectinload(DailyRecordModel.external_task).selectinload(ExternalTaskModel.system)
+            )
             .where(DailyRecordModel.user_id == user_id)
             .where(DailyRecordModel.title == title)
             .where(DailyRecordModel.created_at >= start)
@@ -115,6 +121,9 @@ class DailyRecordRepository(
         """Get records that haven't been processed by AI yet."""
         result = await self.session.execute(
             select(DailyRecordModel)
+            .options(
+                selectinload(DailyRecordModel.external_task).selectinload(ExternalTaskModel.system)
+            )
             .where(DailyRecordModel.is_processed == False)  # noqa: E712
             .order_by(DailyRecordModel.created_at.asc())
             .where(DailyRecordModel.user_id == user_id)
@@ -128,6 +137,9 @@ class DailyRecordRepository(
         """Get all records linked to a specific external task."""
         result = await self.session.execute(
             select(DailyRecordModel)
+            .options(
+                selectinload(DailyRecordModel.external_task).selectinload(ExternalTaskModel.system)
+            )
             .where(DailyRecordModel.external_task_id == external_task_id)
             .order_by(DailyRecordModel.created_at.desc())
             .where(DailyRecordModel.user_id == user_id)
@@ -149,6 +161,9 @@ class DailyRecordRepository(
         """Get records by status."""
         query = (
             select(DailyRecordModel)
+            .options(
+                selectinload(DailyRecordModel.external_task).selectinload(ExternalTaskModel.system)
+            )
             .where(DailyRecordModel.status == status.value)
             .order_by(DailyRecordModel.created_at.desc())
             .where(DailyRecordModel.user_id == user_id)
@@ -160,6 +175,9 @@ class DailyRecordRepository(
     async def get_all_records(self, user_id: int) -> Sequence[DailyRecord]:
         query = (
             select(DailyRecordModel)
+            .options(
+                selectinload(DailyRecordModel.external_task).selectinload(ExternalTaskModel.system)
+            )
             .order_by(DailyRecordModel.created_at.desc())
             .where(DailyRecordModel.user_id == user_id)
         )
@@ -180,10 +198,10 @@ class DailyRecordRepository(
         model.final_description = entity.final_description
         model.external_task_id = entity.external_task_id
         model.external_url = entity.external_url
-        model.status = entity.status
+        model.status = entity.status.value
 
         await self.session.commit()
-        await self.session.refresh(model)
+        await self.session.refresh(model, attribute_names=["external_task"])
         return self.converter.convert(model, DailyRecord)
 
     async def delete_record(self, record_id: int) -> None:

@@ -28,7 +28,9 @@ class AIProviderRepository(repository.SQLAlchemyAsyncRepository[AIProviderModel]
     async def get_many_active(self) -> list[AIProvider]:
         """Get all active providers."""
         result = await self.session.execute(
-            select(AIProviderModel).where(AIProviderModel.is_active == True)  # noqa: E712
+            select(AIProviderModel)
+            .where(AIProviderModel.is_active == True)  # noqa: E712
+            .options(selectinload(AIProviderModel.models))
         )
         models = list(result.scalars().all())
         return self.converter.convert_list(models, AIProvider)

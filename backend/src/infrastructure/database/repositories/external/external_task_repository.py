@@ -2,6 +2,7 @@ from collections.abc import Sequence
 from datetime import datetime
 from advanced_alchemy import repository
 from sqlalchemy import and_, select
+from sqlalchemy.orm import selectinload
 
 from backend.src.application.dto.records import ExternalTaskCreateData
 from backend.src.domain.entities import ExternalTask
@@ -25,6 +26,7 @@ class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTaskMo
             select(ExternalTaskModel)
             .where(ExternalTaskModel.id == task_id)
             .where(ExternalTaskModel.user_id == user_id)
+            .options(selectinload(ExternalTaskModel.system))
         )
         model = result.scalar_one_or_none()
         if not model:
@@ -36,13 +38,15 @@ class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTaskMo
     ) -> ExternalTask | None:
         """Get a task by external system and external ID."""
         result = await self.session.execute(
-            select(ExternalTaskModel).where(
+            select(ExternalTaskModel)
+            .where(
                 and_(
                     ExternalTaskModel.external_system_id == system_id,
                     ExternalTaskModel.external_id == external_id,
                     ExternalTaskModel.user_id == user_id,
                 )
             )
+            .options(selectinload(ExternalTaskModel.system))
         )
         model = result.scalar_one_or_none()
         if not model:
@@ -66,7 +70,7 @@ class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTaskMo
 
         self.session.add(task_model)
         await self.session.commit()
-        await self.session.refresh(task_model)
+        await self.session.refresh(task_model, attribute_names=["system"])
 
         return self.converter.convert(task_model, ExternalTask)
 
@@ -89,7 +93,7 @@ class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTaskMo
         task_model.completed_at = task.completed_at
 
         await self.session.commit()
-        await self.session.refresh(task_model)
+        await self.session.refresh(task_model, attribute_names=["system"])
 
         return self.converter.convert(task_model, ExternalTask)
 
@@ -113,6 +117,7 @@ class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTaskMo
         result = await self.session.execute(
             select(ExternalTaskModel)
             .where(ExternalTaskModel.external_system_id == system_id)
+            .options(selectinload(ExternalTaskModel.system))
             .order_by(ExternalTaskModel.last_sync.asc())
         )
         models = list(result.scalars().all())

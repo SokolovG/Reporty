@@ -1,7 +1,9 @@
 from typing import Any, Callable, Type, TypeVar
 
-from adaptix import Retort
-from adaptix.conversion import get_converter
+from adaptix import Retort, enum_by_value
+from adaptix.conversion import get_converter, coercer
+
+from backend.src.domain.value_objects import RecordStatus
 
 SourceT = TypeVar("SourceT")
 TargetT = TypeVar("TargetT")
@@ -9,7 +11,12 @@ TargetT = TypeVar("TargetT")
 
 class Converter:
     def __init__(self):
-        self._retort = Retort()
+        self._recipe = [
+            enum_by_value(RecordStatus, tp=str),
+            coercer(str, RecordStatus, RecordStatus),
+            coercer(RecordStatus, str, lambda x: x.value),
+        ]
+        self._retort = Retort(recipe=self._recipe)
         self._converters: dict[tuple[Type, Type], Callable] = {}
 
     def convert(self, source_obj: Any, target_type: Type[TargetT]) -> TargetT:
@@ -18,10 +25,11 @@ class Converter:
 
         source_type = type(source_obj)
         cache_key = (source_type, target_type)
-
         if cache_key not in self._converters:
             try:
-                self._converters[cache_key] = get_converter(source_type, target_type)
+                self._converters[cache_key] = get_converter(
+                    source_type, target_type, recipe=self._recipe
+                )
             except Exception as e:
                 raise ValueError(
                     f"Cannot create converter from {source_type.__name__} "

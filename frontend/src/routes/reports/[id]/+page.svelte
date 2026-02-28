@@ -11,7 +11,7 @@
     }
 
     function formatDate(dateString: string): string {
-        return new Date(dateString).toLocaleDateString("ru-RU", {
+        return new Date(dateString).toLocaleDateString("en-EN", {
             year: "numeric",
             month: "long",
             day: "numeric",
@@ -19,7 +19,7 @@
     }
 
     function formatDateTime(dateString: string): string {
-        return new Date(dateString).toLocaleString("ru-RU", {
+        return new Date(dateString).toLocaleString("en-EN", {
             year: "numeric",
             month: "long",
             day: "numeric",
