@@ -10,6 +10,17 @@ from backend.src.application.ports.notification import (
     DefaultNotificationService,
     NotificationService,
 )
+from backend.src.application.ports.repositories import (
+    IAIModelRepository,
+    IAIProviderKeyRepository,
+    IAIProviderRepository,
+    IDailyRecordRepository,
+    IExternalTaskRepository,
+    IExternalSystemRepository,
+    IReportRepository,
+    ITaskTypeRepository,
+    IUserRepository,
+)
 from backend.src.application.use_cases.ai.ai_preferences_use_cases import AIPreferencesUseCases
 from backend.src.application.use_cases.ai.ai_use_cases import AIUseCases
 from backend.src.application.use_cases.auth.auth_use_cases import AuthUseCase
@@ -61,18 +72,18 @@ class MyProvider(Provider):
                 raise
 
     @provide(scope=Scope.REQUEST)
-    def record_repo(self, db_session: AsyncSession) -> DailyRecordRepository:
-        return DailyRecordRepository(session=db_session)
+    def record_repo(self, db_session: AsyncSession, converter: Converter) -> IDailyRecordRepository:
+        return DailyRecordRepository(session=db_session, converter=converter)
 
     @provide(scope=Scope.REQUEST)
-    def report_repo(self, db_session: AsyncSession) -> ReportRepository:
-        return ReportRepository(session=db_session)
+    def report_repo(self, db_session: AsyncSession, converter: Converter) -> IReportRepository:
+        return ReportRepository(session=db_session, converter=converter)
 
     @provide(scope=Scope.REQUEST)
     def record_use_cases(
         self,
-        record_repo: DailyRecordRepository,
-        user_repo: UserRepository,
+        record_repo: IDailyRecordRepository,
+        user_repo: IUserRepository,
         ai_use_cases: AIUseCases,
         converter: Converter,
     ) -> RecordUseCases:
@@ -84,37 +95,37 @@ class MyProvider(Provider):
         )
 
     @provide(scope=Scope.REQUEST)
-    def task_type_repo(self, db_session: AsyncSession) -> TaskTypeRepository:
-        return TaskTypeRepository(session=db_session)
+    def task_type_repo(self, db_session: AsyncSession, converter: Converter) -> ITaskTypeRepository:
+        return TaskTypeRepository(session=db_session, converter=converter)
 
     @provide(scope=Scope.REQUEST)
     def ai_provider_repo(
         self, db_session: AsyncSession, converter: Converter
-    ) -> AIProviderRepository:
+    ) -> IAIProviderRepository:
         return AIProviderRepository(session=db_session, converter=converter)
 
     @provide(scope=Scope.REQUEST)
-    def ai_model_repo(self, db_session: AsyncSession) -> AIModelRepository:
+    def ai_model_repo(self, db_session: AsyncSession) -> IAIModelRepository:
         return AIModelRepository(session=db_session)
 
     @provide(scope=Scope.REQUEST)
     def ai_key_repo(
         self, db_session: AsyncSession, converter: Converter
-    ) -> AIProviderKeyRepository:
+    ) -> IAIProviderKeyRepository:
         return AIProviderKeyRepository(session=db_session, converter=converter)
 
     @provide(scope=Scope.REQUEST)
     def external_system_repo(
         self, db_session: AsyncSession, converter: Converter
-    ) -> ExternalSystemRepository:
+    ) -> IExternalSystemRepository:
         return ExternalSystemRepository(session=db_session, converter=converter)
 
     @provide(scope=Scope.REQUEST)
     def report_use_cases(
         self,
-        report_repo: ReportRepository,
-        record_repo: DailyRecordRepository,
-        user_repo: UserRepository,
+        report_repo: IReportRepository,
+        record_repo: IDailyRecordRepository,
+        user_repo: IUserRepository,
         converter: Converter,
     ) -> ReportUseCases:
         return ReportUseCases(
@@ -127,7 +138,7 @@ class MyProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def external_task_repo(
         self, db_session: AsyncSession, converter: Converter
-    ) -> ExternalTaskRepository:
+    ) -> IExternalTaskRepository:
         return ExternalTaskRepository(session=db_session, converter=converter)
 
     @provide(scope=Scope.APP)
@@ -137,9 +148,9 @@ class MyProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def task_use_cases(
         self,
-        external_task_repo: ExternalTaskRepository,
-        external_system_repo: ExternalSystemRepository,
-        user_repo: UserRepository,
+        external_task_repo: IExternalTaskRepository,
+        external_system_repo: IExternalSystemRepository,
+        user_repo: IUserRepository,
         converter: Converter,
     ) -> TasksUseCase:
         return TasksUseCase(
@@ -149,12 +160,12 @@ class MyProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def settings_use_cases(
         self,
-        ai_provider_repo: AIProviderRepository,
-        external_system_repo: ExternalSystemRepository,
-        ai_model_repo: AIModelRepository,
-        user_repo: UserRepository,
+        ai_provider_repo: IAIProviderRepository,
+        external_system_repo: IExternalSystemRepository,
+        ai_model_repo: IAIModelRepository,
+        user_repo: IUserRepository,
         encryption_service: EncryptionService,
-        api_key_repo: AIProviderKeyRepository,
+        api_key_repo: IAIProviderKeyRepository,
         converter: Converter,
     ) -> SettingsUseCases:
         return SettingsUseCases(
@@ -168,7 +179,7 @@ class MyProvider(Provider):
         )
 
     @provide(scope=Scope.REQUEST)
-    def user_repo(self, db_session: AsyncSession, converter: Converter) -> UserRepository:
+    def user_repo(self, db_session: AsyncSession, converter: Converter) -> IUserRepository:
         return UserRepository(session=db_session, converter=converter)
 
     @provide(scope=Scope.REQUEST)
@@ -182,7 +193,7 @@ class MyProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def auth_use_case(
         self,
-        user_repo: UserRepository,
+        user_repo: IUserRepository,
         jwt_service: JWTService,
         notification_service: NotificationService,
         converter: Converter,
@@ -192,12 +203,12 @@ class MyProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def user_use_cases(
         self,
-        user_repo: UserRepository,
-        ai_provider_repo: AIProviderRepository,
-        ai_model_repo: AIModelRepository,
-        external_system_repo: ExternalSystemRepository,
+        user_repo: IUserRepository,
+        ai_provider_repo: IAIProviderRepository,
+        ai_model_repo: IAIModelRepository,
+        external_system_repo: IExternalSystemRepository,
         encryption_service: EncryptionService,
-        ai_key_repo: AIProviderKeyRepository,
+        ai_key_repo: IAIProviderKeyRepository,
         converter: Converter,
     ) -> UserUseCases:
         return UserUseCases(
@@ -218,16 +229,16 @@ class MyProvider(Provider):
     def ai_use_cases(
         self,
         encryption_service: EncryptionService,
-        user_repo: UserRepository,
-        api_key_repo: AIProviderKeyRepository,
+        user_repo: IUserRepository,
+        api_key_repo: IAIProviderKeyRepository,
     ) -> AIUseCases:
         return AIUseCases(encryption_service, user_repo, api_key_repo)
 
     @provide(scope=Scope.REQUEST)
     def task_type_use_cases(
         self,
-        task_type_repo: TaskTypeRepository,
-        user_repo: UserRepository,
+        task_type_repo: ITaskTypeRepository,
+        user_repo: IUserRepository,
         converter: Converter,
     ) -> TaskTypeUseCases:
         return TaskTypeUseCases(
@@ -239,20 +250,14 @@ class MyProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def ai_preferences_use_cases(
         self,
-        record_repo: DailyRecordRepository,
-        user_repo: UserRepository,
+        user_repo: IUserRepository,
         encryption_service: EncryptionService,
-        ai_use_cases: AIUseCases,
-        ai_provider_repo: AIProviderRepository,
-        ai_key_repo: AIProviderKeyRepository,
-        converter: Converter,
+        ai_provider_repo: IAIProviderRepository,
+        ai_key_repo: IAIProviderKeyRepository,
     ) -> AIPreferencesUseCases:
         return AIPreferencesUseCases(
-            record_repo=record_repo,
             user_repository=user_repo,
             encryption_service=encryption_service,
-            ai_use_cases=ai_use_cases,
             ai_provider_repository=ai_provider_repo,
             ai_key_repo=ai_key_repo,
-            converter=converter,
         )

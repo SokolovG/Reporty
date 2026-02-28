@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import msgspec
 
 from backend.src.domain.value_objects import RecordStatus
@@ -34,6 +36,7 @@ class RecordStatusUpdateData(msgspec.Struct):
 
 class ExternalTaskCreateData(msgspec.Struct):
     url: str
+    external_created_at: datetime | None = None
     title: str | None = None
     external_id: int | None = None
     description: str | None = None

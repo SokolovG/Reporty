@@ -1,3 +1,5 @@
+from collections.abc import Sequence
+from datetime import datetime
 from advanced_alchemy import repository
 from sqlalchemy import and_, select
 
@@ -59,6 +61,7 @@ class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTaskMo
             description=data.description,
             status=data.status or "TODO",
             url=data.url or "",
+            external_created_at=data.external_created_at or datetime.now(),
         )
 
         self.session.add(task_model)
@@ -105,7 +108,7 @@ class ExternalTaskRepository(repository.SQLAlchemyAsyncRepository[ExternalTaskMo
         await self.session.delete(task_model)
         await self.session.commit()
 
-    async def get_tasks_for_sync(self, system_id: int) -> list[ExternalTask]:
+    async def get_tasks_for_sync(self, system_id: int) -> Sequence[ExternalTask]:
         """Get tasks that need synchronization."""
         result = await self.session.execute(
             select(ExternalTaskModel)

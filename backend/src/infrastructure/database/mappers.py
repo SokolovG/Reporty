@@ -14,7 +14,7 @@ class Converter:
 
     def convert(self, source_obj: Any, target_type: Type[TargetT]) -> TargetT:
         if source_obj is None:
-            return None  # type: ignore
+            raise ValueError(f"Cannot convert None to {target_type.__name__}")
 
         source_type = type(source_obj)
         cache_key = (source_type, target_type)

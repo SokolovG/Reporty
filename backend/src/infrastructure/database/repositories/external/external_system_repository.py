@@ -1,6 +1,7 @@
 from advanced_alchemy import repository
 from sqlalchemy import select
 
+from backend.src.application.dto.settings import ExternalSystemUpdateData
 from backend.src.domain.entities.external_system import ExternalSystem
 from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.database.models import ExternalSystemModel
@@ -33,3 +34,20 @@ class ExternalSystemRepository(
         )
         systems = result.scalars().all()
         return self.converter.convert_list(list(systems), ExternalSystem)
+
+    async def update_system(self, system_id: int, data: ExternalSystemUpdateData) -> ExternalSystem:
+        """Update an external system."""
+        system = await self.get(system_id)
+
+        if data.name is not None:
+            system.name = data.name
+        if data.display_name is not None:
+            system.display_name = data.display_name
+        if data.api_config is not None:
+            system.api_config = data.api_config
+        if data.is_active is not None:
+            system.is_active = data.is_active
+
+        await self.session.commit()
+        await self.session.refresh(system)
+        return self.converter.convert(system, ExternalSystem)

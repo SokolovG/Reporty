@@ -50,7 +50,8 @@ class UserRepository(repository.SQLAlchemyAsyncRepository[UserModel]):  # ty: ig
 
     async def update_user(self, user: User) -> User:
         """Update existing user."""
-        user_model = await self.get_one(id=user.id)
+        user_model = await self.get(user.id)
+
         user_model.password_hash = user.password_hash
         user_model.is_active = user.is_active
         user_model.is_admin = user.is_admin
@@ -64,5 +65,7 @@ class UserRepository(repository.SQLAlchemyAsyncRepository[UserModel]):  # ty: ig
         user_model.ai_provider_id = user.ai_provider_id
         user_model.ai_model_id = user.ai_model_id
         user_model.custom_prompt = user.custom_prompt
+
         await self.session.commit()
+        await self.session.refresh(user_model)
         return self.converter.convert(user_model, User)

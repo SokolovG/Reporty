@@ -25,6 +25,14 @@ class AIProviderRepository(repository.SQLAlchemyAsyncRepository[AIProviderModel]
         models = list(result.scalars().all())
         return self.converter.convert_list(models, AIProvider)
 
+    async def get_many_active(self) -> list[AIProvider]:
+        """Get all active providers."""
+        result = await self.session.execute(
+            select(AIProviderModel).where(AIProviderModel.is_active == True)  # noqa: E712
+        )
+        models = list(result.scalars().all())
+        return self.converter.convert_list(models, AIProvider)
+
     async def get_by_id_with_models(self, provider_id: int) -> AIProvider | None:
         """Get AI provider by ID with models loaded."""
         from sqlalchemy.orm import selectinload
@@ -53,13 +61,6 @@ class AIProviderKeyRepository(repository.SQLAlchemyAsyncRepository[AIProviderKey
             select(AIProviderKeyModel.ai_provider_id).where(AIProviderKeyModel.user_id == user_id)
         )
         return set(result.scalars().all())
-
-    async def get_active_providers(self) -> list[AIProvider]:
-        result = await self.session.execute(
-            select(AIProviderModel).where(AIProviderModel.is_active)
-        )
-        active_providers = result.scalars().all()
-        return self.converter.convert_list(list(active_providers), AIProvider)
 
     async def get_user_provider_key(self, user_id: int, provider_id: int) -> AIProviderKey | None:
         """Get API key for specific user and provider."""

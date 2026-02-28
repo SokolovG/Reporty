@@ -221,7 +221,7 @@ class RecordController(Controller):
         result = converter.convert(record, DailyRecordResponse)
         return SuccessResponse(message="Record processed with AI successfully", data=result)
 
-    @post("/{record_id: int}/approve", return_dto=SuccessResponseDTO)
+    @post("/{record_id:int}/approve", return_dto=SuccessResponseDTO)
     @inject
     async def approve_record(
         self,

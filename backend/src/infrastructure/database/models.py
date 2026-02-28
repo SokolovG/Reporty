@@ -148,7 +148,7 @@ class ExternalTaskModel(Base):
     # Synchronization
     last_sync: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        default=datetime.now(),
+        default=datetime.now,
         comment="Last synchronization with external system",
     )
 
@@ -193,7 +193,7 @@ class ReportModel(Base):
         default=0, comment="Number of included daily records"
     )
     generated_at: Mapped[datetime] = mapped_column(
-        DateTime, default=datetime.now().replace(microsecond=0), comment="Report generation time"
+        DateTime, default=datetime.now, comment="Report generation time"
     )
 
     # Indexes for performance

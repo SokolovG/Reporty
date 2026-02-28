@@ -2,10 +2,10 @@ from logging import getLogger
 
 from backend.src.application.dto.auth import ChangePasswordData, LoginData, RegisterData
 from backend.src.application.ports.notification import NotificationService
+from backend.src.application.ports.repositories import IUserRepository
 from backend.src.domain.entities.user import User
 from backend.src.domain.value_objects import TokenPair
 from backend.src.infrastructure.database.mappers import Converter
-from backend.src.infrastructure.database.repositories import UserRepository
 from backend.src.infrastructure.encryption.jwt_service import JWTService
 from backend.src.infrastructure.exceptions.api_exceptions import (
     AuthenticationError,
@@ -20,7 +20,7 @@ logger = getLogger(__name__)
 class AuthUseCase:
     def __init__(
         self,
-        user_repository: UserRepository,
+        user_repository: IUserRepository,
         jwt_service: JWTService,
         notification_service: NotificationService,
         converter: Converter,
@@ -66,6 +66,13 @@ class AuthUseCase:
         user_id = int(payload["sub"])
         token = await self.jwt_service.create_access_token(user_id)
         return token
+
+    async def logout(self, access_token: str | None, refresh_token: str | None) -> None:
+        """Invalidate tokens on logout."""
+        if access_token:
+            await self.jwt_service.blacklist_token(access_token)
+        if refresh_token:
+            await self.jwt_service.blacklist_token(refresh_token)
 
     async def change_password(self, data: ChangePasswordData, user_id: int) -> None:
         """Change user password."""

@@ -78,8 +78,15 @@ class AuthController(Controller):
 
     @post("/logout")
     @inject
-    async def logout(self, request: Request) -> Response[SuccessResponse]:
-        """Logout user by clearing refresh token cookie."""
+    async def logout(
+        self, request: Request, auth_use_case: FromDishka[AuthUseCase]
+    ) -> Response[SuccessResponse]:
+        """Logout user by clearing refresh token cookie and invalidating tokens."""
+        access_token = request.cookies.get("accessToken")
+        refresh_token = request.cookies.get("refreshToken")
+
+        await auth_use_case.logout(access_token, refresh_token)
+
         success_response = SuccessResponse(message="Successfully logged out")
         response = SuccessResponseDTO.create_response_with_cookies(
             request=request,

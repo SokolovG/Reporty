@@ -9,6 +9,11 @@ from backend.src.infrastructure.exceptions.api_exceptions import AuthenticationE
 
 
 class JWTService:
+    BLACKLIST: set[str] = set()
+
+    async def blacklist_token(self, token: str) -> None:
+        self.BLACKLIST.add(token)
+
     async def create_access_token(self, user_id: int) -> str:
         payload = {
             "sub": str(user_id),
@@ -23,6 +28,8 @@ class JWTService:
         return token
 
     async def verify_token(self, token: str, expected_type: str = "access") -> dict:
+        if token in self.BLACKLIST:
+            raise AuthenticationError("Token is blacklisted")
         try:
             payload: dict = jwt.decode(
                 token, settings.JWT_PUBLIC_KEY, algorithms=[settings.ALGORITHM]

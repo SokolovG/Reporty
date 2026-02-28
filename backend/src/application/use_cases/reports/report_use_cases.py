@@ -1,17 +1,21 @@
+from collections.abc import Sequence
 from datetime import datetime
 from logging import getLogger
 
 from backend.src.application.dto.reports import ReportData, ReportUpdateData
-from backend.src.domain.entities import Report
-from backend.src.domain.exceptions import NoRecordsForReportError, ReportGenerationError
+from backend.src.application.ports.repositories import (
+    IDailyRecordRepository,
+    IReportRepository,
+    IUserRepository,
+)
+from backend.src.domain.entities.record import DailyRecord
+from backend.src.domain.entities.report import Report
+from backend.src.domain.exceptions.domain_exceptions import (
+    NoRecordsForReportError,
+    ReportGenerationError,
+)
 from backend.src.domain.value_objects import RecordStatus
 from backend.src.infrastructure.database.mappers import Converter
-from backend.src.infrastructure.database.models import DailyRecordModel, ReportModel
-from backend.src.infrastructure.database.repositories import (
-    DailyRecordRepository,
-    ReportRepository,
-    UserRepository,
-)
 from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError, NotFoundError
 
 logger = getLogger(__name__)
@@ -20,9 +24,9 @@ logger = getLogger(__name__)
 class ReportUseCases:
     def __init__(
         self,
-        report_repo: ReportRepository,
-        record_repo: DailyRecordRepository,
-        user_repository: UserRepository,
+        report_repo: IReportRepository,
+        record_repo: IDailyRecordRepository,
+        user_repository: IUserRepository,
         converter: Converter,
     ) -> None:
         self.repo = report_repo
@@ -56,17 +60,8 @@ class ReportUseCases:
                 entries_count=len(unique_records_models),
             )
 
-            report_model = ReportModel(
-                report_date=report_entity.report_date,
-                content=report_entity.content,
-                entries_count=report_entity.entries_count,
-                user_id=report_entity.user_id,
-            )
-
-            saved_report = await self.repo.add(report_model)
-            await self.repo.session.commit()
-
-            return self.converter.convert(saved_report, Report)
+            saved_report = await self.repo.create_report(report_entity)
+            return saved_report
 
         except Exception as e:
             if isinstance(e, (NoRecordsForReportError, ReportGenerationError)):
@@ -76,8 +71,7 @@ class ReportUseCases:
     async def get(self, report_id: int, user_id: int) -> Report:
         """Get a specific report by ID."""
         try:
-            model = await self.repo.get_report(report_id=report_id, user_id=user_id)
-            return self.converter.convert(model, Report)
+            return await self.repo.get_report(report_id=report_id, user_id=user_id)
 
         except Exception as e:
             raise InternalServerError(f"Failed to get report: {str(e)}", {"report_id": report_id})
@@ -85,8 +79,7 @@ class ReportUseCases:
     async def delete(self, report_id: int, user_id: int) -> None:
         """Delete a report."""
         try:
-            model = await self.repo.get_report(report_id=report_id, user_id=user_id)
-            await self.repo.delete(model.id)
+            await self.repo.delete(report_id)
             await self.repo.session.commit()
         except NotFoundError:
             raise
@@ -98,15 +91,8 @@ class ReportUseCases:
     async def update(self, update_data: ReportUpdateData, user_id: int) -> Report:
         """Update a report content."""
         try:
-            model = await self.repo.get_report(report_id=update_data.report_id, user_id=user_id)
-
-            if update_data.content is not None:
-                model.content = update_data.content
-
-            updated_model = await self.repo.update(model)
-            await self.repo.session.commit()
-
-            return self.converter.convert(updated_model, Report)
+            updated_report = await self.repo.update_report(update_data, user_id)
+            return updated_report
 
         except Exception as e:
             if isinstance(e, NotFoundError):
@@ -115,18 +101,15 @@ class ReportUseCases:
                 f"Failed to update report: {str(e)}", {"report_id": update_data.report_id}
             )
 
-    async def get_many(self, user_id: int) -> list[Report]:
+    async def get_many(self, user_id: int) -> Sequence[Report]:
         """Get all reports."""
         try:
-            models = await self.repo.list(user_id=user_id)
-            return [self.converter.convert(model, Report) for model in models]
+            return await self.repo.list_reports(user_id=user_id)
 
         except Exception as e:
             raise InternalServerError(f"Failed to get reports: {str(e)}")
 
-    def _format_records_to_text(
-        self, records: list[DailyRecordModel], report_date: datetime
-    ) -> str:
+    def _format_records_to_text(self, records: Sequence[DailyRecord], report_date: datetime) -> str:
         """Format records into a readable text report."""
         date_str = report_date.strftime("%d.%m.%Y")
 

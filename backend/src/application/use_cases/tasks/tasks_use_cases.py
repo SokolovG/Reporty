@@ -1,11 +1,14 @@
-from backend.src.application.dto.records import ExternalTaskCreateData, ExternalTaskUpdateData
+from backend.src.application.dto.records import (
+    ExternalTaskCreateData,
+    ExternalTaskUpdateData,
+)
+from backend.src.application.ports.repositories import (
+    IExternalSystemRepository,
+    IExternalTaskRepository,
+    IUserRepository,
+)
 from backend.src.domain.entities.external_task import ExternalTask
 from backend.src.infrastructure.database.mappers import Converter
-from backend.src.infrastructure.database.repositories import (
-    ExternalSystemRepository,
-    ExternalTaskRepository,
-    UserRepository,
-)
 from backend.src.infrastructure.exceptions.api_exceptions import (
     ConflictError,
     InternalServerError,
@@ -16,11 +19,11 @@ from backend.src.infrastructure.exceptions.api_exceptions import (
 class TasksUseCase:
     def __init__(
         self,
-        external_task_repo: ExternalTaskRepository,
-        external_system_repo: ExternalSystemRepository,
-        user_repository: UserRepository,
+        external_task_repo: IExternalTaskRepository,
+        external_system_repo: IExternalSystemRepository,
+        user_repository: IUserRepository,
         converter: Converter,
-    ):
+    ) -> None:
         self.user_repository = user_repository
         self.external_task_repo = external_task_repo
         self.external_system_repo = external_system_repo

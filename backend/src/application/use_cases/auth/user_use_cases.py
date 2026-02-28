@@ -1,13 +1,13 @@
 from backend.src.application.dto.auth import UpdateUserData
+from backend.src.application.ports.repositories import (
+    IAIModelRepository,
+    IAIProviderKeyRepository,
+    IAIProviderRepository,
+    IExternalSystemRepository,
+    IUserRepository,
+)
 from backend.src.domain.entities.user import User
 from backend.src.infrastructure.database.mappers import Converter
-from backend.src.infrastructure.database.repositories import (
-    AIModelRepository,
-    AIProviderKeyRepository,
-    AIProviderRepository,
-    ExternalSystemRepository,
-    UserRepository,
-)
 from backend.src.infrastructure.encryption.encryption_service import EncryptionService
 from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError, NotFoundError
 
@@ -17,12 +17,12 @@ class UserUseCases:
 
     def __init__(
         self,
-        ai_provider_repository: AIProviderRepository,
-        ai_models_repository: AIModelRepository,
-        user_repository: UserRepository,
-        external_system_repository: ExternalSystemRepository,
+        ai_provider_repository: IAIProviderRepository,
+        ai_models_repository: IAIModelRepository,
+        user_repository: IUserRepository,
+        external_system_repository: IExternalSystemRepository,
         encryption_service: EncryptionService,
-        api_key_repo: AIProviderKeyRepository,
+        api_key_repo: IAIProviderKeyRepository,
         converter: Converter,
     ) -> None:
         self.encryption_service = encryption_service
@@ -36,8 +36,10 @@ class UserUseCases:
     async def get(self, user_id: int) -> User:
         """Get user with all information."""
         try:
-            user = await self.user_repository.get_one(id=user_id)
-            return self.converter.convert(user, User)
+            user = await self.user_repository.get_user_by_id(id=user_id)
+            if not user:
+                raise NotFoundError("User", user_id)
+            return user
 
         except Exception as e:
             raise InternalServerError(f"Failed to get user: {str(e)}", {"user_id": user_id})

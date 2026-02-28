@@ -1,8 +1,8 @@
-from backend.src.infrastructure.database.repositories import UserRepository
-from backend.src.infrastructure.database.repositories.ai.ai_repository import (
-    AIProviderKeyRepository,
-)
 from backend.src.infrastructure.encryption.encryption_service import EncryptionService
+from backend.src.application.ports.repositories import (
+    IAIProviderKeyRepository,
+    IUserRepository,
+)
 from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError
 
 
@@ -12,8 +12,8 @@ class AIUseCases:
     def __init__(
         self,
         encryption_service: EncryptionService,
-        user_repository: UserRepository,
-        api_key_repository: AIProviderKeyRepository,
+        user_repository: IUserRepository,
+        api_key_repository: IAIProviderKeyRepository,
     ) -> None:
         self.encryption_service = encryption_service
         self.user_repository = user_repository

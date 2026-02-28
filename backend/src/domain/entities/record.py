@@ -1,11 +1,12 @@
 from dataclasses import dataclass, field
 from datetime import datetime
-from backend.src.domain.entities.external_task import ExternalTask
 
+from backend.src.domain.entities.external_task import ExternalTask
 from backend.src.domain.exceptions.domain_exceptions import (
     RecordAlreadyApprovedError,
     RecordNotProcessedError,
 )
+from backend.src.domain.value_objects import RecordStatus
 
 
 @dataclass
@@ -28,7 +29,7 @@ class DailyRecord:
     external_url: str | None = None
     external_task: ExternalTask | None = None
 
-    status: str = "OPEN"
+    status: RecordStatus = RecordStatus.OPEN
 
     created_at: datetime = field(default_factory=datetime.now)
 
@@ -84,10 +85,10 @@ class DailyRecord:
 
     def close(self) -> None:
         """Close the record"""
-        self.status = "CLOSED"
+        self.status = RecordStatus.CLOSED
 
     def reopen(self) -> None:
         """Reopen closed record"""
         if self.is_approved:
             raise RecordAlreadyApprovedError(f"Cannot reopen approved record {self.id}")
-        self.status = "OPEN"
+        self.status = RecordStatus.OPEN
