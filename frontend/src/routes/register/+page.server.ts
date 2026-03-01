@@ -1,58 +1,41 @@
-import { redirect } from '@sveltejs/kit';
-import type { PageServerLoad, Actions } from './$types';
-
-export const load: PageServerLoad = async ({ parent }) => {
-  const { user } = await parent();
-
-  // Если пользователь уже авторизован, редиректим на главную
-  if (user) {
-    throw redirect(302, '/');
-  }
-
-  return {};
-};
+import { fail, redirect } from '@sveltejs/kit';
+import type { Actions } from './$types';
 
 export const actions: Actions = {
-  register: async ({ request }) => {
-    const formData = await request.formData();
-    const email = formData.get('email');
-    const password = formData.get('password');
-    const confirmPassword = formData.get('confirmPassword');
+  default: async ({ request, fetch }) => {
+    const data = await request.formData();
+    const email = data.get('email');
+    const password = data.get('password');
+    const name = data.get('name');
 
-    if (!email || !password || !confirmPassword) {
-      return { error: 'All fields are required' };
-    }
-
-    if (password !== confirmPassword) {
-      return { error: 'Passwords do not match' };
+    if (!email || !password || !name) {
+      return fail(400, { error: 'All fields are required' });
     }
 
     try {
-      const registerData = {
-        email: email.toString(),
-        password: password.toString()
-      };
-
-      const response = await fetch('http://localhost:8080/register', {
+      const response = await fetch('/api/v1/auth/register', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(registerData)
+        body: JSON.stringify({ email, password, name })
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        return { error: 'Registration failed' };
+        return fail(response.status, {
+          error: result.message || 'Registration failed'
+        });
       }
 
-      // Регистрация успешна - редиректим на логин
-      throw redirect(302, '/login?message=Registration successful. Please log in.');
-    } catch (error) {
-      if (error instanceof Response) {
-        throw error; // Это редирект
+      throw redirect(303, '/login?registered=true');
+    } catch (err) {
+      if (err instanceof Response || (err && typeof err === 'object' && 'status' in err && 'location' in err)) {
+        throw err;
       }
-      return { error: 'Server connection error' };
+      console.error('Registration error:', err);
+      return fail(500, { error: 'An unexpected error occurred during registration' });
     }
   }
 };

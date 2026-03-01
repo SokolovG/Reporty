@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN pip install uv
 
-COPY pyproject.toml uv.lock ./
+COPY pyproject.toml uv.lock LICENSE README.md ./
 
 ENV UV_PROJECT_ENVIRONMENT=/tmp/.venv
 

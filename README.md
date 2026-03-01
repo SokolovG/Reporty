@@ -34,7 +34,7 @@ Reporty solves the problem of creating daily reports for developers. Instead of 
 - **API:** REST with automatic OpenAPI docs
 - **Auth:** JWT with litestar-users
 - **Validation:** MSGSPEC
-- **Code Quality:** Ruff, MyPy, Pre-commit
+- **Code Quality:** Ruff, Ty, Pre-commit
 - **Deployment:** Docker + Docker Compose
 
 🚀 Installation and Setup

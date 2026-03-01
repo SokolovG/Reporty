@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
     try {
         const reportsResponse = await fetch('/api/v1/reports');
         if (!reportsResponse.ok) {
-            return { reports: []};
+            return { reports: [] };
         }
 
         const reports = await reportsResponse.json();
@@ -29,10 +29,14 @@ export const actions: Actions = {
 
         try {
             const body = {
-                "data": data?.toString()
+                "date": data?.toString()
             };
-            const response = await fetch("api/v1/reports", {
+            const response = await fetch("/api/v1/reports", {
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
                 body: JSON.stringify(body),
             });
 
@@ -40,7 +44,7 @@ export const actions: Actions = {
                 return { error: 'Failed to create report' };
             }
         } catch (error) {
-
+            console.error("Report creation error:", error);
         }
         throw redirect(303, "/reports");
     }
