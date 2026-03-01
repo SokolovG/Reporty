@@ -1,9 +1,9 @@
-from typing import AsyncGenerator, Type, TypeVar
+from typing import AsyncGenerator, Type, TypeVar, Callable
 
 from dishka import Scope, provide
 from dishka.provider import Provider
 from litestar import Litestar, Request
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 from starlette.requests import Request as StarletteRequest
 
 from backend.src.application.ports.notification import (
@@ -60,10 +60,15 @@ async def get_dependency(request: Request | StarletteRequest, dependency_type: T
 
 
 class MyProvider(Provider):
+    @provide(scope=Scope.APP)
+    def session_maker(self) -> Callable[[], AsyncSession]:
+        config = get_sqlalchemy_config()
+        return config.create_session_maker()
+
     @provide(scope=Scope.REQUEST)
-    async def get_db_session(self) -> AsyncGenerator[AsyncSession, None]:
-        sqlalchemy_config = get_sqlalchemy_config()
-        session_maker = sqlalchemy_config.create_session_maker()
+    async def get_db_session(
+        self, session_maker: async_sessionmaker
+    ) -> AsyncGenerator[AsyncSession, None]:
         async with session_maker() as session:
             try:
                 yield session
@@ -164,7 +169,6 @@ class MyProvider(Provider):
         external_system_repo: IExternalSystemRepository,
         ai_model_repo: IAIModelRepository,
         user_repo: IUserRepository,
-        encryption_service: EncryptionService,
         api_key_repo: IAIProviderKeyRepository,
         converter: Converter,
     ) -> SettingsUseCases:
@@ -173,7 +177,6 @@ class MyProvider(Provider):
             ai_models_repository=ai_model_repo,
             external_system_repository=external_system_repo,
             user_repository=user_repo,
-            encryption_service=encryption_service,
             api_key_repo=api_key_repo,
             converter=converter,
         )
@@ -182,7 +185,7 @@ class MyProvider(Provider):
     def user_repo(self, db_session: AsyncSession, converter: Converter) -> IUserRepository:
         return UserRepository(session=db_session, converter=converter)
 
-    @provide(scope=Scope.REQUEST)
+    @provide(scope=Scope.APP)
     def jwt_service(self) -> JWTService:
         return JWTService()
 
@@ -204,20 +207,10 @@ class MyProvider(Provider):
     def user_use_cases(
         self,
         user_repo: IUserRepository,
-        ai_provider_repo: IAIProviderRepository,
-        ai_model_repo: IAIModelRepository,
-        external_system_repo: IExternalSystemRepository,
-        encryption_service: EncryptionService,
-        ai_key_repo: IAIProviderKeyRepository,
         converter: Converter,
     ) -> UserUseCases:
         return UserUseCases(
-            ai_provider_repository=ai_provider_repo,
-            ai_models_repository=ai_model_repo,
             user_repository=user_repo,
-            external_system_repository=external_system_repo,
-            encryption_service=encryption_service,
-            api_key_repo=ai_key_repo,
             converter=converter,
         )
 

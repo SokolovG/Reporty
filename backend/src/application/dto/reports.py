@@ -4,7 +4,7 @@ import msgspec
 
 
 class ReportData(msgspec.Struct):
-    date: datetime = datetime.today()
+    date: datetime | None = None
 
 
 class ReportUpdateData(msgspec.Struct):

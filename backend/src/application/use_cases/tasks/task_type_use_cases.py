@@ -112,8 +112,7 @@ class TaskTypeUseCases:
                 task_type_id, user_id
             )
 
-            await self.task_type_repository.delete(task_type_model.id)
-            await self.task_type_repository.session.commit()
+            await self.task_type_repository.delete_task_type(task_type_model.id)
 
         except NotFoundError:
             raise

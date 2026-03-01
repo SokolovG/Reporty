@@ -1,7 +1,7 @@
 import { redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "../$types"
 
-export const load: PageServerLoad = async ({fetch}) => {
+export const load: PageServerLoad = async ({ fetch }) => {
     try {
         const [recordsResponse, taskTypesResponse, providersResponse] = await Promise.all([
             fetch('/api/v1/records'),
@@ -37,9 +37,9 @@ export const load: PageServerLoad = async ({fetch}) => {
 
     } catch (error) {
         if (error instanceof Response) {
-                throw error;
-            }
-            return { error: 'Error during getting task types' };
+            throw error;
+        }
+        return { error: 'Error during getting task types' };
     }
 
 }
@@ -53,7 +53,7 @@ export const actions: Actions = {
         const isActive = formData.get("isActive")
 
         const data = {
-            title: title.toString(),
+            title: title?.toString() || "",
             color: color?.toString()
             // isActive: isActive.
         };
@@ -76,22 +76,22 @@ export const actions: Actions = {
 
         } catch (error) {
             if (error instanceof Response) {
-                    throw error;
-                }
+                throw error;
+            }
             return { error: 'Error during task type updation' };
         }
         throw redirect(303, "/profile")
 
     },
 
-    addTaskType: async({ request, fetch }) => {
+    addTaskType: async ({ request, fetch }) => {
         const formData = await request.formData()
         const title = formData.get("title")
         const color = formData.get("color")
 
 
         const data = {
-            title: title.toString(),
+            title: title?.toString() || "",
             color: color?.toString()
         };
 
@@ -114,14 +114,14 @@ export const actions: Actions = {
 
         } catch (error) {
             if (error instanceof Response) {
-                    throw error;
-                }
+                throw error;
+            }
             return { error: 'Error during task type creation' };
         }
         throw redirect(303, "/profile")
 
     },
-    removeTaskType: async({ request, fetch }) => {
+    removeTaskType: async ({ request, fetch }) => {
         const formData = await request.formData()
         const taskTypeId = formData.get("taskTypeId")
 
@@ -131,6 +131,9 @@ export const actions: Actions = {
             });
             if (!response.ok) {
                 return { error: 'Failed to delete record' };
+            }
+            if (response.status === 204) {
+                throw redirect(303, "/profile");
             }
             const responseData = await response.json()
             if (!responseData.success) {

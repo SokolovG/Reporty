@@ -64,6 +64,11 @@ class TaskTypeRepository(repository.SQLAlchemyAsyncRepository[TaskTypeModel]):  
         await self.session.refresh(created)
         return self.converter.convert(created, TaskType)
 
+    async def delete_task_type(self, task_type_id: int) -> None:
+        """Delete a task type and commit."""
+        await self.delete(task_type_id)
+        await self.session.commit()
+
     async def update_task_type(
         self,
         task_type_id: int,

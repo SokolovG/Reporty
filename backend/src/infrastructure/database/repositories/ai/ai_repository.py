@@ -37,14 +37,16 @@ class AIProviderRepository(repository.SQLAlchemyAsyncRepository[AIProviderModel]
 
     async def get_by_id_with_models(self, provider_id: int) -> AIProvider | None:
         """Get AI provider by ID with models loaded."""
-        from sqlalchemy.orm import selectinload
 
         result = await self.session.execute(
             select(AIProviderModel)
             .where(AIProviderModel.id == provider_id)
             .options(selectinload(AIProviderModel.models))
         )
-        return self.converter.convert(result.scalar_one_or_none(), AIProvider)
+        model = result.scalar_one_or_none()
+        if model is None:
+            return None
+        return self.converter.convert(model, AIProvider)
 
 
 class AIModelRepository(repository.SQLAlchemyAsyncRepository[AIModel]):  # type: ignore[misc]
@@ -73,4 +75,6 @@ class AIProviderKeyRepository(repository.SQLAlchemyAsyncRepository[AIProviderKey
             .where(AIProviderKeyModel.is_active == True)  # noqa: E712
         )
         key = result.scalar_one_or_none()
+        if key is None:
+            return None
         return self.converter.convert(key, AIProviderKey)

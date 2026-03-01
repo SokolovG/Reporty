@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+
 from backend.src.application.dto.settings import AIPreferencesUpdateData, AIProviderUpdateData
 from backend.src.application.ports.repositories import (
     IAIProviderKeyRepository,

@@ -37,8 +37,9 @@ class ReportUseCases:
     async def create(self, data: ReportData, user_id: int) -> Report:
         """Create a new daily report."""
         try:
+            report_date = data.date or datetime.now()
             today_records_models = await self.record_repo.get_records_by_date(
-                target_date=data.date, user_id=user_id
+                target_date=report_date, user_id=user_id
             )
             open_records_models = await self.record_repo.get_records_by_status(
                 status=RecordStatus.OPEN, user_id=user_id
@@ -51,11 +52,11 @@ class ReportUseCases:
                     set_ids.add(record.id)
                     unique_records_models.append(record)
 
-            report_content = self._format_records_to_text(unique_records_models, data.date)
+            report_content = self._format_records_to_text(unique_records_models, report_date)
 
             report_entity = Report.create(
                 user_id=user_id,
-                report_date=data.date,
+                report_date=report_date,
                 content=report_content,
                 entries_count=len(unique_records_models),
             )
@@ -79,8 +80,7 @@ class ReportUseCases:
     async def delete(self, report_id: int, user_id: int) -> None:
         """Delete a report."""
         try:
-            await self.repo.delete(report_id)
-            await self.repo.session.commit()
+            await self.repo.delete_report(report_id, user_id)
         except NotFoundError:
             raise
         except Exception as e:

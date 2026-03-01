@@ -19,7 +19,6 @@ class ReportRepository(repository.SQLAlchemyAsyncRepository[ReportModel]):  # ty
         self.converter = converter
 
     async def get_latest_report(self, user_id: int) -> Report | None:
-        """Get the most recent report."""
         result = await self.session.execute(
             select(ReportModel)
             .order_by(ReportModel.generated_at.desc())
@@ -27,6 +26,8 @@ class ReportRepository(repository.SQLAlchemyAsyncRepository[ReportModel]):  # ty
             .where(ReportModel.user_id == user_id)
         )
         model = result.scalar_one_or_none()
+        if model is None:
+            return None
         return self.converter.convert(model, Report)
 
     async def get_reports_by_date_range(
@@ -65,6 +66,12 @@ class ReportRepository(repository.SQLAlchemyAsyncRepository[ReportModel]):  # ty
         if not report:
             raise NotFoundError("Report", report_id)
         return report
+
+    async def delete_report(self, report_id: int, user_id: int) -> None:
+        """Delete report and commit."""
+        await self.get_report_model(report_id, user_id)
+        await self.delete(report_id)
+        await self.session.commit()
 
     async def create_report(self, report_entity: Report) -> Report:
         """Create a new report from entity."""

@@ -39,6 +39,12 @@ class PasswordValidator:
                 details={"field": "password", "requirement": "digit"},
             )
 
+        if not re.search(r"[!@#$%^&*(),.?\":{}|<>]", password):
+            raise ValidationError(
+                "Password must contain at least one special character",
+                details={"field": "password", "requirement": "special_char"},
+            )
+
 
 class EmailValidator:
     """Email validation."""

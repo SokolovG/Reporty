@@ -1,6 +1,4 @@
 from backend.src.application.dto.settings import ExternalSystemUpdateData
-from backend.src.domain.entities.external_system import ExternalSystem
-from backend.src.infrastructure.database.mappers import Converter
 from backend.src.application.ports.repositories import (
     IAIModelRepository,
     IAIProviderKeyRepository,
@@ -8,7 +6,8 @@ from backend.src.application.ports.repositories import (
     IExternalSystemRepository,
     IUserRepository,
 )
-from backend.src.infrastructure.encryption.encryption_service import EncryptionService
+from backend.src.domain.entities.external_system import ExternalSystem
+from backend.src.infrastructure.database.mappers import Converter
 from backend.src.infrastructure.exceptions.api_exceptions import InternalServerError
 
 
@@ -21,11 +20,9 @@ class SettingsUseCases:
         ai_models_repository: IAIModelRepository,
         user_repository: IUserRepository,
         external_system_repository: IExternalSystemRepository,
-        encryption_service: EncryptionService,
         api_key_repo: IAIProviderKeyRepository,
         converter: Converter,
     ) -> None:
-        self.encryption_service = encryption_service
         self.ai_provider_repository = ai_provider_repository
         self.ai_models_repository = ai_models_repository
         self.user_repository = user_repository
@@ -33,16 +30,10 @@ class SettingsUseCases:
         self.api_key_repo = api_key_repo
         self.converter = converter
 
-    # External Systems Management
     async def get_external_systems(self) -> list[ExternalSystem]:
         """Get all external systems."""
         try:
-            result = await self.external_system_repository.get_many()
-            domain_systems: list[ExternalSystem] = []
-            for system_model in result:
-                domain_systems.append(self.converter.convert(system_model, ExternalSystem))
-
-            return domain_systems
+            return list(await self.external_system_repository.get_many())
 
         except Exception as e:
             raise InternalServerError(f"Failed to get external systems: {str(e)}")
@@ -50,13 +41,7 @@ class SettingsUseCases:
     async def get_active_external_systems(self) -> list[ExternalSystem]:
         """Get only active external systems."""
         try:
-            result = await self.external_system_repository.get_many_active()
-
-            domain_systems: list[ExternalSystem] = []
-            for system_model in result:
-                domain_systems.append(self.converter.convert(system_model, ExternalSystem))
-
-            return domain_systems
+            return list(await self.external_system_repository.get_many_active())
 
         except Exception as e:
             raise InternalServerError(f"Failed to get active external systems: {str(e)}")

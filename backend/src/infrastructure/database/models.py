@@ -269,7 +269,7 @@ class UserModel(Base):
     department: Mapped[str | None] = mapped_column(String(100), nullable=True)
     position: Mapped[str | None] = mapped_column(String(100), nullable=True)
     ai_auto_process: Mapped[bool] = mapped_column(default=False)
-    ai_provider_id: Mapped[int] = mapped_column(ForeignKey("ai_providers.id"), nullable=True)
+    ai_provider_id: Mapped[int | None] = mapped_column(ForeignKey("ai_providers.id"), nullable=True)
     ai_model_id: Mapped[int | None] = mapped_column(ForeignKey("ai_models.id"))
     external_system_id: Mapped[int | None] = mapped_column(ForeignKey("external_systems.id"))
 
@@ -279,8 +279,12 @@ class UserModel(Base):
     )
     ai_model: Mapped[AIModel | None] = relationship("AIModel")
     external_system: Mapped["ExternalSystemModel | None"] = relationship("ExternalSystemModel")
-    custom_prompt: Mapped[str] = mapped_column(String, nullable=True, comment="Custom base prompt")
-    is_admin: Mapped[bool] = mapped_column(Boolean, nullable=True, default=False, comment="Role")
+    custom_prompt: Mapped[str | None] = mapped_column(
+        String, nullable=True, comment="Custom base prompt"
+    )
+    is_admin: Mapped[bool | None] = mapped_column(
+        Boolean, nullable=True, default=False, comment="Role"
+    )
 
     def __str__(self) -> str:
         return str(self.name)

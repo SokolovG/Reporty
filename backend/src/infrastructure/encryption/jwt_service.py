@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+import logging
 
 import bcrypt
 import jwt
@@ -8,8 +9,17 @@ from backend.src.infrastructure.config.settings import settings
 from backend.src.infrastructure.exceptions.api_exceptions import AuthenticationError
 
 
+logger = logging.getLogger(__name__)
+
+
 class JWTService:
     BLACKLIST: set[str] = set()
+
+    def __init__(self) -> None:
+        logger.warning(
+            "JWT blacklist is in-memory only. "
+            "Blacklisted tokens will be valid again after server restart."
+        )
 
     async def blacklist_token(self, token: str) -> None:
         self.BLACKLIST.add(token)
