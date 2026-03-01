@@ -1,4 +1,4 @@
-from typing import AsyncGenerator, Type, TypeVar, Callable
+from typing import AsyncGenerator, Type, TypeVar
 
 from dishka import Scope, provide
 from dishka.provider import Provider
@@ -61,13 +61,13 @@ async def get_dependency(request: Request | StarletteRequest, dependency_type: T
 
 class MyProvider(Provider):
     @provide(scope=Scope.APP)
-    def session_maker(self) -> Callable[[], AsyncSession]:
+    def session_maker(self) -> async_sessionmaker[AsyncSession]:
         config = get_sqlalchemy_config()
-        return config.create_session_maker()
+        return config.create_session_maker()  # type: ignore
 
     @provide(scope=Scope.REQUEST)
     async def get_db_session(
-        self, session_maker: async_sessionmaker
+        self, session_maker: async_sessionmaker[AsyncSession]
     ) -> AsyncGenerator[AsyncSession, None]:
         async with session_maker() as session:
             try:

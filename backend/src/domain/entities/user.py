@@ -20,7 +20,7 @@ class User:
     # Status
     is_active: bool = False
     is_verify: bool = False
-    is_admin: bool = False
+    is_admin: bool | None = False
 
     # Profile
     display_name: str | None = None
